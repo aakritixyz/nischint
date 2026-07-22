@@ -141,21 +141,30 @@ const defaultGuidance: Guidance = {
 
 const featureHighlights = [
   {
-    title: "One-tap help",
-    copy: "A clear emergency action for moments when words and decisions feel hard.",
+    title: "Emergency help",
+    copy: "One large action shares location, home address, and care details with family.",
   },
   {
-    title: "Caregiver clarity",
-    copy: "Family sees location, safe-zone status, notes, reminders, and alert history.",
+    title: "Daily assurance",
+    copy: "Simple check-ins for medicine, routines, and moments when support is needed.",
   },
   {
-    title: "Mobile-first safety",
-    copy: "Large buttons, simple language, offline shell caching, and accessibility controls.",
+    title: "Family live view",
+    copy: "Caregivers see the latest alert, safe-zone status, contacts, and care notes.",
   },
   {
-    title: "Ready to integrate",
-    copy: "Provider hooks exist for SMS, WhatsApp, database persistence, and AI guidance.",
+    title: "Calm guidance",
+    copy: "Gentle steps and familiar family messages help reduce panic during confusion.",
   },
+];
+
+const serviceHighlights = [
+  "Live location sharing",
+  "Safe-zone demo",
+  "Emergency contacts",
+  "Medicine reminders",
+  "Family voice note",
+  "Privacy requests",
 ];
 
 export default function Home() {
@@ -418,17 +427,29 @@ export default function Home() {
     <main
       className={`shell ${largeText ? "largeText" : ""} ${highContrast ? "highContrast" : ""}`}
     >
+      <header className="topBar" aria-label="Nischint navigation">
+        <a className="brandLockup" href="#nischint-title" aria-label="Nischint home">
+          <span>नि</span>
+          <strong>Nischint</strong>
+        </a>
+        <nav aria-label="Page sections">
+          <a href="#care-services">Care</a>
+          <a href="#live-demo">Demo</a>
+          <a href="#privacy">Privacy</a>
+        </nav>
+      </header>
+
       <section className="hero" aria-labelledby="nischint-title">
         <div className="heroCopy">
           <div className="brandPill">
             <span aria-hidden="true">नि</span>
-            Peace-of-mind safety companion
+            Dementia safety companion
           </div>
+          <p className="scriptName" aria-hidden="true">निश्चिंत</p>
           <h1 id="nischint-title">Nischint</h1>
           <p>
-            Real-time support for moments of confusion: calm guidance, GPS
-            sharing, caregiver alerts, medicine check-ins, and safe-zone
-            awareness.
+            A calm mobile-first companion for seniors who may feel confused or
+            lost, and for families who need quick, clear safety updates.
           </p>
           <div className="heroActions" aria-label="Primary demo actions">
             <button
@@ -445,6 +466,11 @@ export default function Home() {
             >
               I am safe
             </button>
+          </div>
+          <div className="trustStrip" aria-label="Safety highlights">
+            <span><strong>24/7</strong> ready</span>
+            <span><strong>1 tap</strong> alert</span>
+            <span><strong>Family</strong> first</span>
           </div>
         </div>
 
@@ -508,6 +534,23 @@ export default function Home() {
         </div>
       </section>
 
+      <section id="care-services" className="careIntro" aria-label="Nischint care services">
+        <div className="sectionHeading">
+          <span>How Nischint helps</span>
+          <h2>Built for real moments, not just memories</h2>
+        </div>
+        <p>
+          The app keeps the patient screen very simple while giving caregivers
+          the context they need: where the person is, what happened, who to
+          contact, and what to do next.
+        </p>
+        <div className="serviceCloud" aria-label="Available care features">
+          {serviceHighlights.map((service) => (
+            <span key={service}>{service}</span>
+          ))}
+        </div>
+      </section>
+
       <section className="featureRail" aria-label="Project strengths">
         {featureHighlights.map((feature) => (
           <article key={feature.title}>
@@ -517,7 +560,7 @@ export default function Home() {
         ))}
       </section>
 
-      <section className="toolGrid" aria-label="Nischint controls">
+      <section id="live-demo" className="toolGrid" aria-label="Nischint controls">
         <article className="patientPanel">
           <div className="sectionHeading">
             <span>Patient setup</span>
@@ -823,7 +866,7 @@ export default function Home() {
           </div>
         </article>
 
-        <article className="caregiverPanel">
+        <article id="privacy" className="caregiverPanel">
           <div className="sectionHeading">
             <span>Privacy and safety</span>
             <h2>Consent-first design</h2>

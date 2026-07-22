@@ -1,17 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fbf8fa;
-  --foreground: #3b2635;
-  --rose: #d85b86;
-  --rose-dark: #a83f68;
-  --mauve: #7b5870;
-  --mauve-soft: #f4e7ee;
-  --lavender: #f0edf7;
+  --background: #fbf7f5;
+  --foreground: #31232b;
+  --ink: #3a2432;
+  --muted: #765f6d;
+  --rose: #d8627f;
+  --rose-dark: #a94863;
+  --coral: #ef826d;
+  --mauve: #876678;
+  --mauve-soft: #f1e5eb;
+  --blush: #fff2f5;
   --cream: #fffdf8;
-  --mint: #e9f8f0;
-  --amber: #fff5df;
-  --shadow: 0 14px 34px rgba(71, 45, 62, 0.09);
+  --mint: #eaf7ee;
+  --sage: #6f8f77;
+  --amber: #fff2d6;
+  --line: rgba(86, 58, 74, 0.13);
+  --shadow: 0 18px 44px rgba(57, 35, 48, 0.09);
 }
 
 @theme inline {
@@ -25,6 +30,7 @@
 }
 
 html {
+  scroll-behavior: smooth;
   background: var(--background);
 }
 
@@ -32,77 +38,21 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background: var(--background);
+  background:
+    radial-gradient(circle at top left, rgba(255, 226, 233, 0.65), transparent 30rem),
+    linear-gradient(180deg, #fffaf8 0%, var(--background) 34rem, #fffdfb 100%);
   color: var(--foreground);
-  font-family: var(--font-care), "Avenir Next", "Nunito", "Segoe UI", sans-serif;
+  font-family: var(--font-care), "Avenir Next", "Nunito Sans", "Segoe UI", sans-serif;
 }
 
-button {
+button,
+input,
+textarea {
   font: inherit;
 }
 
-.shell {
-  width: min(100% - 24px, 1120px);
-  margin: 0 auto;
-  padding: 18px 0 34px;
-}
-
-.hero,
-.dashboard,
-.heroCopy,
-.phoneCard,
-.patientPanel,
-.caregiverPanel,
-.sectionHeading,
-.stepList {
-  display: grid;
-}
-
-.hero {
-  gap: 18px;
-}
-
-.phoneCard {
-  order: -1;
-}
-
-.heroCopy {
-  gap: 16px;
-  padding: 8px 2px 4px;
-}
-
-.brandPill,
-.smallLabel,
-.sectionHeading span {
-  color: var(--mauve);
-  font-size: 0.76rem;
-  font-weight: 850;
-  letter-spacing: 0;
-  text-transform: uppercase;
-}
-
-.brandPill {
-  width: fit-content;
-  max-width: 100%;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 12px 8px 9px;
-  border: 1px solid rgba(140, 95, 125, 0.2);
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 8px 20px rgba(71, 45, 62, 0.06);
-}
-
-.brandPill span {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #ffd7e5;
-  color: #8c315d;
-  font-size: 0.74rem;
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
@@ -112,23 +62,37 @@ p {
   margin: 0;
 }
 
-h1 {
-  max-width: 100%;
-  color: #44233a;
-  font-size: clamp(3.1rem, 16vw, 5.4rem);
-  font-weight: 900;
-  line-height: 0.95;
-  overflow-wrap: anywhere;
+a {
+  color: inherit;
 }
 
-.heroCopy > p {
-  max-width: 680px;
-  color: #67465c;
-  font-size: clamp(1.05rem, 4vw, 1.28rem);
-  font-weight: 650;
-  line-height: 1.48;
+.shell {
+  width: min(100% - 22px, 1180px);
+  margin: 0 auto;
+  padding: 14px 0 34px;
 }
 
+.topBar {
+  position: sticky;
+  top: 8px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 58px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(86, 58, 74, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 253, 250, 0.9);
+  box-shadow: 0 12px 26px rgba(57, 35, 48, 0.08);
+  padding: 8px 10px;
+  backdrop-filter: blur(14px);
+}
+
+.brandLockup,
+.topBar nav,
+.brandPill,
 .heroActions,
 .phoneTop,
 .voiceCard,
@@ -136,41 +100,196 @@ h1 {
 .mapCard,
 .contactList article {
   display: flex;
-  gap: 12px;
 }
 
-.heroActions,
-.voiceCard,
-.alertCard,
-.mapCard {
-  flex-direction: column;
-}
-
-.phoneTop,
-.contactList article {
+.brandLockup {
   align-items: center;
-  justify-content: space-between;
+  gap: 9px;
+  min-width: 0;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brandLockup span,
+.brandPill span {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #ffe0e8;
+  color: #8c3153;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 800;
+}
+
+.brandLockup span {
+  width: 38px;
+  height: 38px;
+}
+
+.brandLockup strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.12rem;
+  letter-spacing: 0.01em;
+}
+
+.topBar nav {
+  align-items: center;
+  gap: 2px;
+}
+
+.topBar nav a {
+  border-radius: 999px;
+  color: #735969;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 9px 10px;
+}
+
+.topBar nav a:hover {
+  background: #fff0f3;
+  color: var(--ink);
+}
+
+.hero,
+.dashboard,
+.heroCopy,
+.phoneCard,
+.patientPanel,
+.caregiverPanel,
+.sectionHeading,
+.stepList,
+.featureRail,
+.toolGrid,
+.careIntro,
+.serviceCloud,
+.quickGrid,
+.eventList,
+.contactList,
+.emergencyCard,
+.emergencyActions,
+.toggleRow {
+  display: grid;
+}
+
+.hero {
+  gap: 18px;
+  align-items: start;
+}
+
+.phoneCard {
+  order: -1;
+}
+
+.heroCopy {
+  gap: 13px;
+  padding: 4px 2px 8px;
+}
+
+.brandPill,
+.smallLabel,
+.sectionHeading span {
+  color: var(--mauve);
+  font-size: 0.73rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brandPill {
+  width: fit-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px 7px 8px;
+  border: 1px solid rgba(134, 92, 113, 0.18);
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 10px 22px rgba(57, 35, 48, 0.06);
+}
+
+.brandPill span {
+  width: 30px;
+  height: 30px;
+  font-size: 0.78rem;
+}
+
+.scriptName {
+  color: var(--rose-dark);
+  font-family: "Snell Roundhand", "Apple Chancery", "Brush Script MT", Georgia, serif;
+  font-size: clamp(2.1rem, 12vw, 4.8rem);
+  line-height: 0.8;
+}
+
+h1 {
+  max-width: 100%;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.15rem, 15vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.heroCopy > p:not(.scriptName) {
+  max-width: 650px;
+  color: #604858;
+  font-size: clamp(1.04rem, 4vw, 1.24rem);
+  font-weight: 650;
+  line-height: 1.54;
+}
+
+.heroActions {
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.trustStrip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.trustStrip span {
+  min-height: 56px;
+  border: 1px solid rgba(86, 58, 74, 0.11);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #735969;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.15;
+  padding: 10px;
+}
+
+.trustStrip strong {
+  display: block;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.14rem;
 }
 
 .primaryButton,
 .softButton,
 .lostButton,
 .quickGrid button,
-.roundButton {
-  min-height: 58px;
+.roundButton,
+.emergencyActions a,
+.emergencyActions button {
+  min-height: 56px;
   border: 0;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
 }
 
 .primaryButton,
 .softButton {
   width: 100%;
   border-radius: 999px;
-  padding: 16px 22px;
+  padding: 15px 20px;
   font-size: 1rem;
   font-weight: 900;
 }
@@ -178,66 +297,75 @@ h1 {
 .primaryButton {
   background: var(--rose);
   color: white;
-  box-shadow: 0 10px 20px rgba(168, 63, 104, 0.16);
+  box-shadow: 0 12px 24px rgba(168, 63, 99, 0.18);
 }
 
 .softButton {
-  border: 1px solid rgba(140, 95, 125, 0.2);
-  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(134, 92, 113, 0.2);
+  background: #fffdfa;
   color: #64384f;
 }
 
 .compact {
   min-height: 46px;
-  padding: 12px 18px;
+  padding: 11px 16px;
 }
 
-button:hover {
+button:hover,
+.emergencyActions a:hover {
   transform: translateY(-1px);
 }
 
-button:focus-visible {
-  outline: 4px solid rgba(216, 91, 134, 0.25);
-  outline-offset: 4px;
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 4px solid rgba(216, 98, 127, 0.22);
+  outline-offset: 3px;
 }
 
 .phoneCard,
 .patientPanel,
-.caregiverPanel {
-  gap: 14px;
-  border: 1px solid rgba(140, 95, 125, 0.14);
-  border-radius: 26px;
-  background: #ffffff;
+.caregiverPanel,
+.careIntro,
+.featureRail article,
+.emergencyCard {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: var(--shadow);
-  
 }
 
 .phoneCard {
-  padding: 14px;
+  gap: 13px;
+  padding: 13px;
 }
 
 .phoneTop {
-  padding: 2px 2px 8px;
-  color: #74566a;
-  font-size: 0.96rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 3px 6px;
+  color: #735969;
+  font-size: 0.95rem;
   flex-wrap: wrap;
 }
 
 .phoneTop strong {
-  color: #44233a;
+  color: var(--ink);
 }
 
 .syncPill {
   border-radius: 999px;
   padding: 7px 10px;
-  background: #eefcf5;
+  background: var(--mint);
   color: #356850;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 900;
 }
 
 .syncPill.localOnly {
-  background: #fff1ce;
+  background: var(--amber);
   color: #7a5730;
 }
 
@@ -247,27 +375,44 @@ button:focus-visible {
 .alertCard,
 .mapCard,
 .contactList article {
-  border: 1px solid rgba(140, 95, 125, 0.13);
-  border-radius: 22px;
-  padding: 16px;
+  border: 1px solid rgba(86, 58, 74, 0.12);
+  border-radius: 19px;
+  padding: 15px;
   background: white;
 }
 
 .statusBanner span {
   display: block;
-  font-size: 1.02rem;
-  font-weight: 900;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 950;
 }
 
 .statusBanner p,
 .orientationCard p,
 .voiceCard p,
 .alertCard p,
-.mapCard p {
-  margin-top: 6px;
-  color: #715469;
+.mapCard p,
+.panelCopy,
+.careIntro > p,
+.featureRail p,
+.emergencyCard p,
+.stepItem p,
+.contactList span,
+.contactList p {
+  color: #715968;
   font-weight: 650;
-  line-height: 1.45;
+  line-height: 1.48;
+}
+
+.statusBanner p,
+.orientationCard p,
+.voiceCard p,
+.alertCard p,
+.mapCard p,
+.featureRail p,
+.emergencyCard p {
+  margin-top: 6px;
 }
 
 .statusGood {
@@ -278,20 +423,22 @@ button:focus-visible {
   background: var(--amber);
 }
 
-.statusAlert {
-  background: #fdeaf1;
+.statusAlert,
+.alertOn {
+  background: #fff0f3;
 }
 
 .orientationCard {
-  background: #fffafb;
+  background: #fffdf8;
 }
 
 .orientationCard h2 {
   margin-top: 7px;
-  color: #44233a;
-  font-size: clamp(1.55rem, 7vw, 2.1rem);
-  font-weight: 950;
-  line-height: 1.08;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 7vw, 2rem);
+  font-weight: 800;
+  line-height: 1.1;
 }
 
 .lostButton {
@@ -299,22 +446,22 @@ button:focus-visible {
   display: grid;
   gap: 8px;
   place-items: center;
-  min-height: 118px;
-  border-radius: 26px;
+  min-height: 116px;
+  border-radius: 24px;
   background: var(--rose);
   color: white;
-  box-shadow: 0 12px 24px rgba(168, 63, 104, 0.18);
+  box-shadow: 0 14px 28px rgba(168, 63, 99, 0.2);
 }
 
 .lostButton span {
-  font-size: clamp(2.15rem, 12vw, 3.25rem);
+  font-size: clamp(2rem, 11vw, 3.08rem);
   font-weight: 950;
   line-height: 1;
 }
 
 .lostButton small {
-  max-width: 90%;
-  font-size: 1rem;
+  max-width: 92%;
+  font-size: 0.98rem;
   font-weight: 850;
   line-height: 1.2;
 }
@@ -324,167 +471,170 @@ button:focus-visible {
 }
 
 .quickGrid {
-  display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 9px;
 }
 
 .quickGrid button {
-  min-height: 64px;
-  border-radius: 20px;
-  background: #fff7fb;
+  min-height: 62px;
+  border-radius: 17px;
+  background: #fff7f8;
   color: #5e334c;
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 900;
   line-height: 1.12;
-  box-shadow: inset 0 0 0 1px rgba(140, 95, 125, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(134, 92, 113, 0.12);
 }
 
-.dashboard {
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.featureRail {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-
-.featureRail article,
 .emergencyCard {
-  border: 1px solid rgba(140, 95, 125, 0.14);
-  border-radius: 22px;
-  background: #ffffff;
-  box-shadow: 0 10px 24px rgba(71, 45, 62, 0.07);
-  padding: 16px;
+  gap: 10px;
+  background: #fffdf8;
+  padding: 15px;
 }
 
-.featureRail strong,
-.emergencyCard h3 {
+.emergencyCard h3,
+.featureRail strong {
   display: block;
-  color: #44233a;
-  font-size: 1.08rem;
+  color: var(--ink);
+  font-size: 1.07rem;
   font-weight: 950;
 }
 
-.featureRail p,
-.emergencyCard p {
-  margin-top: 6px;
-  color: #715469;
-  font-weight: 650;
-  line-height: 1.45;
-}
-
-.emergencyCard {
-  display: grid;
-  gap: 10px;
-  background: #fffafb;
-}
-
 .emergencyActions {
-  display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 9px;
 }
 
 .emergencyActions a,
 .emergencyActions button {
   display: grid;
   place-items: center;
-  min-height: 50px;
-  border: 0;
   border-radius: 999px;
-  background: #44233a;
   color: white;
-  cursor: pointer;
-  font: inherit;
   font-weight: 900;
   text-decoration: none;
 }
 
-.emergencyActions button {
-  background: var(--rose);
+.emergencyActions a {
+  background: var(--ink);
 }
 
-.toolGrid {
-  display: grid;
-  gap: 18px;
+.emergencyActions button {
+  background: var(--coral);
+}
+
+.careIntro {
+  gap: 14px;
   margin-top: 18px;
+  padding: 18px;
+}
+
+.serviceCloud {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.serviceCloud span {
+  display: grid;
+  place-items: center;
+  min-height: 50px;
+  border: 1px solid rgba(86, 58, 74, 0.11);
+  border-radius: 16px;
+  background: #fff9fb;
+  color: #604858;
+  font-size: 0.9rem;
+  font-weight: 850;
+  text-align: center;
+  padding: 10px;
+}
+
+.featureRail,
+.toolGrid,
+.dashboard {
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.featureRail article {
+  padding: 16px;
 }
 
 .patientPanel,
 .caregiverPanel {
+  gap: 14px;
   padding: 16px;
 }
 
-.panelCopy {
-  color: #715469;
-  font-weight: 650;
-  line-height: 1.48;
+.sectionHeading {
+  gap: 7px;
+}
+
+.sectionHeading h2 {
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.55rem, 7vw, 2.12rem);
+  font-weight: 800;
+  line-height: 1.08;
 }
 
 label {
   display: grid;
   gap: 8px;
-  color: #6a4b60;
-  font-size: 0.95rem;
+  color: #644a5a;
+  font-size: 0.94rem;
   font-weight: 900;
 }
 
 input,
 textarea {
   width: 100%;
-  border: 1px solid rgba(140, 95, 125, 0.18);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.86);
-  color: #44233a;
-  font: inherit;
+  border: 1px solid rgba(134, 92, 113, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 253, 250, 0.92);
+  color: var(--ink);
   font-size: 1rem;
   font-weight: 700;
-  padding: 14px 15px;
+  padding: 13px 14px;
   outline: none;
 }
 
 textarea {
-  min-height: 98px;
+  min-height: 96px;
   resize: vertical;
 }
 
 input:focus,
 textarea:focus {
-  border-color: rgba(216, 91, 134, 0.55);
-  box-shadow: 0 0 0 4px rgba(216, 91, 134, 0.12);
+  border-color: rgba(216, 98, 127, 0.55);
+  box-shadow: 0 0 0 4px rgba(216, 98, 127, 0.11);
 }
 
 .toggleRow {
-  display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 9px;
 }
 
 .selected {
-  background: #44233a;
+  background: var(--ink);
   color: white;
 }
 
 .eventList {
-  display: grid;
-  gap: 10px;
+  gap: 9px;
 }
 
 .eventList p {
-  border: 1px solid rgba(140, 95, 125, 0.12);
-  border-radius: 18px;
-  background: #fff7fb;
-  color: #6d4e63;
+  border: 1px solid rgba(86, 58, 74, 0.11);
+  border-radius: 15px;
+  background: #fff9fb;
+  color: #6d5362;
   font-weight: 700;
   line-height: 1.42;
-  padding: 12px 14px;
+  padding: 11px 13px;
 }
 
 .eventList strong {
-  color: #44233a;
+  color: var(--ink);
   text-transform: capitalize;
 }
 
@@ -494,95 +644,66 @@ textarea:focus {
 
 .highContrast {
   --background: #fff;
-  --foreground: #25101f;
-}
-
-.highContrast .phoneCard,
-.highContrast .patientPanel,
-.highContrast .caregiverPanel,
-.highContrast .statusBanner,
-.highContrast .orientationCard,
-.highContrast .voiceCard,
-.highContrast .alertCard,
-.highContrast .mapCard,
-.highContrast .contactList article,
-.highContrast .eventList p {
-  border-color: rgba(68, 35, 58, 0.38);
-}
-
-.sectionHeading {
-  gap: 8px;
-}
-
-.sectionHeading h2 {
-  color: #44233a;
-  font-size: clamp(1.65rem, 7vw, 2.2rem);
-  font-weight: 950;
-  line-height: 1.06;
+  --foreground: #24121d;
+  --line: rgba(68, 35, 58, 0.35);
 }
 
 .stepList {
-  gap: 10px;
+  gap: 9px;
 }
 
 .stepItem {
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 42px 1fr;
   gap: 12px;
   align-items: center;
-  padding: 14px;
-  border-radius: 22px;
-  background: #fff7fb;
+  padding: 13px;
+  border-radius: 18px;
+  background: #fff7f8;
 }
 
 .stepItem strong {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: var(--mauve-soft);
   color: #72405f;
-  font-size: 1.1rem;
+  font-size: 1.06rem;
 }
 
-.stepItem p,
-.contactList span,
-.contactList p {
-  color: #6d4e63;
-  font-weight: 700;
-  line-height: 1.42;
+.voiceCard,
+.alertCard,
+.mapCard {
+  flex-direction: column;
+  gap: 12px;
 }
 
 .voiceCard {
   align-items: stretch;
-  background: #fbf8ff;
+  background: #fffdf8;
 }
 
 .voiceCard h3,
 .alertCard h3,
 .mapCard h3 {
   margin-top: 7px;
-  color: #44233a;
-  font-size: 1.18rem;
+  color: var(--ink);
+  font-size: 1.14rem;
   font-weight: 950;
 }
 
 .roundButton {
   align-self: stretch;
-  border-radius: 20px;
-  background: #44233a;
+  border-radius: 18px;
+  background: var(--ink);
   color: white;
   font-weight: 950;
 }
 
 .alertOn {
-  background: #fdeaf1;
-  box-shadow: inset 0 0 0 2px rgba(168, 63, 104, 0.18);
-}
-
-.mapCard {
-  align-items: stretch;
+  box-shadow: inset 0 0 0 2px rgba(168, 63, 99, 0.15);
 }
 
 .mapSurface {
@@ -590,14 +711,18 @@ textarea:focus {
   width: 100%;
   min-height: 168px;
   overflow: hidden;
-  border-radius: 20px;
-  background: #fbf8fa;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, rgba(134, 102, 120, 0.07) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(134, 102, 120, 0.07) 1px, transparent 1px),
+    #fff9f5;
+  background-size: 28px 28px;
 }
 
 .safeRing {
   position: absolute;
   inset: 24px 42px;
-  border: 3px dashed rgba(140, 95, 125, 0.35);
+  border: 3px dashed rgba(134, 102, 120, 0.38);
   border-radius: 50%;
 }
 
@@ -619,7 +744,7 @@ textarea:focus {
 .homeDot {
   top: 68px;
   left: 50%;
-  background: #8c5f7d;
+  background: var(--mauve);
   transform: translateX(-50%);
 }
 
@@ -637,15 +762,14 @@ textarea:focus {
 }
 
 .contactList {
-  display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 9px;
 }
 
 .contactList article {
-  display: grid;
   align-items: start;
-  min-height: 92px;
+  justify-content: space-between;
+  min-height: 86px;
   background: #fffdf8;
 }
 
@@ -655,17 +779,15 @@ textarea:focus {
 }
 
 .contactList strong {
-  color: #44233a;
-  font-size: 1.06rem;
+  color: var(--ink);
+  font-size: 1.04rem;
 }
 
 @media (min-width: 560px) {
-  .heroActions {
-    grid-template-columns: auto auto;
-  }
-
   .heroActions,
-  .quickGrid {
+  .quickGrid,
+  .toggleRow,
+  .emergencyActions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -674,20 +796,13 @@ textarea:focus {
     grid-column: 1 / -1;
   }
 
-  .contactList {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
+  .contactList,
   .featureRail {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .emergencyActions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .toggleRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .serviceCloud {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .primaryButton,
@@ -698,15 +813,18 @@ textarea:focus {
 
 @media (min-width: 860px) {
   .shell {
-    width: min(100% - 48px, 1120px);
-    padding: 32px 0 48px;
+    width: min(100% - 48px, 1180px);
+    padding: 20px 0 48px;
+  }
+
+  .topBar {
+    margin-bottom: 28px;
   }
 
   .hero {
-    grid-template-columns: minmax(0, 0.88fr) minmax(380px, 0.72fr);
+    grid-template-columns: minmax(0, 0.86fr) minmax(380px, 0.72fr);
     align-items: center;
-    gap: 28px;
-    min-height: auto;
+    gap: 30px;
   }
 
   .phoneCard {
@@ -715,35 +833,44 @@ textarea:focus {
 
   .heroCopy {
     align-content: center;
+    gap: 15px;
   }
 
   h1 {
-    font-size: clamp(4rem, 7.4vw, 6.4rem);
+    font-size: clamp(4.2rem, 7.2vw, 6.4rem);
+  }
+
+  .careIntro {
+    grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+    align-items: center;
+    gap: 24px;
+    margin-top: 22px;
+    padding: 22px;
+  }
+
+  .careIntro > p {
+    font-size: 1.04rem;
   }
 
   .dashboard {
     grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-    gap: 20px;
-    margin-top: 20px;
+    gap: 18px;
+    margin-top: 18px;
   }
 
   .featureRail {
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 20px;
   }
 
   .toolGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-    margin-top: 20px;
   }
 
   .phoneCard,
   .patientPanel,
   .caregiverPanel {
-    border-radius: 28px;
-    padding: 18px;
+    border-radius: 26px;
+    padding: 17px;
   }
 
   .quickGrid {
@@ -765,8 +892,8 @@ textarea:focus {
   .roundButton {
     flex: 0 0 auto;
     align-self: center;
-    width: 76px;
-    height: 76px;
+    width: 74px;
+    height: 74px;
     border-radius: 50%;
   }
 
@@ -777,15 +904,15 @@ textarea:focus {
 
 @media (min-width: 1180px) {
   .shell {
-    width: min(100% - 72px, 1280px);
+    width: min(100% - 72px, 1260px);
   }
 
   .hero {
     grid-template-columns: minmax(0, 0.82fr) minmax(420px, 0.62fr);
-    gap: 40px;
+    gap: 42px;
   }
 
   h1 {
-    font-size: clamp(4.6rem, 6vw, 6.8rem);
+    font-size: clamp(4.9rem, 6vw, 6.8rem);
   }
 }
