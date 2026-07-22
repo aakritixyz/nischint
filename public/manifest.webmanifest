@@ -1,0 +1,17 @@
+{
+  "name": "Nischint",
+  "short_name": "Nischint",
+  "description": "Peace-of-mind safety companion for dementia care and family alerts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fff8fb",
+  "theme_color": "#ff7faa",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
