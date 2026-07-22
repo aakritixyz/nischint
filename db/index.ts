@@ -1,13 +1,14 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
-import * as schema from "./schema";
+export function getDatabaseUrl() {
+  return process.env.DATABASE_URL ?? null;
+}
 
-export function getDb() {
-  if (!env.DB) {
+export function requireDatabaseUrl() {
+  const databaseUrl = getDatabaseUrl();
+  if (!databaseUrl) {
     throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
+      "DATABASE_URL is not configured. Add Neon, Supabase, or Vercel Postgres on Vercel to enable durable persistence."
     );
   }
 
-  return drizzle(env.DB, { schema });
+  return databaseUrl;
 }

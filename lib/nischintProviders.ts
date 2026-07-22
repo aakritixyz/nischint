@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import type { CareState } from "./nischintStore";
 
 type ProviderEnv = {
@@ -11,7 +10,14 @@ type ProviderEnv = {
 };
 
 function providerEnv() {
-  return env as unknown as ProviderEnv;
+  return {
+    TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID,
+    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN,
+    TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER,
+    WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
+    WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  } satisfies ProviderEnv;
 }
 
 export async function sendCareNotification(

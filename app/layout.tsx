@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -6,11 +6,14 @@ export const metadata: Metadata = {
   description:
     "A gentle real-time support app for dementia care, family alerts, safe-zone status, and calming guidance.",
   manifest: "/manifest.webmanifest",
-  themeColor: "#ff7faa",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ff7faa",
 };
 
 export default function RootLayout({
