@@ -43,3 +43,17 @@ Open `http://localhost:3000`.
 
 Without provider keys, Nischint still runs as a working prototype and simulates
 delivery where appropriate.
+
+
+## Demo Flow
+
+1. Open Nischint on a phone-sized screen.
+2. Press **I feel lost** to trigger lost mode.
+3. Share live location and allow browser GPS permission.
+4. Use SMS, WhatsApp, or Push to simulate caregiver notification.
+5. Add a reminder and caregiver note.
+6. Toggle large text or high contrast to show accessibility support.
+
+## Production Readiness
+
+Nischint is deployment-ready as a polished MVP. For real-world use, connect a production database, authentication provider, SMS/WhatsApp credentials, and privacy review before handling real patient data.

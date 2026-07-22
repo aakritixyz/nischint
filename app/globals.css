@@ -348,6 +348,68 @@ button:focus-visible {
   margin-top: 18px;
 }
 
+.featureRail {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.featureRail article,
+.emergencyCard {
+  border: 1px solid rgba(140, 95, 125, 0.14);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 12px 32px rgba(105, 55, 86, 0.1);
+  padding: 16px;
+}
+
+.featureRail strong,
+.emergencyCard h3 {
+  display: block;
+  color: #44233a;
+  font-size: 1.08rem;
+  font-weight: 950;
+}
+
+.featureRail p,
+.emergencyCard p {
+  margin-top: 6px;
+  color: #715469;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.emergencyCard {
+  display: grid;
+  gap: 10px;
+  background: linear-gradient(135deg, #ffffff, #fff1f6);
+}
+
+.emergencyActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.emergencyActions a,
+.emergencyActions button {
+  display: grid;
+  place-items: center;
+  min-height: 50px;
+  border: 0;
+  border-radius: 999px;
+  background: #44233a;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.emergencyActions button {
+  background: linear-gradient(135deg, #ff7faa, #d95b8c);
+}
+
 .toolGrid {
   display: grid;
   gap: 18px;
@@ -623,6 +685,14 @@ textarea:focus {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .featureRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .emergencyActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .toggleRow {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -661,6 +731,12 @@ textarea:focus {
   .dashboard {
     grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
     gap: 20px;
+    margin-top: 20px;
+  }
+
+  .featureRail {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
     margin-top: 20px;
   }
 

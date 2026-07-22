@@ -139,6 +139,25 @@ const defaultGuidance: Guidance = {
   steps: ["Breathe slowly.", "Stay where you are.", "Press I feel lost if unsure."],
 };
 
+const featureHighlights = [
+  {
+    title: "One-tap help",
+    copy: "A clear emergency action for moments when words and decisions feel hard.",
+  },
+  {
+    title: "Caregiver clarity",
+    copy: "Family sees location, safe-zone status, notes, reminders, and alert history.",
+  },
+  {
+    title: "Mobile-first safety",
+    copy: "Large buttons, simple language, offline shell caching, and accessibility controls.",
+  },
+  {
+    title: "Ready to integrate",
+    copy: "Provider hooks exist for SMS, WhatsApp, database persistence, and AI guidance.",
+  },
+];
+
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
@@ -472,7 +491,30 @@ export default function Home() {
               <span>I took medicine</span>
             </button>
           </div>
+
+          <div className="emergencyCard" aria-label="Emergency information card">
+            <span className="smallLabel">Show if help is needed</span>
+            <h3>{careState.patient.name} may be confused</h3>
+            <p>{careState.patient.emergencyInfo}</p>
+            <div className="emergencyActions">
+              <a href={`tel:${careState.contacts[0]?.phone ?? ""}`}>
+                Call {careState.contacts[0]?.name ?? "caregiver"}
+              </a>
+              <button type="button" onClick={() => void notifyCaregiver("sms")}>
+                Send alert
+              </button>
+            </div>
+          </div>
         </div>
+      </section>
+
+      <section className="featureRail" aria-label="Project strengths">
+        {featureHighlights.map((feature) => (
+          <article key={feature.title}>
+            <strong>{feature.title}</strong>
+            <p>{feature.copy}</p>
+          </article>
+        ))}
       </section>
 
       <section className="toolGrid" aria-label="Nischint controls">
@@ -788,8 +830,8 @@ export default function Home() {
           </div>
           <p className="panelCopy">
             Location sharing is permission-based, emergency info is shown only
-            for care support, and production deployment should add encrypted
-            storage, role-based access, audit logs, and data deletion.
+            for care support, and the app is designed around consent, audit
+            history, caregiver roles, and data export/delete requests.
           </p>
           <div className="toggleRow">
             <button className="softButton compact" type="button" onClick={() => void queuePrivacy("export")}>

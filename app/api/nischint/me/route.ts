@@ -7,6 +7,6 @@ export async function GET() {
     authenticated: Boolean(user),
     user,
     authModel:
-      "Uses ChatGPT/Sites authenticated-user headers when deployed behind a signed-in workspace route. Add role checks before production use.",
+      "Identity endpoint placeholder. Connect Vercel Auth, Clerk, Auth.js, or Supabase Auth for production role checks.",
   });
 }
