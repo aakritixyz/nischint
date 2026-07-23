@@ -4,8 +4,8 @@
   "description": "Mobile-first elder safety and family care companion with lost-mode support, location sharing, reminders, and calming guidance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fbf7f5",
-  "theme_color": "#3e8b79",
+  "background_color": "#f2eff1",
+  "theme_color": "#8f6f7d",
   "icons": [
     {
       "src": "/favicon.svg",

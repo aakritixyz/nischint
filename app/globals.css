@@ -560,7 +560,7 @@ textarea:focus-visible {
 }
 
 .noticePanel {
-  background: #fff8ee;
+  background: #f3e9e6;
   box-shadow: 0 12px 30px rgba(122, 87, 48, 0.08);
 }
 
@@ -1325,15 +1325,15 @@ textarea:focus {
 :root {
   --background: #f7f4ef;
   --foreground: #233238;
-  --ink: #20333a;
+  --ink: #40363e;
   --muted: #68777a;
-  --rose: #e26d5c;
-  --rose-dark: #b94f48;
-  --coral: #f0a35e;
+  --rose: #ae5873;
+  --rose-dark: #8e455f;
+  --coral: #d89a91;
   --mauve: #6f6a8d;
   --mauve-soft: #e9e7f4;
   --mint: #e5f5ed;
-  --sage: #3e8b79;
+  --sage: #4a756b;
   --amber: #fff0c7;
   --line: rgba(32, 51, 58, 0.14);
   --shadow: 0 22px 52px rgba(21, 42, 49, 0.12);
@@ -1341,8 +1341,8 @@ textarea:focus {
 
 body {
   background:
-    linear-gradient(115deg, rgba(62, 139, 121, 0.16), transparent 24rem),
-    linear-gradient(245deg, rgba(240, 163, 94, 0.18), transparent 26rem),
+    linear-gradient(115deg, rgba(74, 117, 107, 0.16), transparent 24rem),
+    linear-gradient(245deg, rgba(216, 154, 145, 0.18), transparent 26rem),
     linear-gradient(180deg, #fffaf3 0%, #f7f4ef 42rem, #f9fbf7 100%);
 }
 
@@ -1360,35 +1360,35 @@ body {
 
 .brandLockup span,
 .brandPill span {
-  background: #dff5ee;
-  color: #226d5f;
+  background: #ead8df;
+  color: #8e455f;
 }
 
 .scriptName {
-  color: #2c7f70;
+  color: #a95873;
 }
 
 .primaryButton,
 .lostButton,
 .emergencyActions button {
-  background: linear-gradient(135deg, #e26d5c, #f0a35e);
-  box-shadow: 0 16px 34px rgba(226, 109, 92, 0.24);
+  background: linear-gradient(135deg, #ae5873, #d89a91);
+  box-shadow: 0 16px 34px rgba(174, 88, 115, 0.24);
 }
 
 .softButton {
-  border-color: rgba(62, 139, 121, 0.2);
+  border-color: rgba(74, 117, 107, 0.2);
   color: #244950;
 }
 
 .trustStrip span {
   background: rgba(255, 254, 250, 0.78);
-  border-color: rgba(62, 139, 121, 0.16);
+  border-color: rgba(74, 117, 107, 0.16);
 }
 
 .signalRail {
   max-width: 100%;
   overflow: hidden;
-  border: 1px solid rgba(62, 139, 121, 0.14);
+  border: 1px solid rgba(74, 117, 107, 0.14);
   border-radius: 999px;
   background: rgba(255, 254, 250, 0.72);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52);
@@ -1407,7 +1407,7 @@ body {
   align-items: center;
   min-height: 32px;
   border-radius: 999px;
-  background: #20333a;
+  background: #40363e;
   color: #fffdf7;
   font-size: 0.78rem;
   font-weight: 900;
@@ -1422,8 +1422,8 @@ body {
 .motionTile {
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 255, 250, 0.85)),
-    linear-gradient(145deg, rgba(62, 139, 121, 0.18), rgba(240, 163, 94, 0.16));
-  border-color: rgba(62, 139, 121, 0.16);
+    linear-gradient(145deg, rgba(74, 117, 107, 0.18), rgba(216, 154, 145, 0.16));
+  border-color: rgba(74, 117, 107, 0.16);
   box-shadow: 0 18px 42px rgba(21, 42, 49, 0.13);
   animation: tileFloatA 4.8s ease-in-out infinite;
 }
@@ -1439,7 +1439,7 @@ body {
 
 .motionTile::after,
 .featureTile::after {
-  background: linear-gradient(90deg, #3e8b79, #f0a35e, #6f6a8d);
+  background: linear-gradient(90deg, #4a756b, #d89a91, #6f6a8d);
 }
 
 .motionTile::before {
@@ -1449,19 +1449,19 @@ body {
 .tone2 {
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 235, 0.88)),
-    linear-gradient(145deg, rgba(240, 163, 94, 0.22), rgba(111, 106, 141, 0.12));
+    linear-gradient(145deg, rgba(216, 154, 145, 0.22), rgba(111, 106, 141, 0.12));
 }
 
 .tone3 {
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(245, 243, 255, 0.86)),
-    linear-gradient(145deg, rgba(111, 106, 141, 0.18), rgba(62, 139, 121, 0.14));
+    linear-gradient(145deg, rgba(111, 106, 141, 0.18), rgba(74, 117, 107, 0.14));
 }
 
 .tone4 {
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(245, 255, 249, 0.86)),
-    linear-gradient(145deg, rgba(62, 139, 121, 0.2), rgba(226, 109, 92, 0.1));
+    linear-gradient(145deg, rgba(74, 117, 107, 0.2), rgba(174, 88, 115, 0.1));
 }
 
 .motionTile em {
@@ -1471,7 +1471,7 @@ body {
 .featureTile {
   background:
     linear-gradient(180deg, rgba(255, 254, 250, 0.94), rgba(247, 255, 250, 0.86)),
-    linear-gradient(135deg, rgba(62, 139, 121, 0.14), rgba(240, 163, 94, 0.12));
+    linear-gradient(135deg, rgba(74, 117, 107, 0.14), rgba(216, 154, 145, 0.12));
 }
 
 .serviceChip:nth-child(2n) {
@@ -1496,27 +1496,27 @@ body {
 }
 
 .phoneCard::before {
-  background: linear-gradient(135deg, rgba(62, 139, 121, 0.3), rgba(255, 253, 248, 0), rgba(240, 163, 94, 0.24));
+  background: linear-gradient(135deg, rgba(74, 117, 107, 0.3), rgba(255, 253, 248, 0), rgba(216, 154, 145, 0.24));
 }
 
 .mapSurface {
   background:
-    linear-gradient(90deg, rgba(62, 139, 121, 0.09) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(62, 139, 121, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 117, 107, 0.09) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(74, 117, 107, 0.08) 1px, transparent 1px),
     linear-gradient(135deg, #fffaf1, #eefaf4);
   background-size: 25px 25px;
 }
 
 .safeRing {
-  border-color: rgba(62, 139, 121, 0.48);
+  border-color: rgba(74, 117, 107, 0.48);
 }
 
 .personDot {
-  background: #e26d5c;
+  background: #ae5873;
 }
 
 .personDot.outside {
-  background: #b94f48;
+  background: #8e455f;
 }
 
 .routeLine {
@@ -1526,7 +1526,7 @@ body {
   width: 46%;
   height: 3px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(62, 139, 121, 0), rgba(62, 139, 121, 0.68), rgba(240, 163, 94, 0));
+  background: linear-gradient(90deg, rgba(74, 117, 107, 0), rgba(74, 117, 107, 0.68), rgba(216, 154, 145, 0));
   transform: rotate(-22deg);
   animation: routePulse 2.2s ease-in-out infinite;
 }
@@ -1560,11 +1560,11 @@ body {
   position: relative;
   min-height: 138px;
   overflow: hidden;
-  border: 1px solid rgba(62, 139, 121, 0.14);
+  border: 1px solid rgba(74, 117, 107, 0.14);
   border-radius: 20px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(244, 251, 247, 0.88)),
-    linear-gradient(135deg, rgba(62, 139, 121, 0.15), rgba(240, 163, 94, 0.12));
+    linear-gradient(135deg, rgba(74, 117, 107, 0.15), rgba(216, 154, 145, 0.12));
   padding: 15px;
   transition: transform 220ms ease, box-shadow 220ms ease;
   animation: productionLift 5.4s ease-in-out infinite;
@@ -1583,7 +1583,7 @@ body {
   min-height: 30px;
   align-items: center;
   border-radius: 999px;
-  background: #20333a;
+  background: #40363e;
   color: white;
   font-size: 0.72rem;
   font-style: normal;
@@ -1615,7 +1615,7 @@ body {
   justify-content: space-between;
   gap: 12px;
   min-height: 56px;
-  border: 1px solid rgba(62, 139, 121, 0.14);
+  border: 1px solid rgba(74, 117, 107, 0.14);
   border-radius: 18px;
   background: rgba(255, 254, 250, 0.86);
   padding: 12px 14px;
@@ -1624,7 +1624,7 @@ body {
 .switchRow input {
   width: 48px;
   height: 26px;
-  accent-color: #3e8b79;
+  accent-color: #4a756b;
 }
 
 .switchRow span {
@@ -1638,7 +1638,7 @@ body {
 }
 
 .escalationStack p {
-  border: 1px solid rgba(62, 139, 121, 0.12);
+  border: 1px solid rgba(74, 117, 107, 0.12);
   border-radius: 16px;
   background: #f4fbf7;
   color: #5e6b6e;
@@ -1648,7 +1648,7 @@ body {
 }
 
 .escalationStack strong {
-  color: #20333a;
+  color: #40363e;
 }
 
 @keyframes railMove {
@@ -1735,20 +1735,20 @@ body {
 
 /* Professional mobile refinement: quiet hierarchy, warm character, clear actions. */
 :root {
-  --background: #f4f3ee;
-  --foreground: #29383b;
-  --ink: #24363a;
-  --muted: #687578;
-  --rose: #c9635b;
-  --rose-dark: #a94f4b;
-  --coral: #df8d68;
-  --mauve: #746b80;
-  --mauve-soft: #eeebf1;
-  --mint: #e5f2eb;
-  --sage: #2f786b;
-  --amber: #f8edcf;
-  --line: rgba(36, 54, 58, 0.12);
-  --shadow: 0 16px 42px rgba(36, 54, 58, 0.08);
+  --background: #f2eff1;
+  --foreground: #433b42;
+  --ink: #3f373e;
+  --muted: #746d74;
+  --rose: #ae5873;
+  --rose-dark: #8e455f;
+  --coral: #d89a91;
+  --mauve: #77717e;
+  --mauve-soft: #e9e6ec;
+  --mint: #e7f0eb;
+  --sage: #4a756b;
+  --amber: #f2e6dc;
+  --line: rgba(63, 55, 62, 0.12);
+  --shadow: 0 16px 42px rgba(63, 55, 62, 0.08);
 }
 
 body {
@@ -1861,7 +1861,7 @@ textarea {
 .featureRail article,
 .emergencyCard,
 .productionBand {
-  background: #fffdf9;
+  background: #fffafb;
   backdrop-filter: none;
 }
 
@@ -1869,7 +1869,7 @@ textarea {
 .lostButton,
 .emergencyActions button {
   background: var(--rose);
-  box-shadow: 0 12px 26px rgba(169, 79, 75, 0.18);
+  box-shadow: 0 12px 26px rgba(142, 69, 95, 0.18);
 }
 
 .lostButton.isActive {
@@ -1885,32 +1885,32 @@ textarea {
 }
 
 .phoneCard::before {
-  background: #dfece6;
+  background: #e7d0c8;
   opacity: 0.7;
   animation: none;
 }
 
 .motionTile {
-  background: #f7fbf8;
-  border-color: rgba(47, 120, 107, 0.16);
-  box-shadow: 0 14px 34px rgba(36, 54, 58, 0.09);
+  background: #f7f1f3;
+  border-color: rgba(74, 117, 107, 0.16);
+  box-shadow: 0 14px 34px rgba(63, 55, 62, 0.09);
 }
 
 .motionTile:nth-child(2) {
-  background: #fff8ee;
+  background: #f3e9e6;
 }
 
 .motionTile:nth-child(3) {
-  background: #f4f1f7;
+  background: #efebf1;
 }
 
 .motionTile:nth-child(4) {
-  background: #eef6f2;
+  background: #eaf1ed;
 }
 
 .featureTile,
 .productionTile {
-  background: #fffdf9;
+  background: #fffafb;
 }
 
 .statusGood {
@@ -1918,12 +1918,12 @@ textarea {
 }
 
 .statusWatch {
-  background: #f8edcf;
+  background: #f2e6dc;
 }
 
 .statusAlert,
 .alertOn {
-  background: #f9e7e2;
+  background: #f4dfe5;
 }
 
 @media (max-width: 559px) {

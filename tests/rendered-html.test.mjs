@@ -33,7 +33,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(layout, /Nischint | Elder Safety Companion/);
   assert.match(layout, /openGraph/);
   assert.equal(manifest.name, "Nischint");
-  assert.equal(manifest.theme_color, "#3e8b79");
+  assert.equal(manifest.theme_color, "#8f6f7d");
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.orientation, "portrait-primary");
 });
