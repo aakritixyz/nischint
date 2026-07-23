@@ -921,3 +921,402 @@ textarea:focus {
     font-size: clamp(4.9rem, 6vw, 6.8rem);
   }
 }
+
+.motionDeck {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 2px;
+  perspective: 900px;
+}
+
+.motionTile,
+.featureTile,
+.serviceChip,
+.statusBanner,
+.orientationCard,
+.voiceCard,
+.alertCard,
+.mapCard,
+.contactList article,
+.patientPanel,
+.caregiverPanel {
+  position: relative;
+  overflow: hidden;
+}
+
+.motionTile {
+  min-height: 128px;
+  border: 1px solid rgba(86, 58, 74, 0.12);
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 246, 248, 0.9)),
+    linear-gradient(135deg, rgba(216, 98, 127, 0.18), rgba(111, 143, 119, 0.16));
+  box-shadow: 0 16px 38px rgba(57, 35, 48, 0.1);
+  padding: 15px;
+  transform: translateY(0) rotateX(0);
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+  animation: tileDrift 7s ease-in-out infinite;
+}
+
+.motionTile::before,
+.featureTile::before,
+.statusBanner::before,
+.lostButton::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.42) 45%, transparent 72%);
+  transform: translateX(-120%);
+}
+
+.motionTile::before {
+  animation: signalSweep 5.8s ease-in-out infinite;
+}
+
+.motionTile::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  right: 15px;
+  bottom: 12px;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rose), var(--coral), var(--sage));
+  opacity: 0.72;
+  transform-origin: left;
+  animation: signalFill 4.8s ease-in-out infinite;
+}
+
+.motionTile span {
+  display: block;
+  color: var(--mauve);
+  font-size: 0.69rem;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.motionTile strong {
+  display: block;
+  max-width: 78%;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 950;
+  line-height: 1.08;
+}
+
+.motionTile p {
+  max-width: 86%;
+  margin-top: 7px;
+  color: #6f5362;
+  font-size: 0.88rem;
+  font-weight: 680;
+  line-height: 1.34;
+}
+
+.motionTile em {
+  position: absolute;
+  right: 15px;
+  top: 14px;
+  color: rgba(168, 72, 99, 0.18);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.motionTile2,
+.motionTile4 {
+  animation-delay: -2s;
+}
+
+.motionTile3 {
+  animation-delay: -3.8s;
+}
+
+.motionTile:hover,
+.featureTile:hover,
+.serviceChip:hover,
+.patientPanel:hover,
+.caregiverPanel:hover,
+.contactList article:hover {
+  border-color: rgba(216, 98, 127, 0.24);
+  box-shadow: 0 20px 48px rgba(57, 35, 48, 0.14);
+  transform: translateY(-4px);
+}
+
+.featureTile {
+  isolation: isolate;
+  min-height: 154px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 250, 0.9)),
+    linear-gradient(135deg, rgba(216, 98, 127, 0.14), rgba(111, 143, 119, 0.12));
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.featureTile::before,
+.statusBanner::before,
+.lostButton::before {
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.featureTile:hover::before,
+.statusBanner:hover::before,
+.lostButton:hover::before {
+  opacity: 1;
+  animation: signalSweep 1.8s ease-out;
+}
+
+.featureTile::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rose), var(--coral), var(--sage));
+  transform: scaleX(0.24);
+  transform-origin: left;
+  opacity: 0.62;
+  transition: transform 220ms ease;
+}
+
+.featureTile:hover::after {
+  transform: scaleX(1);
+}
+
+.serviceChip {
+  transition:
+    transform 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.serviceChip:nth-child(2n) {
+  background: #fffdf8;
+}
+
+.serviceChip:nth-child(3n) {
+  background: #f3fbf6;
+}
+
+.phoneCard {
+  position: relative;
+  isolation: isolate;
+}
+
+.phoneCard::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(216, 98, 127, 0.28), rgba(255, 253, 248, 0), rgba(111, 143, 119, 0.2));
+  opacity: 0.7;
+  animation: panelGlow 6.5s ease-in-out infinite;
+}
+
+.statusBanner {
+  animation: softRise 560ms ease both;
+}
+
+.lostButton {
+  isolation: isolate;
+}
+
+.lostButton::after {
+  content: "";
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  border-radius: 50%;
+  animation: helpPulse 2.8s ease-out infinite;
+}
+
+.quickGrid button,
+.emergencyActions a,
+.emergencyActions button,
+.roundButton {
+  position: relative;
+  overflow: hidden;
+}
+
+.quickGrid button::after,
+.emergencyActions a::after,
+.emergencyActions button::after,
+.roundButton::after {
+  content: "";
+  position: absolute;
+  inset: auto 16px 10px 16px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.16;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.quickGrid button:hover::after,
+.emergencyActions a:hover::after,
+.emergencyActions button:hover::after,
+.roundButton:hover::after {
+  transform: scaleX(1);
+}
+
+.safeRing {
+  animation: ringBreathe 3.8s ease-in-out infinite;
+}
+
+.personDot {
+  animation: personPing 4.2s ease-in-out infinite;
+}
+
+@keyframes tileDrift {
+  0%,
+  100% {
+    transform: translateY(0) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotateX(1.2deg);
+  }
+}
+
+@keyframes signalSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  58%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes signalFill {
+  0%,
+  100% {
+    transform: scaleX(0.32);
+  }
+  48% {
+    transform: scaleX(0.92);
+  }
+}
+
+@keyframes panelGlow {
+  0%,
+  100% {
+    opacity: 0.44;
+  }
+  50% {
+    opacity: 0.86;
+  }
+}
+
+@keyframes helpPulse {
+  0% {
+    opacity: 0.68;
+    transform: scale(0.62);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.25);
+  }
+}
+
+@keyframes ringBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.56;
+  }
+}
+
+@keyframes personPing {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(216, 98, 127, 0.26);
+  }
+  45% {
+    box-shadow: 0 0 0 14px rgba(216, 98, 127, 0);
+  }
+}
+
+@keyframes softRise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 560px) {
+  .motionDeck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 860px) {
+  .motionDeck {
+    max-width: 700px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .motionTile {
+    min-height: 142px;
+  }
+
+  .motionTile2 {
+    transform: translateY(18px);
+  }
+
+  .motionTile3 {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .motionTile:hover,
+  .featureTile:hover,
+  .serviceChip:hover,
+  .patientPanel:hover,
+  .caregiverPanel:hover,
+  .contactList article:hover {
+    transform: none;
+  }
+}

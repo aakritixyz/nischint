@@ -167,6 +167,33 @@ const serviceHighlights = [
   "Privacy requests",
 ];
 
+const advancedTiles = [
+  {
+    kicker: "Signal 01",
+    title: "Safe-zone heartbeat",
+    copy: "A live status tile shows whether the person is inside the familiar care area.",
+    metric: "500m",
+  },
+  {
+    kicker: "Signal 02",
+    title: "Family alert path",
+    copy: "Lost mode moves from patient action to caregiver context in one clear flow.",
+    metric: "1 tap",
+  },
+  {
+    kicker: "Signal 03",
+    title: "Calm voice cue",
+    copy: "A familiar message anchors the person before panic turns into wandering.",
+    metric: "voice",
+  },
+  {
+    kicker: "Signal 04",
+    title: "Care routine pulse",
+    copy: "Medicine, reminders, and check-ins stay visible without crowding the screen.",
+    metric: "8:30",
+  },
+];
+
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
@@ -477,6 +504,20 @@ export default function Home() {
             <span><strong>1 tap</strong> alert</span>
             <span><strong>Family</strong> first</span>
           </div>
+
+          <div className="motionDeck" aria-label="Live care signal tiles">
+            {advancedTiles.map((tile, index) => (
+              <article
+                className={`motionTile motionTile${index + 1}`}
+                key={tile.title}
+              >
+                <span>{tile.kicker}</span>
+                <strong>{tile.title}</strong>
+                <p>{tile.copy}</p>
+                <em>{tile.metric}</em>
+              </article>
+            ))}
+          </div>
         </div>
 
         <div className="phoneCard" aria-label="Patient safety screen">
@@ -551,14 +592,14 @@ export default function Home() {
         </p>
         <div className="serviceCloud" aria-label="Available care features">
           {serviceHighlights.map((service) => (
-            <span key={service}>{service}</span>
+            <span className="serviceChip" key={service}>{service}</span>
           ))}
         </div>
       </section>
 
       <section className="featureRail" aria-label="Project strengths">
         {featureHighlights.map((feature) => (
-          <article key={feature.title}>
+          <article className="featureTile" key={feature.title}>
             <strong>{feature.title}</strong>
             <p>{feature.copy}</p>
           </article>
