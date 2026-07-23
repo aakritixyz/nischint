@@ -586,7 +586,7 @@ export default function Home() {
           <div className="phoneTop">
             <span>Patient view</span>
             <span className={`syncPill ${backendReady ? "" : "localOnly"}`}>
-              {backendReady ? "Backend synced" : "Local mode"}
+              {backendReady ? "Care synced" : "Offline ready"}
             </span>
             <strong>{careState.lostMode ? "Help mode" : "Today"}</strong>
           </div>

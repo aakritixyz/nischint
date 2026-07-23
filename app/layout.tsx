@@ -1,5 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import { Instrument_Sans, Lora } from "next/font/google";
 import "./globals.css";
+
+const interfaceFont = Instrument_Sans({
+  variable: "--font-care",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const displayFont = Lora({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nischint-rho.vercel.app"),
@@ -39,7 +52,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      className={`${interfaceFont.variable} ${displayFont.variable}`}
+      lang="en"
+    >
       <body>{children}</body>
     </html>
   );

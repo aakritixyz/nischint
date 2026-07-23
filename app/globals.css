@@ -1732,3 +1732,609 @@ body {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
+
+/* Professional mobile refinement: quiet hierarchy, warm character, clear actions. */
+:root {
+  --background: #f4f3ee;
+  --foreground: #29383b;
+  --ink: #24363a;
+  --muted: #687578;
+  --rose: #c9635b;
+  --rose-dark: #a94f4b;
+  --coral: #df8d68;
+  --mauve: #746b80;
+  --mauve-soft: #eeebf1;
+  --mint: #e5f2eb;
+  --sage: #2f786b;
+  --amber: #f8edcf;
+  --line: rgba(36, 54, 58, 0.12);
+  --shadow: 0 16px 42px rgba(36, 54, 58, 0.08);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-care), "Avenir Next", "Segoe UI", sans-serif;
+  font-weight: 450;
+  letter-spacing: 0;
+}
+
+.brandLockup strong,
+h1,
+.orientationCard h2,
+.sectionHeading h2 {
+  font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.scriptName {
+  font-size: 3.4rem;
+}
+
+h1 {
+  font-size: 5rem;
+  font-weight: 600;
+}
+
+.heroCopy > p:not(.scriptName) {
+  font-size: 1.08rem;
+  font-weight: 450;
+}
+
+.brandPill,
+.smallLabel,
+.sectionHeading span,
+.motionTile span {
+  font-weight: 650;
+  letter-spacing: 0;
+}
+
+.topBar nav a,
+.primaryButton,
+.softButton,
+.quickGrid button,
+.emergencyActions a,
+.emergencyActions button,
+.roundButton {
+  font-weight: 650;
+}
+
+.statusBanner span,
+.emergencyCard h3,
+.featureRail strong,
+.voiceCard h3,
+.alertCard h3,
+.mapCard h3,
+.motionTile strong,
+.productionTile strong,
+.switchRow span {
+  font-weight: 650;
+}
+
+.statusBanner p,
+.orientationCard p,
+.voiceCard p,
+.alertCard p,
+.mapCard p,
+.panelCopy,
+.careIntro > p,
+.featureRail p,
+.emergencyCard p,
+.stepItem p,
+.contactList span,
+.contactList p,
+.motionTile p,
+.productionTile p {
+  font-weight: 450;
+}
+
+.orientationCard h2 {
+  font-size: 1.72rem;
+}
+
+.sectionHeading h2 {
+  font-size: 1.82rem;
+}
+
+.lostButton span {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.lostButton small,
+.syncPill,
+.trustStrip span,
+.serviceCloud span,
+.contactList strong,
+label,
+input,
+textarea {
+  font-weight: 550;
+}
+
+.topBar,
+.phoneCard,
+.patientPanel,
+.caregiverPanel,
+.careIntro,
+.featureRail article,
+.emergencyCard,
+.productionBand {
+  background: #fffdf9;
+  backdrop-filter: none;
+}
+
+.primaryButton,
+.lostButton,
+.emergencyActions button {
+  background: var(--rose);
+  box-shadow: 0 12px 26px rgba(169, 79, 75, 0.18);
+}
+
+.lostButton.isActive {
+  background: var(--rose-dark);
+}
+
+.lostButton::after {
+  display: none;
+}
+
+.lostButton.isActive::after {
+  display: block;
+}
+
+.phoneCard::before {
+  background: #dfece6;
+  opacity: 0.7;
+  animation: none;
+}
+
+.motionTile {
+  background: #f7fbf8;
+  border-color: rgba(47, 120, 107, 0.16);
+  box-shadow: 0 14px 34px rgba(36, 54, 58, 0.09);
+}
+
+.motionTile:nth-child(2) {
+  background: #fff8ee;
+}
+
+.motionTile:nth-child(3) {
+  background: #f4f1f7;
+}
+
+.motionTile:nth-child(4) {
+  background: #eef6f2;
+}
+
+.featureTile,
+.productionTile {
+  background: #fffdf9;
+}
+
+.statusGood {
+  background: #e6f2eb;
+}
+
+.statusWatch {
+  background: #f8edcf;
+}
+
+.statusAlert,
+.alertOn {
+  background: #f9e7e2;
+}
+
+@media (max-width: 559px) {
+  .shell {
+    width: min(100% - 24px, 430px);
+    padding: 8px 0 28px;
+  }
+
+  .topBar {
+    top: max(6px, env(safe-area-inset-top));
+    min-height: 52px;
+    margin-bottom: 12px;
+    border-radius: 18px;
+    padding: 6px 8px;
+  }
+
+  .brandLockup {
+    gap: 7px;
+  }
+
+  .brandLockup span {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .brandLockup strong {
+    font-size: 1rem;
+  }
+
+  .topBar nav {
+    gap: 0;
+  }
+
+  .topBar nav a {
+    border-radius: 10px;
+    font-size: 0.74rem;
+    padding: 8px 7px;
+  }
+
+  .hero {
+    gap: 14px;
+  }
+
+  .phoneCard {
+    gap: 9px;
+    border-radius: 20px;
+    padding: 10px;
+  }
+
+  .phoneTop {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 2px 2px 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .syncPill {
+    padding: 5px 8px;
+    font-size: 0.65rem;
+  }
+
+  .statusBanner,
+  .orientationCard,
+  .voiceCard,
+  .alertCard,
+  .mapCard,
+  .contactList article {
+    border-radius: 15px;
+    padding: 11px 12px;
+  }
+
+  .statusBanner span {
+    font-size: 0.9rem;
+  }
+
+  .statusBanner p,
+  .orientationCard p,
+  .emergencyCard p {
+    margin-top: 4px;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .orientationCard h2 {
+    margin-top: 4px;
+    font-size: 1.28rem;
+    line-height: 1.16;
+  }
+
+  .brandPill,
+  .smallLabel,
+  .sectionHeading span {
+    font-size: 0.65rem;
+  }
+
+  .lostButton {
+    min-height: 88px;
+    gap: 4px;
+    border-radius: 17px;
+    padding: 13px 10px;
+  }
+
+  .lostButton span {
+    font-size: 1.9rem;
+    line-height: 1.05;
+  }
+
+  .lostButton small {
+    font-size: 0.76rem;
+  }
+
+  .quickGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .quickGrid button {
+    min-height: 54px;
+    border-radius: 13px;
+    font-size: 0.72rem;
+    line-height: 1.22;
+    padding: 6px 5px;
+  }
+
+  .emergencyCard {
+    gap: 7px;
+    border-radius: 16px;
+    padding: 12px;
+  }
+
+  .emergencyCard h3,
+  .featureRail strong {
+    font-size: 0.94rem;
+  }
+
+  .emergencyActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .emergencyActions a,
+  .emergencyActions button {
+    min-height: 48px;
+    font-size: 0.76rem;
+    padding: 6px;
+    text-align: center;
+  }
+
+  .heroCopy {
+    gap: 10px;
+    padding: 4px 2px;
+  }
+
+  .scriptName {
+    font-size: 2.5rem;
+  }
+
+  h1 {
+    font-size: 3.25rem;
+    line-height: 0.96;
+  }
+
+  .heroCopy > p:not(.scriptName) {
+    font-size: 0.94rem;
+    line-height: 1.48;
+  }
+
+  .heroActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .primaryButton,
+  .softButton {
+    min-height: 48px;
+    border-radius: 14px;
+    font-size: 0.84rem;
+    padding: 10px 12px;
+  }
+
+  .trustStrip {
+    gap: 6px;
+  }
+
+  .trustStrip span {
+    min-height: 48px;
+    border-radius: 13px;
+    font-size: 0.72rem;
+    padding: 7px;
+  }
+
+  .trustStrip strong {
+    font-size: 0.94rem;
+  }
+
+  .signalRail {
+    padding: 6px 0;
+  }
+
+  .signalRail span {
+    min-height: 28px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0 10px;
+  }
+
+  .motionDeck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .motionTile {
+    min-height: 116px;
+    border-radius: 16px;
+    padding: 11px;
+  }
+
+  .motionTile span {
+    font-size: 0.59rem;
+  }
+
+  .motionTile strong {
+    max-width: 100%;
+    margin-top: 6px;
+    font-size: 0.88rem;
+    line-height: 1.16;
+  }
+
+  .motionTile p {
+    max-width: 100%;
+    margin-top: 5px;
+    font-size: 0.72rem;
+    line-height: 1.32;
+  }
+
+  .motionTile em {
+    display: none;
+  }
+
+  .motionTile::after {
+    left: 11px;
+    right: 11px;
+    bottom: 8px;
+    height: 3px;
+  }
+
+  .careIntro,
+  .patientPanel,
+  .caregiverPanel,
+  .productionBand {
+    gap: 11px;
+    border-radius: 18px;
+    padding: 14px;
+  }
+
+  .careIntro {
+    margin-top: 12px;
+  }
+
+  .sectionHeading {
+    gap: 4px;
+  }
+
+  .sectionHeading h2 {
+    font-size: 1.35rem;
+    line-height: 1.16;
+  }
+
+  .careIntro > p,
+  .panelCopy,
+  .featureRail p,
+  .productionTile p {
+    font-size: 0.84rem;
+    line-height: 1.42;
+  }
+
+  .serviceCloud {
+    gap: 6px;
+  }
+
+  .serviceCloud span {
+    min-height: 44px;
+    border-radius: 12px;
+    font-size: 0.76rem;
+    padding: 7px;
+  }
+
+  .featureRail,
+  .toolGrid,
+  .dashboard {
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .featureRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .featureRail article {
+    min-height: 124px;
+    border-radius: 17px;
+    padding: 13px;
+  }
+
+  label {
+    gap: 6px;
+    font-size: 0.82rem;
+  }
+
+  input,
+  textarea {
+    border-radius: 13px;
+    font-size: 0.9rem;
+    padding: 11px 12px;
+  }
+
+  textarea {
+    min-height: 84px;
+  }
+
+  .stepItem {
+    grid-template-columns: 36px 1fr;
+    gap: 9px;
+    border-radius: 14px;
+    padding: 10px;
+  }
+
+  .stepItem strong {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .voiceCard h3,
+  .alertCard h3,
+  .mapCard h3 {
+    font-size: 1rem;
+  }
+
+  .productionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .productionTile {
+    min-height: 130px;
+    border-radius: 16px;
+    padding: 11px;
+  }
+
+  .productionTile em {
+    min-height: 25px;
+    font-size: 0.62rem;
+    font-weight: 650;
+    padding: 0 8px;
+  }
+
+  .productionTile strong {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    line-height: 1.16;
+  }
+
+  .switchRow {
+    min-height: 50px;
+    border-radius: 14px;
+    padding: 9px 11px;
+  }
+
+  .switchRow span,
+  .escalationStack p,
+  .eventList p {
+    font-size: 0.82rem;
+  }
+
+  .mapSurface {
+    min-height: 150px;
+  }
+}
+
+@media (max-width: 420px) {
+  .topBar nav a:nth-child(2) {
+    display: none;
+  }
+}
+
+@media (min-width: 560px) {
+  .quickGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quickGrid button:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (min-width: 860px) {
+  h1 {
+    font-size: 5.25rem;
+  }
+
+  .scriptName {
+    font-size: 3.7rem;
+  }
+}
+
+@media (min-width: 1180px) {
+  h1 {
+    font-size: 5.8rem;
+  }
+}
