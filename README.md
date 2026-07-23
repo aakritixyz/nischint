@@ -1,18 +1,18 @@
 # Nischint
 
-**Nischint** means *carefree* or *peace of mind*. This project is a mobile-first dementia safety companion designed for moments when an older adult feels confused, lost, or unable to explain what they need.
+**Nischint** means *carefree* or *peace of mind*. This project is a mobile-first elder safety and family care companion designed for moments when an older adult feels confused, lost, unwell, or unable to explain what they need.
 
 Instead of being only a memory-preservation app, Nischint focuses on real-time support: helping the person stay calm, helping family understand what is happening, and making emergency actions simple enough to use under stress.
 
 ## Why This Matters
 
-Dementia can make ordinary situations suddenly unsafe. A person may forget where they are, struggle to call family, miss medicine, wander outside a safe area, or panic because they cannot remember what to do next.
+Older adults can face moments when ordinary situations become unexpectedly unsafe. A person may feel disoriented, struggle to call family, miss medicine, move beyond a familiar area, or need support without being able to explain what is wrong.
 
 Nischint is built around one core idea:
 
 > During confusion, the app should reduce decisions, not add more.
 
-The patient-facing side keeps actions large, gentle, and direct. The caregiver-facing side gives family the context they need quickly: location status, check-ins, emergency info, reminders, notes, and alert history.
+The senior-facing side keeps actions large, gentle, and direct. The caregiver-facing side gives family the context they need quickly: location status, check-ins, emergency info, reminders, notes, and alert history.
 
 ## Core Use Case
 
@@ -27,7 +27,7 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 
 ## Features Built
 
-### Patient View
+### Senior View
 
 - Big **I feel lost** emergency button
 - **I am okay**, **I need help**, and **I took medicine** check-ins
@@ -84,7 +84,7 @@ Without provider keys, the app still works as a polished demo and simulates deli
 
 1. Open the app on a phone-sized screen.
 2. Press **I feel lost**.
-3. Watch the patient view enter help mode.
+3. Watch the senior view enter help mode.
 4. Press **Share live location** and allow GPS permission.
 5. Send a simulated SMS, WhatsApp, or push alert.
 6. Toggle **Large text** or **High contrast**.
@@ -93,7 +93,7 @@ Without provider keys, the app still works as a polished demo and simulates deli
 
 This makes the project easy to explain in a presentation:
 
-> Nischint supports people with dementia during moments of confusion by giving them simple guidance, family contact, live location sharing, and real-time caregiver alerts.
+> Nischint supports older adults during vulnerable moments by giving them simple guidance, family contact, location sharing, reminders, and real-time caregiver alerts.
 
 ## Run Locally
 
@@ -189,11 +189,11 @@ Before using it with real families, the project needs:
 ## Future Improvements
 
 - Caregiver login and family-specific dashboards
-- Real persistent patient profiles
+- Real persistent care profiles
 - Medication adherence escalation
 - Production safe-zone distance logic with configurable zones
 - Audio recording/upload for real family voice notes
-- Multilingual patient guidance in Hindi and English
+- Multilingual senior guidance in Hindi and English
 - Caregiver notification preferences
 - Admin audit logs and consent history
 - Better offline emergency card support

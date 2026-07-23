@@ -12,7 +12,7 @@ test("Nischint page contains the launch-ready product experience", async () => {
   const page = await readProjectFile("app/page.tsx");
 
   assert.match(page, /Nischint/);
-  assert.match(page, /Dementia safety companion/);
+  assert.match(page, /Elder safety & family care/);
   assert.match(page, /I feel lost/);
   assert.match(page, /Share live location/);
   assert.match(page, /Consent-first design/);
@@ -30,7 +30,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   ]);
   const manifest = JSON.parse(manifestText);
 
-  assert.match(layout, /Nischint | Dementia Safety Companion/);
+  assert.match(layout, /Nischint | Elder Safety Companion/);
   assert.match(layout, /openGraph/);
   assert.equal(manifest.name, "Nischint");
   assert.equal(manifest.theme_color, "#3e8b79");

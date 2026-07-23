@@ -17,9 +17,9 @@ const displayFont = Lora({
 export const metadata: Metadata = {
   metadataBase: new URL("https://nischint-rho.vercel.app"),
   applicationName: "Nischint",
-  title: "Nischint | Dementia Safety Companion",
+  title: "Nischint | Elder Safety Companion",
   description:
-    "A mobile-first dementia safety companion with lost-mode support, GPS sharing, caregiver alerts, reminders, and calming guidance.",
+    "A mobile-first elder safety and family care companion with lost-mode support, location sharing, reminders, and calming guidance.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/favicon.svg",
@@ -27,18 +27,18 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
   openGraph: {
-    title: "Nischint | Dementia Safety Companion",
+    title: "Nischint | Elder Safety Companion",
     description:
-      "Simple real-time support for seniors during confusion, and clearer safety updates for families.",
+      "Simple real-time safety support for older adults and clearer care updates for families.",
     url: "https://nischint-rho.vercel.app",
     siteName: "Nischint",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Nischint | Dementia Safety Companion",
+    title: "Nischint | Elder Safety Companion",
     description:
-      "Lost-mode support, caregiver alerts, safe-zone status, and calming guidance for dementia care.",
+      "Lost-mode support, caregiver alerts, safe-zone status, reminders, and calming guidance for elder care.",
   },
 };
 

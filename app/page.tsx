@@ -87,7 +87,7 @@ const fallbackState: CareState = {
     name: "Meera",
     preferredLanguage: "English + Hindi",
     homeAddress: "24 Willow Lane",
-    emergencyInfo: "Mild dementia. Allergic to penicillin. Morning medicine at 8:30 AM.",
+    emergencyInfo: "May experience confusion. Allergic to penicillin. Morning medicine at 8:30 AM.",
     safeZoneName: "Home and Rose Garden route",
     safeZoneLatitude: null,
     safeZoneLongitude: null,
@@ -177,7 +177,7 @@ const advancedTiles = [
   {
     kicker: "Signal 02",
     title: "Family alert path",
-    copy: "Lost mode turns one patient action into a caregiver response chain.",
+    copy: "Lost mode turns one simple action into a caregiver response chain.",
     metric: "1 tap",
   },
   {
@@ -529,7 +529,7 @@ export default function Home() {
         <div className="heroCopy">
           <div className="brandPill">
             <span aria-hidden="true">नि</span>
-            Dementia safety companion
+            Elder safety & family care
           </div>
           <p className="scriptName" aria-hidden="true">निश्चिंत</p>
           <h1 id="nischint-title">Nischint</h1>
@@ -582,9 +582,9 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="phoneCard" aria-label="Patient safety screen">
+        <div className="phoneCard" aria-label="Senior safety screen">
           <div className="phoneTop">
-            <span>Patient view</span>
+            <span>Senior view</span>
             <span className={`syncPill ${backendReady ? "" : "localOnly"}`}>
               {backendReady ? "Care synced" : "Offline ready"}
             </span>
@@ -648,7 +648,7 @@ export default function Home() {
           <h2>Built for real moments, not just memories</h2>
         </div>
         <p>
-          The app keeps the patient screen very simple while giving caregivers
+          The app keeps the senior-facing screen very simple while giving caregivers
           the context they need: where the person is, what happened, who to
           contact, and what to do next.
         </p>
@@ -671,7 +671,7 @@ export default function Home() {
       <section id="live-demo" className="toolGrid" aria-label="Nischint controls">
         <article className="patientPanel">
           <div className="sectionHeading">
-            <span>Patient setup</span>
+            <span>Senior setup</span>
             <h2>Care profile</h2>
           </div>
           <label>
@@ -740,7 +740,7 @@ export default function Home() {
             </button>
           </div>
           <p className="panelCopy">
-            The patient view uses large touch targets, simple sentences,
+            The senior view uses large touch targets, simple sentences,
             readable contrast, keyboard focus states, and reduced choices.
           </p>
         </article>

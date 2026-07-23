@@ -1,7 +1,7 @@
 {
   "name": "Nischint",
   "short_name": "Nischint",
-  "description": "Mobile-first dementia safety companion with lost-mode support, GPS sharing, caregiver alerts, reminders, and calming guidance.",
+  "description": "Mobile-first elder safety and family care companion with lost-mode support, location sharing, reminders, and calming guidance.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fbf7f5",

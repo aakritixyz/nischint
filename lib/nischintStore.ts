@@ -96,7 +96,7 @@ const initialState: CareState = {
     name: "Meera",
     preferredLanguage: "English + Hindi",
     homeAddress: "24 Willow Lane",
-    emergencyInfo: "Mild dementia. Allergic to penicillin. Morning medicine at 8:30 AM.",
+    emergencyInfo: "May experience confusion. Allergic to penicillin. Morning medicine at 8:30 AM.",
     safeZoneName: "Home and Rose Garden route",
     safeZoneLatitude: null,
     safeZoneLongitude: null,
@@ -202,7 +202,7 @@ export function updateOnboarding(payload: {
 
   addEvent(state, {
     type: "onboarding",
-    message: "Patient setup and caregiver circle were updated.",
+    message: "Care profile and caregiver circle were updated.",
   });
 
   return state;
@@ -270,7 +270,7 @@ export function updateLocation(payload: Partial<LocationState>) {
     type: "location",
     message:
       state.location.safeZoneStatus === "outside"
-        ? "Location update shows patient outside the safe zone."
+        ? "Location update shows the loved one outside the safe zone."
         : "Location update received inside the safe zone.",
   });
 
