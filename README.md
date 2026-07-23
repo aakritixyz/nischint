@@ -48,6 +48,9 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 - Family handoff notes
 - Recent event history
 - Privacy export/delete request demo
+- Consent toggles for location and emergency-card visibility
+- Caregiver access-code concept
+- Escalation ladder for primary, backup, and doctor/neighbor handoff
 
 ### Backend/API Routes
 
@@ -188,7 +191,7 @@ Before using it with real families, the project needs:
 - Caregiver login and family-specific dashboards
 - Real persistent patient profiles
 - Medication adherence escalation
-- Safer geofencing with configurable zones
+- Production safe-zone distance logic with configurable zones
 - Audio recording/upload for real family voice notes
 - Multilingual patient guidance in Hindi and English
 - Caregiver notification preferences
@@ -197,4 +200,4 @@ Before using it with real families, the project needs:
 
 ## Project Status
 
-Nischint is ready to deploy as a meaningful MVP. It demonstrates the full care flow clearly, has a professional mobile-first interface, and includes backend routes for the main safety actions.
+Nischint is ready to deploy as a meaningful MVP. It demonstrates the full care flow clearly, has a professional mobile-first interface, visible production-safety concepts, and backend routes for the main safety actions.

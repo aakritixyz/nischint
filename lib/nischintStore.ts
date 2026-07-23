@@ -85,9 +85,9 @@ export type PrivacyRequest = {
 };
 
 const contacts: CareContact[] = [
-  { name: "Asha", role: "Daughter", phone: "Calling now", tone: "Primary" },
-  { name: "Ravi", role: "Neighbor", phone: "2 min away", tone: "Nearby" },
-  { name: "Dr. Meera", role: "Doctor", phone: "On call", tone: "Care" },
+  { name: "Asha", role: "Daughter", phone: "+91 98765 43210", tone: "Primary" },
+  { name: "Ravi", role: "Neighbor", phone: "+91 98765 43211", tone: "Nearby" },
+  { name: "Dr. Meera", role: "Doctor", phone: "+91 98765 43212", tone: "Care" },
 ];
 
 const initialState: CareState = {

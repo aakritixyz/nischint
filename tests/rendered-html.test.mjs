@@ -17,6 +17,9 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Share live location/);
   assert.match(page, /Consent-first design/);
   assert.match(page, /Demo-ready, not medical advice/);
+  assert.match(page, /Production safety layer/);
+  assert.match(page, /Caregiver access code/);
+  assert.match(page, /signalRail/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
 });
 
@@ -30,7 +33,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(layout, /Nischint | Dementia Safety Companion/);
   assert.match(layout, /openGraph/);
   assert.equal(manifest.name, "Nischint");
-  assert.equal(manifest.theme_color, "#d8627f");
+  assert.equal(manifest.theme_color, "#3e8b79");
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.orientation, "portrait-primary");
 });

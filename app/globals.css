@@ -1320,3 +1320,415 @@ textarea:focus {
     transform: none;
   }
 }
+
+/* Maximum-polish layer: more dimensional, less pink, visibly alive. */
+:root {
+  --background: #f7f4ef;
+  --foreground: #233238;
+  --ink: #20333a;
+  --muted: #68777a;
+  --rose: #e26d5c;
+  --rose-dark: #b94f48;
+  --coral: #f0a35e;
+  --mauve: #6f6a8d;
+  --mauve-soft: #e9e7f4;
+  --mint: #e5f5ed;
+  --sage: #3e8b79;
+  --amber: #fff0c7;
+  --line: rgba(32, 51, 58, 0.14);
+  --shadow: 0 22px 52px rgba(21, 42, 49, 0.12);
+}
+
+body {
+  background:
+    linear-gradient(115deg, rgba(62, 139, 121, 0.16), transparent 24rem),
+    linear-gradient(245deg, rgba(240, 163, 94, 0.18), transparent 26rem),
+    linear-gradient(180deg, #fffaf3 0%, #f7f4ef 42rem, #f9fbf7 100%);
+}
+
+.topBar,
+.phoneCard,
+.patientPanel,
+.caregiverPanel,
+.careIntro,
+.featureRail article,
+.emergencyCard,
+.productionBand {
+  background: rgba(255, 254, 250, 0.86);
+  backdrop-filter: blur(18px);
+}
+
+.brandLockup span,
+.brandPill span {
+  background: #dff5ee;
+  color: #226d5f;
+}
+
+.scriptName {
+  color: #2c7f70;
+}
+
+.primaryButton,
+.lostButton,
+.emergencyActions button {
+  background: linear-gradient(135deg, #e26d5c, #f0a35e);
+  box-shadow: 0 16px 34px rgba(226, 109, 92, 0.24);
+}
+
+.softButton {
+  border-color: rgba(62, 139, 121, 0.2);
+  color: #244950;
+}
+
+.trustStrip span {
+  background: rgba(255, 254, 250, 0.78);
+  border-color: rgba(62, 139, 121, 0.16);
+}
+
+.signalRail {
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(62, 139, 121, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 254, 250, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52);
+  padding: 8px 0;
+}
+
+.signalRail div {
+  display: flex;
+  width: max-content;
+  gap: 8px;
+  animation: railMove 16s linear infinite;
+}
+
+.signalRail span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border-radius: 999px;
+  background: #20333a;
+  color: #fffdf7;
+  font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+  padding: 0 13px;
+}
+
+.motionDeck {
+  isolation: isolate;
+}
+
+.motionTile {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 255, 250, 0.85)),
+    linear-gradient(145deg, rgba(62, 139, 121, 0.18), rgba(240, 163, 94, 0.16));
+  border-color: rgba(62, 139, 121, 0.16);
+  box-shadow: 0 18px 42px rgba(21, 42, 49, 0.13);
+  animation: tileFloatA 4.8s ease-in-out infinite;
+}
+
+.motionTile2,
+.motionTile4 {
+  animation-name: tileFloatB;
+}
+
+.motionTile3 {
+  animation-name: tileFloatC;
+}
+
+.motionTile::after,
+.featureTile::after {
+  background: linear-gradient(90deg, #3e8b79, #f0a35e, #6f6a8d);
+}
+
+.motionTile::before {
+  animation: signalSweep 2.6s ease-in-out infinite;
+}
+
+.tone2 {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(255, 248, 235, 0.88)),
+    linear-gradient(145deg, rgba(240, 163, 94, 0.22), rgba(111, 106, 141, 0.12));
+}
+
+.tone3 {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(245, 243, 255, 0.86)),
+    linear-gradient(145deg, rgba(111, 106, 141, 0.18), rgba(62, 139, 121, 0.14));
+}
+
+.tone4 {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(245, 255, 249, 0.86)),
+    linear-gradient(145deg, rgba(62, 139, 121, 0.2), rgba(226, 109, 92, 0.1));
+}
+
+.motionTile em {
+  color: rgba(32, 51, 58, 0.16);
+}
+
+.featureTile {
+  background:
+    linear-gradient(180deg, rgba(255, 254, 250, 0.94), rgba(247, 255, 250, 0.86)),
+    linear-gradient(135deg, rgba(62, 139, 121, 0.14), rgba(240, 163, 94, 0.12));
+}
+
+.serviceChip:nth-child(2n) {
+  background: #fff8ea;
+}
+
+.serviceChip:nth-child(3n) {
+  background: #eaf7f2;
+}
+
+.statusGood {
+  background: #e7f7ef;
+}
+
+.statusWatch {
+  background: #fff0c7;
+}
+
+.statusAlert,
+.alertOn {
+  background: #fff1e9;
+}
+
+.phoneCard::before {
+  background: linear-gradient(135deg, rgba(62, 139, 121, 0.3), rgba(255, 253, 248, 0), rgba(240, 163, 94, 0.24));
+}
+
+.mapSurface {
+  background:
+    linear-gradient(90deg, rgba(62, 139, 121, 0.09) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(62, 139, 121, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #fffaf1, #eefaf4);
+  background-size: 25px 25px;
+}
+
+.safeRing {
+  border-color: rgba(62, 139, 121, 0.48);
+}
+
+.personDot {
+  background: #e26d5c;
+}
+
+.personDot.outside {
+  background: #b94f48;
+}
+
+.routeLine {
+  position: absolute;
+  left: 33%;
+  top: 55%;
+  width: 46%;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(62, 139, 121, 0), rgba(62, 139, 121, 0.68), rgba(240, 163, 94, 0));
+  transform: rotate(-22deg);
+  animation: routePulse 2.2s ease-in-out infinite;
+}
+
+.scanBeam {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.64) 45%, transparent 58%);
+  transform: translateX(-120%);
+  animation: mapScan 3.4s ease-in-out infinite;
+}
+
+.productionBand {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  overflow: hidden;
+}
+
+.productionGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.productionTile {
+  position: relative;
+  min-height: 138px;
+  overflow: hidden;
+  border: 1px solid rgba(62, 139, 121, 0.14);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(244, 251, 247, 0.88)),
+    linear-gradient(135deg, rgba(62, 139, 121, 0.15), rgba(240, 163, 94, 0.12));
+  padding: 15px;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  animation: productionLift 5.4s ease-in-out infinite;
+}
+
+.productionTile:nth-child(2n) {
+  animation-delay: -1.8s;
+}
+
+.productionTile:nth-child(3n) {
+  animation-delay: -3.1s;
+}
+
+.productionTile em {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  border-radius: 999px;
+  background: #20333a;
+  color: white;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 900;
+  padding: 0 10px;
+}
+
+.productionTile strong {
+  display: block;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 950;
+  line-height: 1.08;
+}
+
+.productionTile p {
+  margin-top: 8px;
+  color: #5e6b6e;
+  font-size: 0.92rem;
+  font-weight: 680;
+  line-height: 1.38;
+}
+
+.switchRow {
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 56px;
+  border: 1px solid rgba(62, 139, 121, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 254, 250, 0.86);
+  padding: 12px 14px;
+}
+
+.switchRow input {
+  width: 48px;
+  height: 26px;
+  accent-color: #3e8b79;
+}
+
+.switchRow span {
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.escalationStack {
+  display: grid;
+  gap: 8px;
+}
+
+.escalationStack p {
+  border: 1px solid rgba(62, 139, 121, 0.12);
+  border-radius: 16px;
+  background: #f4fbf7;
+  color: #5e6b6e;
+  font-weight: 750;
+  line-height: 1.3;
+  padding: 11px 12px;
+}
+
+.escalationStack strong {
+  color: #20333a;
+}
+
+@keyframes railMove {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes tileFloatA {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotateZ(-0.4deg);
+  }
+  50% {
+    transform: translate3d(0, -13px, 0) rotateZ(0.6deg);
+  }
+}
+
+@keyframes tileFloatB {
+  0%, 100% {
+    transform: translate3d(0, 8px, 0) rotateZ(0.5deg);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0) rotateZ(-0.8deg);
+  }
+}
+
+@keyframes tileFloatC {
+  0%, 100% {
+    transform: translate3d(0, -5px, 0) rotateZ(0.2deg);
+  }
+  50% {
+    transform: translate3d(0, 9px, 0) rotateZ(-0.4deg);
+  }
+}
+
+@keyframes routePulse {
+  0%, 100% {
+    opacity: 0.32;
+    transform: rotate(-22deg) scaleX(0.64);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(-22deg) scaleX(1.06);
+  }
+}
+
+@keyframes mapScan {
+  0%, 28% {
+    transform: translateX(-120%);
+  }
+  70%, 100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes productionLift {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@media (min-width: 560px) {
+  .productionGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 860px) {
+  .productionBand {
+    gap: 18px;
+    padding: 20px;
+  }
+
+  .productionGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

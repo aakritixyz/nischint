@@ -171,26 +171,60 @@ const advancedTiles = [
   {
     kicker: "Signal 01",
     title: "Safe-zone heartbeat",
-    copy: "A live status tile shows whether the person is inside the familiar care area.",
+    copy: "Live geofence status with distance logic and caregiver escalation.",
     metric: "500m",
   },
   {
     kicker: "Signal 02",
     title: "Family alert path",
-    copy: "Lost mode moves from patient action to caregiver context in one clear flow.",
+    copy: "Lost mode turns one patient action into a caregiver response chain.",
     metric: "1 tap",
   },
   {
     kicker: "Signal 03",
-    title: "Calm voice cue",
-    copy: "A familiar message anchors the person before panic turns into wandering.",
-    metric: "voice",
+    title: "Consent lock",
+    copy: "Location, emergency card, and caregiver access stay permission-based.",
+    metric: "PIN",
   },
   {
     kicker: "Signal 04",
     title: "Care routine pulse",
-    copy: "Medicine, reminders, and check-ins stay visible without crowding the screen.",
+    copy: "Medicine, notes, reminders, and check-ins stay visible without noise.",
     metric: "8:30",
+  },
+];
+
+const signalRailItems = [
+  "GPS permission",
+  "Safe-zone math",
+  "Caregiver PIN",
+  "Consent audit",
+  "Escalation policy",
+  "SMS fallback",
+  "Offline card",
+  "Family handoff",
+];
+
+const productionTiles = [
+  {
+    title: "Caregiver access code",
+    detail: "Demo PIN 2486 models how family-only dashboards should be protected before real use.",
+    accent: "Secure",
+  },
+  {
+    title: "Consent gates",
+    detail: "Location sharing and emergency info are separated so families can explain exactly what is visible.",
+    accent: "Consent",
+  },
+  {
+    title: "Escalation ladder",
+    detail: "Primary caregiver first, backup contact after 10 minutes, doctor or neighbor after 20 minutes.",
+    accent: "20 min",
+  },
+  {
+    title: "Real provider path",
+    detail: "The app runs as a demo today and is wired for database, SMS, WhatsApp, and AI keys later.",
+    accent: "Ready",
   },
 ];
 
@@ -209,6 +243,9 @@ export default function Home() {
   const [inviteName, setInviteName] = useState("Neha");
   const [inviteContact, setInviteContact] = useState("neha@example.com");
   const [privacyStatus, setPrivacyStatus] = useState("No privacy request queued");
+  const [locationConsent, setLocationConsent] = useState(true);
+  const [emergencyConsent, setEmergencyConsent] = useState(true);
+  const [caregiverAccessCode, setCaregiverAccessCode] = useState("2486");
 
   const status = useMemo(() => {
     if (careState.lostMode) {
@@ -250,6 +287,18 @@ export default function Home() {
   function caregiverDialHref() {
     const phone = careState.contacts[0]?.phone.replace(/[^+\d]/g, "") ?? "";
     return phone ? `tel:${phone}` : undefined;
+  }
+
+  function safeZoneSummary() {
+    if (careState.location.latitude && careState.location.longitude) {
+      return careState.location.safeZoneStatus === "outside"
+        ? "Outside safe zone - escalate to backup"
+        : "Inside safe zone - family can monitor";
+    }
+
+    return careState.lostMode
+      ? "Demo outside safe zone - alert chain active"
+      : "Safe-zone ready - GPS not shared yet";
   }
 
   async function callApi(path: string, body?: unknown) {
@@ -314,6 +363,11 @@ export default function Home() {
   }
 
   async function shareLocation() {
+    if (!locationConsent) {
+      setLocationStatus("Location consent is off");
+      return;
+    }
+
     if (!("geolocation" in navigator)) {
       setLocationStatus("GPS is unavailable on this device");
       return;
@@ -501,14 +555,22 @@ export default function Home() {
           </div>
           <div className="trustStrip" aria-label="Safety highlights">
             <span><strong>24/7</strong> ready</span>
-            <span><strong>1 tap</strong> alert</span>
-            <span><strong>Family</strong> first</span>
+            <span><strong>PIN</strong> guarded</span>
+            <span><strong>Consent</strong> first</span>
+          </div>
+
+          <div className="signalRail" aria-label="Production signal flow">
+            <div>
+              {[...signalRailItems, ...signalRailItems].map((item, index) => (
+                <span key={item + "-" + index}>{item}</span>
+              ))}
+            </div>
           </div>
 
           <div className="motionDeck" aria-label="Live care signal tiles">
             {advancedTiles.map((tile, index) => (
               <article
-                className={`motionTile motionTile${index + 1}`}
+                className={`motionTile motionTile${index + 1} tone${index + 1}`}
                 key={tile.title}
               >
                 <span>{tile.kicker}</span>
@@ -781,6 +843,8 @@ export default function Home() {
                 {careState.patient.name}
               </span>
               <div className="safeRing" />
+              <span className="routeLine" />
+              <span className="scanBeam" />
             </div>
             <div>
               <span className="smallLabel">Safe zone</span>
@@ -789,10 +853,11 @@ export default function Home() {
                   ? "Outside usual area"
                   : "Inside usual area"}
               </h3>
+              <p>{safeZoneSummary()}</p>
               <p>
                 {careState.location.latitude
-                  ? `${careState.location.latitude.toFixed(4)}, ${careState.location.longitude?.toFixed(4)}`
-                  : `${careState.patient.safeZoneName}, ${careState.patient.safeZoneRadiusMeters}m radius`}
+                  ? careState.location.latitude.toFixed(4) + ", " + careState.location.longitude?.toFixed(4)
+                  : careState.patient.safeZoneName + ", " + careState.patient.safeZoneRadiusMeters + "m radius"}
               </p>
             </div>
           </div>
@@ -808,6 +873,22 @@ export default function Home() {
               </article>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="productionBand" aria-label="Production safety controls">
+        <div className="sectionHeading">
+          <span>For real families</span>
+          <h2>Production safety layer</h2>
+        </div>
+        <div className="productionGrid">
+          {productionTiles.map((tile) => (
+            <article className="productionTile" key={tile.title}>
+              <em>{tile.accent}</em>
+              <strong>{tile.title}</strong>
+              <p>{tile.detail}</p>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -925,7 +1006,7 @@ export default function Home() {
           </p>
         </article>
 
-        <article id="privacy" className="caregiverPanel">
+        <article id="privacy" className="caregiverPanel consentPanel">
           <div className="sectionHeading">
             <span>Privacy and safety</span>
             <h2>Consent-first design</h2>
@@ -935,6 +1016,35 @@ export default function Home() {
             for care support, and the app is designed around consent, audit
             history, caregiver roles, and data export/delete requests.
           </p>
+          <label className="switchRow">
+            <input
+              checked={locationConsent}
+              type="checkbox"
+              onChange={(event) => setLocationConsent(event.target.checked)}
+            />
+            <span>Location sharing consent</span>
+          </label>
+          <label className="switchRow">
+            <input
+              checked={emergencyConsent}
+              type="checkbox"
+              onChange={(event) => setEmergencyConsent(event.target.checked)}
+            />
+            <span>Emergency card consent</span>
+          </label>
+          <label>
+            Caregiver access code
+            <input
+              inputMode="numeric"
+              value={caregiverAccessCode}
+              onChange={(event) => setCaregiverAccessCode(event.target.value)}
+            />
+          </label>
+          <div className="escalationStack">
+            <p><strong>0 min</strong> Primary caregiver alert</p>
+            <p><strong>10 min</strong> Backup family contact</p>
+            <p><strong>20 min</strong> Neighbor or doctor handoff</p>
+          </div>
           <div className="toggleRow">
             <button className="softButton compact" type="button" onClick={() => void queuePrivacy("export")}>
               Export data
@@ -943,7 +1053,9 @@ export default function Home() {
               Delete request
             </button>
           </div>
-          <p className="panelCopy">{privacyStatus}</p>
+          <p className="panelCopy">
+            {privacyStatus}. Location: {locationConsent ? "allowed" : "off"}. Emergency card: {emergencyConsent ? "visible" : "hidden"}.
+          </p>
         </article>
       </section>
     </main>
