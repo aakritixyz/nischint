@@ -1,4 +1,4 @@
-const CACHE_NAME = "nischint-offline-v1";
+const CACHE_NAME = "nischint-offline-v2";
 const OFFLINE_URLS = ["/", "/favicon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {

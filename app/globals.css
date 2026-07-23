@@ -559,6 +559,11 @@ textarea:focus-visible {
   padding: 16px;
 }
 
+.noticePanel {
+  background: #fff8ee;
+  box-shadow: 0 12px 30px rgba(122, 87, 48, 0.08);
+}
+
 .patientPanel,
 .caregiverPanel {
   gap: 14px;

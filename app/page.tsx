@@ -106,9 +106,9 @@ const fallbackState: CareState = {
   lostMode: false,
   checkIn: "ok",
   contacts: [
-    { name: "Asha", role: "Daughter", phone: "Calling now", tone: "Primary" },
-    { name: "Ravi", role: "Neighbor", phone: "2 min away", tone: "Nearby" },
-    { name: "Dr. Meera", role: "Doctor", phone: "On call", tone: "Care" },
+    { name: "Asha", role: "Daughter", phone: "+91 98765 43210", tone: "Primary" },
+    { name: "Ravi", role: "Neighbor", phone: "+91 98765 43211", tone: "Nearby" },
+    { name: "Dr. Meera", role: "Doctor", phone: "+91 98765 43212", tone: "Care" },
   ],
   notes: ["Asha will visit after lunch."],
   reminders: [
@@ -218,6 +218,11 @@ export default function Home() {
   function applyState(state: CareState) {
     setCareState(state);
     setBackendReady(true);
+  }
+
+  function caregiverDialHref() {
+    const phone = careState.contacts[0]?.phone.replace(/[^+\d]/g, "") ?? "";
+    return phone ? `tel:${phone}` : undefined;
   }
 
   async function callApi(path: string, body?: unknown) {
@@ -490,7 +495,7 @@ export default function Home() {
 
           <div className="orientationCard">
             <span className="smallLabel">Right now</span>
-            <h2>Wednesday, 8:30 AM</h2>
+            <h2>Today, 8:30 AM</h2>
             <p>
               {careState.patient.name} is near {careState.location.label}. Home
               is saved as {careState.patient.homeAddress}.
@@ -523,7 +528,7 @@ export default function Home() {
             <h3>{careState.patient.name} may be confused</h3>
             <p>{careState.patient.emergencyInfo}</p>
             <div className="emergencyActions">
-              <a href={`tel:${careState.contacts[0]?.phone ?? ""}`}>
+              <a href={caregiverDialHref()}>
                 Call {careState.contacts[0]?.name ?? "caregiver"}
               </a>
               <button type="button" onClick={() => void notifyCaregiver("sms")}>
@@ -864,6 +869,19 @@ export default function Home() {
               </p>
             ))}
           </div>
+        </article>
+
+        <article className="caregiverPanel noticePanel">
+          <div className="sectionHeading">
+            <span>Launch note</span>
+            <h2>Demo-ready, not medical advice</h2>
+          </div>
+          <p className="panelCopy">
+            Nischint is a safety-support prototype for presentations and pilot
+            testing. For real families, connect verified contacts, a secure
+            database, authentication, emergency policies, and consent workflows
+            before storing sensitive health or location data.
+          </p>
         </article>
 
         <article id="privacy" className="caregiverPanel">

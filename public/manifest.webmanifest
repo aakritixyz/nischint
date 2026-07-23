@@ -1,11 +1,11 @@
 {
   "name": "Nischint",
   "short_name": "Nischint",
-  "description": "Peace-of-mind safety companion for dementia care and family alerts.",
+  "description": "Mobile-first dementia safety companion with lost-mode support, GPS sharing, caregiver alerts, reminders, and calming guidance.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff8fb",
-  "theme_color": "#ff7faa",
+  "background_color": "#fbf7f5",
+  "theme_color": "#d8627f",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -13,5 +13,11 @@
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": [
+    "health",
+    "medical",
+    "utilities"
+  ],
+  "orientation": "portrait-primary"
 }

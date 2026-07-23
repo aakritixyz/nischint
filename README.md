@@ -19,8 +19,15 @@ Open `http://localhost:3000`.
 1. Push this folder to GitHub.
 2. Import the repository in Vercel.
 3. Keep the framework preset as `Next.js`.
-4. Add environment variables from `.env.example` as needed.
+4. Leave environment variables empty for the demo deployment. Add real values only when you connect providers.
 5. Deploy.
+
+Recommended Vercel settings:
+
+- Root Directory: `./`
+- Install Command: `npm install`
+- Build Command: `npm run build`
+- Output Directory: `.next`
 
 ## Custom Domain On Vercel
 
@@ -56,4 +63,11 @@ delivery where appropriate.
 
 ## Production Readiness
 
-Nischint is deployment-ready as a polished MVP. For real-world use, connect a production database, authentication provider, SMS/WhatsApp credentials, and privacy review before handling real patient data.
+Nischint is deployment-ready as a polished MVP for demos, portfolios, and judged project presentations. Before using it with real patients or families, finish these production items:
+
+1. Connect a production database such as Neon, Supabase, or Vercel Postgres.
+2. Add authentication and caregiver roles so each family only sees its own data.
+3. Add real Twilio or WhatsApp credentials for emergency messages.
+4. Replace demo contact numbers with verified caregiver numbers.
+5. Complete privacy, consent, and emergency-response review before storing health or location data.
+6. Buy and connect a custom domain if you want a clean public URL.
