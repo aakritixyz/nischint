@@ -163,6 +163,20 @@ const hindiGuidance: Guidance = {
 
 const languageCopy = {
   en: {
+    welcomeEyebrow: "Welcome to Nischint",
+    welcomeTitle: "Set up gentle support before entering",
+    welcomeCopy:
+      "Choose the language and voice comfort level first, so the app feels calm and personal from the very first screen.",
+    personName: "Senior name",
+    accessCode: "Family access code",
+    voiceChoice: "Voice guidance",
+    voiceChoiceOn: "Keep voice guidance on",
+    voiceChoiceOff: "Use buttons only",
+    startApp: "Enter Nischint",
+    demoCodeHint: "Demo access code: 2486",
+    voiceOff: "Voice guidance is off. Button actions will still work.",
+    recognized: (phrase: string) => `Heard: "${phrase}".`,
+    commandNotFound: "I did not understand that. Try saying help, lost, okay, or medicine.",
     brandTag: "Elder safety & family care",
     heroDescription:
       "A calm mobile-first companion for seniors who may feel confused or lost, and for families who need quick, clear safety updates.",
@@ -222,6 +236,20 @@ const languageCopy = {
     calmingMessage: "Hi Ma, I can see your location. Stay calm. I am coming to you.",
   },
   hi: {
+    welcomeEyebrow: "निश्चिंत में आपका स्वागत है",
+    welcomeTitle: "पहले अपनी सुविधा चुनें",
+    welcomeCopy:
+      "भाषा और आवाज की सुविधा पहले चुनें, ताकि ऐप शुरुआत से ही सरल और शांत लगे।",
+    personName: "वरिष्ठ का नाम",
+    accessCode: "परिवार का एक्सेस कोड",
+    voiceChoice: "आवाज की सहायता",
+    voiceChoiceOn: "आवाज की सहायता चालू रखें",
+    voiceChoiceOff: "सिर्फ बटन इस्तेमाल करें",
+    startApp: "निश्चिंत खोलें",
+    demoCodeHint: "डेमो एक्सेस कोड: 2486",
+    voiceOff: "आवाज की सहायता बंद है। बटन फिर भी काम करेंगे।",
+    recognized: (phrase: string) => `सुना गया: "${phrase}"।`,
+    commandNotFound: "समझ नहीं आया। मदद, रास्ता, ठीक, या दवा बोलकर देखें।",
     brandTag: "वरिष्ठ सुरक्षा और परिवार की देखभाल",
     heroDescription:
       "वरिष्ठों के लिए एक सरल साथी, जो रास्ता भूलने या घबराहट के समय परिवार से जल्दी संपर्क कराता है।",
@@ -374,6 +402,7 @@ const productionTiles = [
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
+  const [hasEntered, setHasEntered] = useState(false);
   const [backendReady, setBackendReady] = useState(false);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
@@ -391,6 +420,7 @@ export default function Home() {
   const [caregiverAccessCode, setCaregiverAccessCode] = useState("2486");
   const [language, setLanguage] = useState<Language>("en");
   const [voiceAssist, setVoiceAssist] = useState(true);
+  const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
   const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
@@ -462,7 +492,12 @@ export default function Home() {
     setVoiceStatus(copy.voiceReady);
   }
 
-  function speakText(text: string, spokenLanguage: Language = language) {
+  function speakText(text: string, spokenLanguage: Language = language, force = false) {
+    if (!voiceAssist && !force) {
+      setVoiceStatus(languageCopy[spokenLanguage].voiceOff);
+      return;
+    }
+
     if (!("speechSynthesis" in window)) {
       setVoiceStatus(languageCopy[spokenLanguage].voiceUnsupported);
       return;
@@ -521,19 +556,74 @@ export default function Home() {
       },
     }));
     window.localStorage.setItem("nischint-language", nextLanguage);
-    if (voiceAssist) {
+    if (hasEntered && voiceAssist) {
       speakText(languageCopy[nextLanguage].languageSelected, nextLanguage);
     }
   }
 
   function setVoicePreference(enabled: boolean) {
     setVoiceAssist(enabled);
+    setOnboardingVoiceAssist(enabled);
     window.localStorage.setItem("nischint-voice-assist", String(enabled));
     if (!enabled) {
       stopSpeaking();
       return;
     }
     speakText(copy.languageSelected);
+  }
+
+  function enterNischint() {
+    setVoiceAssist(onboardingVoiceAssist);
+    window.localStorage.setItem("nischint-has-entered", "true");
+    window.localStorage.setItem("nischint-voice-assist", String(onboardingVoiceAssist));
+    window.localStorage.setItem("nischint-language", language);
+    setHasEntered(true);
+
+    if (onboardingVoiceAssist) {
+      window.setTimeout(() => speakText(copy.languageSelected, language, true), 120);
+    } else {
+      setVoiceStatus(copy.voiceOff);
+    }
+  }
+
+  function normalizeCommand(phrase: string) {
+    return phrase
+      .toLocaleLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function commandIntent(transcript: string): CheckIn | "lost" | null {
+    const phrase = normalizeCommand(transcript);
+    const lostWords = [
+      "i feel lost",
+      "i am lost",
+      "im lost",
+      "lost",
+      "help me",
+      "need help",
+      "emergency",
+      "take me home",
+      "home",
+      "ghar",
+      "madad",
+      "mujhe madad chahiye",
+      "rasta nahi mil raha",
+      "raasta nahi mil raha",
+      "मदद",
+      "रास्ता",
+      "घर",
+      "खो",
+    ];
+    const medicineWords = ["medicine", "tablet", "pill", "took medicine", "dawa", "दवा", "गोली"];
+    const okayWords = ["okay", "ok", "i am okay", "i am safe", "safe", "fine", "theek", "ठीक", "सुरक्षित"];
+
+    if (lostWords.some((word) => phrase.includes(word))) return "lost";
+    if (medicineWords.some((word) => phrase.includes(word))) return "medicine";
+    if (okayWords.some((word) => phrase.includes(word))) return "ok";
+
+    return null;
   }
 
   async function keepScreenAwake() {
@@ -599,17 +689,19 @@ export default function Home() {
     recognition.interimResults = false;
     recognitionRef.current = recognition;
     recognition.onresult = (event) => {
-      const transcript = event.results[0]?.[0]?.transcript?.toLocaleLowerCase() ?? "";
-      setVoiceStatus(transcript || copy.commandHelp);
+      const transcript = event.results[0]?.[0]?.transcript ?? "";
+      const intent = commandIntent(transcript);
+      setVoiceStatus(transcript ? copy.recognized(transcript) : copy.commandHelp);
 
-      if (/lost|help|emergency|home|मदद|रास्ता|खो|घर/.test(transcript)) {
+      if (intent === "lost") {
         void activateLostMode();
-      } else if (/medicine|tablet|दवा/.test(transcript)) {
+      } else if (intent === "medicine") {
         void completeCheckIn("medicine");
-      } else if (/okay|safe|fine|ठीक|सुरक्षित/.test(transcript)) {
+      } else if (intent === "ok") {
         void completeCheckIn("ok");
       } else {
-        speakText(copy.commandHelp);
+        setVoiceStatus(copy.commandNotFound);
+        if (voiceAssist) speakText(copy.commandNotFound);
       }
     };
     recognition.onerror = () => {
@@ -813,13 +905,19 @@ export default function Home() {
     let mounted = true;
     const savedLanguage = window.localStorage.getItem("nischint-language");
     const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
+    const savedHasEntered = window.localStorage.getItem("nischint-has-entered");
 
     const restorePreferences = window.setTimeout(() => {
       if (savedLanguage === "hi" || savedLanguage === "en") {
         setLanguage(savedLanguage);
         setVoiceStatus(languageCopy[savedLanguage].voiceReady);
       }
-      if (savedVoiceAssist === "false") setVoiceAssist(false);
+      if (savedVoiceAssist === "false") {
+        setVoiceAssist(false);
+        setOnboardingVoiceAssist(false);
+      }
+      if (savedVoiceAssist === "true") setOnboardingVoiceAssist(true);
+      if (savedHasEntered === "true") setHasEntered(true);
     }, 0);
 
     async function loadCareState() {
@@ -849,9 +947,107 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const appClassName = `shell ${largeText ? "largeText" : ""} ${highContrast ? "highContrast" : ""}`;
+
+  if (!hasEntered) {
+    return (
+      <main
+        className={`${appClassName} welcomeShell`}
+        lang={language === "hi" ? "hi" : "en"}
+      >
+        <section className="welcomeGate" aria-labelledby="welcome-title">
+          <div className="welcomeBrand">
+            <span aria-hidden="true">नि</span>
+            <div>
+              <p className="smallLabel">{copy.welcomeEyebrow}</p>
+              <h1 className="heroWordmark" id="welcome-title">Nischint</h1>
+            </div>
+          </div>
+
+          <div className="welcomeCopy">
+            <p className="scriptName" aria-hidden="true">निश्चिंत</p>
+            <h2>{copy.welcomeTitle}</h2>
+            <p>{copy.welcomeCopy}</p>
+          </div>
+
+          <div className="welcomeForm" aria-label="Nischint start setup">
+            <label>
+              {copy.personName}
+              <input
+                value={careState.patient.name}
+                onChange={(event) =>
+                  setCareState((state) => ({
+                    ...state,
+                    patient: { ...state.patient, name: event.target.value },
+                  }))
+                }
+              />
+            </label>
+
+            <label>
+              {copy.accessCode}
+              <input
+                inputMode="numeric"
+                value={caregiverAccessCode}
+                onChange={(event) => setCaregiverAccessCode(event.target.value)}
+              />
+              <small>{copy.demoCodeHint}</small>
+            </label>
+
+            <div className="welcomeChoice">
+              <span>{copy.languageLabel}</span>
+              <div className="languageSegment" role="group" aria-label={copy.languageLabel}>
+                <button
+                  className={language === "en" ? "active" : ""}
+                  type="button"
+                  aria-pressed={language === "en"}
+                  onClick={() => selectLanguage("en")}
+                >
+                  English
+                </button>
+                <button
+                  className={language === "hi" ? "active" : ""}
+                  type="button"
+                  aria-pressed={language === "hi"}
+                  onClick={() => selectLanguage("hi")}
+                >
+                  हिंदी
+                </button>
+              </div>
+            </div>
+
+            <div className="welcomeVoiceGroup" aria-label={copy.voiceChoice}>
+              <span>{copy.voiceChoice}</span>
+              <button
+                className={onboardingVoiceAssist ? "active" : ""}
+                type="button"
+                aria-pressed={onboardingVoiceAssist}
+                onClick={() => setOnboardingVoiceAssist(true)}
+              >
+                {copy.voiceChoiceOn}
+              </button>
+              <button
+                className={!onboardingVoiceAssist ? "active" : ""}
+                type="button"
+                aria-pressed={!onboardingVoiceAssist}
+                onClick={() => setOnboardingVoiceAssist(false)}
+              >
+                {copy.voiceChoiceOff}
+              </button>
+            </div>
+
+            <button className="primaryButton" type="button" onClick={enterNischint}>
+              {copy.startApp}
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main
-      className={`shell ${largeText ? "largeText" : ""} ${highContrast ? "highContrast" : ""}`}
+      className={appClassName}
       lang={language === "hi" ? "hi" : "en"}
     >
       <header className="topBar" aria-label="Nischint navigation">
@@ -958,11 +1154,11 @@ export default function Home() {
                 <span>{copy.autoVoice}</span>
               </label>
             </div>
-            <div className="voiceActions">
+            <div className={`voiceActions ${voiceAssist ? "" : "voiceActionsOff"}`}>
               <button type="button" onClick={readCurrentScreen}>
                 {voicePlaying ? copy.stop : copy.listen}
               </button>
-              <button type="button" disabled={isListening} onClick={listenForCommand}>
+              <button type="button" disabled={!voiceAssist || isListening} onClick={listenForCommand}>
                 {isListening ? copy.listening : copy.speak}
               </button>
             </div>

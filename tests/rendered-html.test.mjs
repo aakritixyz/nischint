@@ -12,6 +12,10 @@ test("Nischint page contains the launch-ready product experience", async () => {
   const page = await readProjectFile("app/page.tsx");
 
   assert.match(page, /Nischint/);
+  assert.match(page, /Set up gentle support before entering/);
+  assert.match(page, /nischint-has-entered/);
+  assert.match(page, /Keep voice guidance on/);
+  assert.match(page, /Use buttons only/);
   assert.match(page, /Elder safety & family care/);
   assert.match(page, /I feel lost/);
   assert.match(page, /Share live location/);
@@ -23,6 +27,8 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /हिंदी/);
   assert.match(page, /SpeechSynthesisUtterance/);
   assert.match(page, /webkitSpeechRecognition/);
+  assert.match(page, /commandIntent/);
+  assert.match(page, /I did not understand that/);
   assert.match(page, /wakeLock/);
   assert.match(page, /activateLostMode/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
@@ -47,5 +53,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /Bilingual voice assistance/);
   assert.match(styles, /heroWordmark/);
   assert.match(styles, /assistPanel/);
+  assert.match(styles, /welcomeGate/);
+  assert.match(styles, /welcomeVoiceGroup/);
   assert.match(serviceWorker, /nischint-offline-v3/);
 });

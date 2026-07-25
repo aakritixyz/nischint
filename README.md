@@ -29,6 +29,7 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 
 ### Senior View
 
+- First-screen setup for name, family access code, language, and voice preference
 - Big **I feel lost** emergency button
 - **I am okay**, **I need help**, and **I took medicine** check-ins
 - Saved home address and current location label
@@ -75,9 +76,13 @@ Without provider keys, the app still works as a polished demo and simulates deli
 
 ## Voice And Language Accessibility
 
-The senior screen can switch between English and Hindi and stores that preference on the device. **Listen** reads the person's name, current location, saved home address, and help instruction aloud. **Speak** listens for a short command such as “I feel lost,” “I am okay,” “I took medicine,” “मुझे मदद चाहिए,” or “मैं ठीक हूं.”
+The app now starts with a simple setup screen instead of forcing voice features immediately. A family member or senior can choose English/Hindi and decide whether voice guidance should be on or whether the app should use buttons only.
 
-Automatic voice guidance speaks after emergency and check-in actions. During lost mode, supported phones also vibrate and request a screen wake lock so the instructions remain visible. Read-aloud uses the browser's speech synthesis. Voice-command availability depends on browser support and may use the browser vendor's speech service, so production privacy notices should explain that behavior.
+The senior screen can still switch between English and Hindi and stores that preference on the device. **Listen** reads the person's name, current location, saved home address, and help instruction aloud when voice guidance is enabled. **Speak** listens for clear commands such as “I feel lost,” “I need help,” “I am okay,” “I took medicine,” “मुझे मदद चाहिए,” “घर,” or “मैं ठीक हूं.”
+
+Voice commands intentionally use a stricter matcher so random words like “live” do not trigger lost mode. If the browser hears something unclear, Nischint shows what it heard and asks the person to try a simpler phrase. Automatic voice guidance speaks after emergency and check-in actions only when voice support is enabled. During lost mode, supported phones also vibrate and request a screen wake lock so the instructions remain visible.
+
+Read-aloud uses the browser's speech synthesis. Voice-command availability depends on browser support and may use the browser vendor's speech service, so production privacy notices should explain that behavior.
 
 ## Tech Stack
 
@@ -92,15 +97,15 @@ Automatic voice guidance speaks after emergency and check-in actions. During los
 ## Demo Flow
 
 1. Open the app on a phone-sized screen.
-2. Press **I feel lost**.
-3. Watch the senior view enter help mode.
-4. Press **Share live location** and allow GPS permission.
-5. Send a simulated SMS, WhatsApp, or push alert.
-6. Switch between **English** and **Hindi**, then use **Listen** to hear the safety screen.
-7. Press **Speak** and say a help or check-in command.
-8. Toggle **Large text** or **High contrast**.
-9. Add a reminder and caregiver note.
-10. Show the caregiver live view and event history.
+2. Choose the senior name, language, and whether voice guidance should be on.
+3. Enter with the demo access code **2486**.
+4. Press **I feel lost**.
+5. Watch the senior view enter help mode.
+6. Press **Share live location** and allow GPS permission.
+7. Send a simulated SMS, WhatsApp, or push alert.
+8. Switch between **English** and **Hindi**, then use **Listen** to hear the safety screen.
+9. Press **Speak** and say a clear help or check-in command.
+10. Add a reminder, caregiver note, and show the caregiver live view.
 
 This makes the project easy to explain in a presentation:
 

@@ -2469,6 +2469,10 @@ textarea {
   opacity: 0.65;
 }
 
+.voiceActionsOff button:last-child {
+  cursor: not-allowed;
+}
+
 .voiceStatus {
   min-height: 1.1em;
   color: var(--muted);
@@ -2552,5 +2556,179 @@ textarea {
   .languageSegment button,
   .voiceActions button {
     transition: none;
+  }
+}
+
+/* First-run setup */
+.welcomeShell {
+  display: grid;
+  min-height: 100vh;
+  align-items: center;
+  padding-top: max(18px, env(safe-area-inset-top));
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+.welcomeGate {
+  display: grid;
+  gap: 18px;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 251, 0.96), rgba(247, 241, 243, 0.96)),
+    #fffafb;
+  box-shadow: 0 22px 60px rgba(63, 55, 62, 0.13);
+  padding: clamp(18px, 5vw, 34px);
+}
+
+.welcomeBrand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.welcomeBrand > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: #ead8df;
+  color: var(--rose-dark);
+  font-family: "Kohinoor Devanagari", "Noto Sans Devanagari", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.welcomeBrand .heroWordmark {
+  font-size: clamp(2.8rem, 11vw, 4.7rem);
+}
+
+.welcomeCopy {
+  display: grid;
+  gap: 8px;
+}
+
+.welcomeCopy .scriptName {
+  font-size: clamp(2rem, 10vw, 3rem);
+}
+
+.welcomeCopy h2 {
+  color: var(--ink);
+  font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
+  font-size: clamp(1.65rem, 7vw, 2.45rem);
+  font-weight: 650;
+  line-height: 1.04;
+}
+
+.welcomeCopy p:not(.scriptName) {
+  max-width: 620px;
+  color: #675d65;
+  font-size: 1rem;
+  font-weight: 450;
+  line-height: 1.5;
+}
+
+.welcomeForm {
+  display: grid;
+  gap: 12px;
+}
+
+.welcomeForm small {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.welcomeChoice,
+.welcomeVoiceGroup {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(63, 55, 62, 0.11);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.64);
+  padding: 12px;
+}
+
+.welcomeChoice > span,
+.welcomeVoiceGroup > span {
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.welcomeChoice .languageSegment {
+  width: 100%;
+}
+
+.welcomeVoiceGroup button {
+  min-height: 50px;
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 14px;
+  background: #fffafb;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 650;
+  text-align: left;
+  padding: 11px 13px;
+}
+
+.welcomeVoiceGroup button.active {
+  border-color: rgba(74, 117, 107, 0.28);
+  background: #e7f0eb;
+  box-shadow: inset 4px 0 0 var(--sage);
+}
+
+@media (min-width: 700px) {
+  .welcomeGate {
+    grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.7fr);
+    align-items: center;
+  }
+
+  .welcomeBrand,
+  .welcomeCopy {
+    grid-column: 1;
+  }
+
+  .welcomeForm {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
+
+@media (max-width: 420px) {
+  .welcomeShell {
+    width: min(100% - 18px, 430px);
+  }
+
+  .welcomeGate {
+    border-radius: 22px;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .welcomeBrand {
+    gap: 10px;
+  }
+
+  .welcomeBrand > span {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    font-size: 1.15rem;
+  }
+
+  .welcomeBrand .heroWordmark {
+    font-size: 2.55rem;
+  }
+
+  .welcomeCopy h2 {
+    font-size: 1.55rem;
+  }
+
+  .welcomeCopy p:not(.scriptName) {
+    font-size: 0.9rem;
   }
 }
