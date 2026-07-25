@@ -502,6 +502,7 @@ export default function Home() {
       : careState.location.networkStatus === "weak"
         ? "caution"
         : "safe";
+  const isSafeCheckIn = !careState.lostMode && careState.checkIn === "ok";
 
   const status = useMemo(() => {
     if (careState.lostMode) {
@@ -1360,12 +1361,18 @@ export default function Home() {
           </div>
 
           <button
-            className={`lostButton ${careState.lostMode ? "isActive" : ""}`}
+            className={`lostButton ${careState.lostMode ? "isActive" : ""} ${isSafeCheckIn ? "isSafe" : ""}`}
             type="button"
             onClick={() => void activateLostMode()}
           >
-            <span>{actionBusy === "lost" ? "Alerting..." : copy.lost}</span>
-            <small>{copy.lostSubtitle}</small>
+            <span>
+              {actionBusy === "lost"
+                ? "Alerting..."
+                : isSafeCheckIn
+                  ? copy.safe
+                  : copy.lost}
+            </span>
+            <small>{isSafeCheckIn ? copy.statusOkayDetail : copy.lostSubtitle}</small>
           </button>
 
           <div className="quickGrid" aria-label="Daily check in">

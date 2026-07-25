@@ -2888,6 +2888,11 @@ textarea {
   box-shadow: 0 18px 34px rgba(184, 50, 70, 0.24);
 }
 
+.lostButton.isSafe {
+  background: #d9788a;
+  box-shadow: 0 16px 30px rgba(217, 120, 138, 0.2);
+}
+
 .lostButton.isActive {
   background: #7c2030;
 }
