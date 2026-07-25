@@ -1,8 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type CheckIn = "ok" | "help" | "medicine";
+type Language = "en" | "hi";
+
+type BrowserSpeechRecognition = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start(): void;
+  stop(): void;
+  onresult: ((event: {
+    results: ArrayLike<{ 0: { transcript: string } }>;
+  }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+};
+
+type SpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
 
 type CareContact = {
   name: string;
@@ -139,6 +155,133 @@ const defaultGuidance: Guidance = {
   steps: ["Breathe slowly.", "Stay where you are.", "Press I feel lost if unsure."],
 };
 
+const hindiGuidance: Guidance = {
+  title: "आप अभी सुरक्षित हैं",
+  message: "आपके घर का पता और परिवार के संपर्क सुरक्षित हैं।",
+  steps: ["धीरे-धीरे सांस लें।", "जहां हैं वहीं रुकें।", "जरूरत हो तो मदद वाला बटन दबाएं।"],
+};
+
+const languageCopy = {
+  en: {
+    brandTag: "Elder safety & family care",
+    heroDescription:
+      "A calm mobile-first companion for seniors who may feel confused or lost, and for families who need quick, clear safety updates.",
+    navCare: "Care",
+    navDemo: "Demo",
+    navPrivacy: "Privacy",
+    lost: "I feel lost",
+    lostSubtitle: "Share location and alert family",
+    safe: "I am safe",
+    ready: "ready",
+    guarded: "guarded",
+    consentFirst: "first",
+    seniorView: "Senior view",
+    synced: "Care synced",
+    offline: "Offline ready",
+    helpMode: "Help mode",
+    today: "Today",
+    rightNow: "Right now",
+    nowTitle: "Today, 8:30 AM",
+    okay: "I am okay",
+    needHelp: "I need help",
+    medicine: "I took medicine",
+    emergencyLabel: "Show if help is needed",
+    needsSupport: "may need support",
+    call: "Call",
+    sendAlert: "Send alert",
+    languageLabel: "Language",
+    autoVoice: "Auto voice",
+    listen: "Listen",
+    stop: "Stop",
+    speak: "Voice command",
+    listening: "Listening...",
+    voiceReady: "Voice guidance is ready",
+    voiceUnsupported: "Voice commands are not available on this browser. Read-aloud still works.",
+    commandHelp: "Say: I feel lost, I am okay, or I took medicine.",
+    familyVoice: "Family reassurance",
+    playingMessage: "Playing reassurance",
+    familySays: (name: string) => `${name} says you are safe`,
+    play: "Listen",
+    statusAlert: "Caregiver alert active",
+    statusAlertDetail: (name: string) => `${name} received location, home address, and emergency info.`,
+    statusHelp: "Help request sent",
+    statusHelpDetail: "Family sees that support is needed soon.",
+    statusMedicine: "Medicine confirmed",
+    statusMedicineDetail: "Morning tablet marked complete at 8:30 AM.",
+    statusOkay: "All okay",
+    statusOkayDetail: "Daily check-in complete. Safe zone is normal.",
+    orientation: (name: string, location: string, home: string) =>
+      `${name} is near ${location}. Home is saved as ${home}.`,
+    voiceSummary: (name: string, location: string, home: string) =>
+      `You are safe, ${name}. You are near ${location}. Your home is saved as ${home}. Press I feel lost if you need family help.`,
+    lostVoice: "Stay calm. Your family is being alerted. Stay where you are and listen for the next step.",
+    okayVoice: "Thank you. Your family can see that you are okay.",
+    helpVoice: "Your help request has been shared with family.",
+    medicineVoice: "Medicine has been marked as taken.",
+    languageSelected: "English selected. Voice guidance is ready.",
+    calmingMessage: "Hi Ma, I can see your location. Stay calm. I am coming to you.",
+  },
+  hi: {
+    brandTag: "वरिष्ठ सुरक्षा और परिवार की देखभाल",
+    heroDescription:
+      "वरिष्ठों के लिए एक सरल साथी, जो रास्ता भूलने या घबराहट के समय परिवार से जल्दी संपर्क कराता है।",
+    navCare: "देखभाल",
+    navDemo: "डेमो",
+    navPrivacy: "गोपनीयता",
+    lost: "मुझे रास्ता नहीं मिल रहा",
+    lostSubtitle: "स्थान साझा करें और परिवार को सूचना दें",
+    safe: "मैं सुरक्षित हूं",
+    ready: "तैयार",
+    guarded: "सुरक्षित",
+    consentFirst: "सहमति",
+    seniorView: "वरिष्ठ स्क्रीन",
+    synced: "परिवार जुड़ा है",
+    offline: "ऑफलाइन तैयार",
+    helpMode: "मदद चालू",
+    today: "आज",
+    rightNow: "अभी",
+    nowTitle: "आज, सुबह 8:30 बजे",
+    okay: "मैं ठीक हूं",
+    needHelp: "मुझे मदद चाहिए",
+    medicine: "मैंने दवा ले ली",
+    emergencyLabel: "मदद की जरूरत हो तो दिखाएं",
+    needsSupport: "को सहायता की जरूरत हो सकती है",
+    call: "कॉल करें",
+    sendAlert: "सूचना भेजें",
+    languageLabel: "भाषा",
+    autoVoice: "आवाज अपने आप",
+    listen: "सुनें",
+    stop: "रोकें",
+    speak: "आवाज से बोलें",
+    listening: "सुन रहे हैं...",
+    voiceReady: "आवाज से सहायता तैयार है",
+    voiceUnsupported: "इस ब्राउजर में बोलकर आदेश देना उपलब्ध नहीं है। सुनने की सुविधा काम करेगी।",
+    commandHelp: "कहें: मुझे मदद चाहिए, मैं ठीक हूं, या मैंने दवा ले ली।",
+    familyVoice: "परिवार का भरोसा",
+    playingMessage: "परिवार का संदेश चल रहा है",
+    familySays: (name: string) => `${name} कहती हैं कि आप सुरक्षित हैं`,
+    play: "सुनें",
+    statusAlert: "परिवार को सूचना भेजी गई",
+    statusAlertDetail: (name: string) => `${name} को स्थान, घर का पता और जरूरी जानकारी मिल गई है।`,
+    statusHelp: "मदद का संदेश भेजा गया",
+    statusHelpDetail: "परिवार को पता है कि जल्द सहायता चाहिए।",
+    statusMedicine: "दवा की पुष्टि हुई",
+    statusMedicineDetail: "सुबह की दवा 8:30 बजे पूरी दिखाई गई है।",
+    statusOkay: "सब ठीक है",
+    statusOkayDetail: "आज की जानकारी पूरी है। सुरक्षित क्षेत्र सामान्य है।",
+    orientation: (name: string, location: string, home: string) =>
+      `${name}, आप ${location} के पास हैं। आपके घर का पता ${home} है।`,
+    voiceSummary: (name: string, location: string, home: string) =>
+      `${name}, आप सुरक्षित हैं। आप ${location} के पास हैं। आपके घर का पता ${home} है। परिवार की मदद चाहिए तो मदद वाला बटन दबाएं।`,
+    lostVoice: "शांत रहें। परिवार को सूचना भेजी जा रही है। जहां हैं वहीं रुकें और अगला निर्देश सुनें।",
+    okayVoice: "धन्यवाद। परिवार को पता चल गया है कि आप ठीक हैं।",
+    helpVoice: "आपकी मदद की सूचना परिवार को भेज दी गई है।",
+    medicineVoice: "दवा लेने की जानकारी दर्ज हो गई है।",
+    languageSelected: "हिंदी चुनी गई है। आवाज से सहायता तैयार है।",
+    calmingMessage: "मां, मुझे आपका स्थान दिख रहा है। शांत रहें। मैं आपके पास आ रही हूं।",
+  },
+} as const;
+
 const featureHighlights = [
   {
     title: "Emergency help",
@@ -163,7 +306,7 @@ const serviceHighlights = [
   "Safe-zone demo",
   "Emergency contacts",
   "Medicine reminders",
-  "Family voice note",
+  "English + Hindi voice",
   "Privacy requests",
 ];
 
@@ -246,38 +389,46 @@ export default function Home() {
   const [locationConsent, setLocationConsent] = useState(true);
   const [emergencyConsent, setEmergencyConsent] = useState(true);
   const [caregiverAccessCode, setCaregiverAccessCode] = useState("2486");
+  const [language, setLanguage] = useState<Language>("en");
+  const [voiceAssist, setVoiceAssist] = useState(true);
+  const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const wakeLockRef = useRef<{ release: () => Promise<void> } | null>(null);
+  const copy = languageCopy[language];
+  const activeGuidance = language === "hi" ? hindiGuidance : guidance;
 
   const status = useMemo(() => {
     if (careState.lostMode) {
       return {
-        label: "Caregiver alert active",
-        detail: `${careState.contacts[0]?.name ?? "Family"} received location, home address, and emergency info.`,
+        label: copy.statusAlert,
+        detail: copy.statusAlertDetail(careState.contacts[0]?.name ?? "Family"),
         className: "statusAlert",
       };
     }
 
     if (careState.checkIn === "help") {
       return {
-        label: "Help request sent",
-        detail: "Family sees that support is needed soon.",
+        label: copy.statusHelp,
+        detail: copy.statusHelpDetail,
         className: "statusWatch",
       };
     }
 
     if (careState.checkIn === "medicine") {
       return {
-        label: "Medicine confirmed",
-        detail: "Morning tablet marked complete at 8:30 AM.",
+        label: copy.statusMedicine,
+        detail: copy.statusMedicineDetail,
         className: "statusGood",
       };
     }
 
     return {
-      label: "All okay",
-      detail: "Daily check-in complete. Safe zone is normal.",
+      label: copy.statusOkay,
+      detail: copy.statusOkayDetail,
       className: "statusGood",
     };
-  }, [careState]);
+  }, [careState, copy]);
 
   function applyState(state: CareState) {
     setCareState(state);
@@ -299,6 +450,179 @@ export default function Home() {
     return careState.lostMode
       ? "Demo outside safe zone - alert chain active"
       : "Safe-zone ready - GPS not shared yet";
+  }
+
+  function stopSpeaking() {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    recognitionRef.current?.stop();
+    setIsListening(false);
+    setVoicePlaying(false);
+    setVoiceStatus(copy.voiceReady);
+  }
+
+  function speakText(text: string, spokenLanguage: Language = language) {
+    if (!("speechSynthesis" in window)) {
+      setVoiceStatus(languageCopy[spokenLanguage].voiceUnsupported);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const locale = spokenLanguage === "hi" ? "hi-IN" : "en-IN";
+    const matchingVoice = window.speechSynthesis
+      .getVoices()
+      .find((voice) => voice.lang.toLowerCase().startsWith(spokenLanguage));
+
+    utterance.lang = matchingVoice?.lang ?? locale;
+    if (matchingVoice) utterance.voice = matchingVoice;
+    utterance.rate = spokenLanguage === "hi" ? 0.78 : 0.82;
+    utterance.pitch = 0.96;
+    utterance.volume = 1;
+    utterance.onstart = () => {
+      setVoicePlaying(true);
+      setVoiceStatus(languageCopy[spokenLanguage].playingMessage);
+    };
+    utterance.onend = () => {
+      setVoicePlaying(false);
+      setVoiceStatus(languageCopy[spokenLanguage].voiceReady);
+    };
+    utterance.onerror = () => {
+      setVoicePlaying(false);
+      setVoiceStatus(languageCopy[spokenLanguage].voiceUnsupported);
+    };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function readCurrentScreen() {
+    if (voicePlaying) {
+      stopSpeaking();
+      return;
+    }
+
+    speakText(
+      copy.voiceSummary(
+        careState.patient.name,
+        careState.location.label,
+        careState.patient.homeAddress
+      )
+    );
+  }
+
+  function selectLanguage(nextLanguage: Language) {
+    setLanguage(nextLanguage);
+    setVoiceStatus(languageCopy[nextLanguage].voiceReady);
+    setCareState((state) => ({
+      ...state,
+      patient: {
+        ...state.patient,
+        preferredLanguage: nextLanguage === "hi" ? "Hindi" : "English",
+      },
+    }));
+    window.localStorage.setItem("nischint-language", nextLanguage);
+    if (voiceAssist) {
+      speakText(languageCopy[nextLanguage].languageSelected, nextLanguage);
+    }
+  }
+
+  function setVoicePreference(enabled: boolean) {
+    setVoiceAssist(enabled);
+    window.localStorage.setItem("nischint-voice-assist", String(enabled));
+    if (!enabled) {
+      stopSpeaking();
+      return;
+    }
+    speakText(copy.languageSelected);
+  }
+
+  async function keepScreenAwake() {
+    const wakeNavigator = navigator as Navigator & {
+      wakeLock?: {
+        request(type: "screen"): Promise<{ release: () => Promise<void> }>;
+      };
+    };
+
+    try {
+      wakeLockRef.current = await wakeNavigator.wakeLock?.request("screen") ?? null;
+    } catch {
+      wakeLockRef.current = null;
+    }
+  }
+
+  async function activateLostMode() {
+    navigator.vibrate?.([180, 90, 180]);
+    void keepScreenAwake();
+    if (voiceAssist) speakText(copy.lostVoice);
+    await syncLostMode(true);
+    if (locationConsent) void shareLocation();
+    void notifyCaregiver("sms");
+  }
+
+  async function completeCheckIn(checkIn: CheckIn) {
+    navigator.vibrate?.(80);
+    if (voiceAssist) {
+      const spokenMessage =
+        checkIn === "medicine"
+          ? copy.medicineVoice
+          : checkIn === "help"
+            ? copy.helpVoice
+            : copy.okayVoice;
+      speakText(spokenMessage);
+    }
+    await syncCheckIn(checkIn);
+    if (checkIn === "help") void notifyCaregiver("sms");
+    if (checkIn !== "help") {
+      void wakeLockRef.current?.release();
+      wakeLockRef.current = null;
+    }
+  }
+
+  function listenForCommand() {
+    const speechWindow = window as typeof window & {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+    const Recognition =
+      speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+
+    if (!Recognition) {
+      setVoiceStatus(copy.voiceUnsupported);
+      speakText(copy.commandHelp);
+      return;
+    }
+
+    stopSpeaking();
+    const recognition = new Recognition();
+    recognition.lang = language === "hi" ? "hi-IN" : "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript?.toLocaleLowerCase() ?? "";
+      setVoiceStatus(transcript || copy.commandHelp);
+
+      if (/lost|help|emergency|home|मदद|रास्ता|खो|घर/.test(transcript)) {
+        void activateLostMode();
+      } else if (/medicine|tablet|दवा/.test(transcript)) {
+        void completeCheckIn("medicine");
+      } else if (/okay|safe|fine|ठीक|सुरक्षित/.test(transcript)) {
+        void completeCheckIn("ok");
+      } else {
+        speakText(copy.commandHelp);
+      }
+    };
+    recognition.onerror = () => {
+      setVoiceStatus(copy.commandHelp);
+      setIsListening(false);
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+    setIsListening(true);
+    setVoiceStatus(copy.listening);
+    recognition.start();
   }
 
   async function callApi(path: string, body?: unknown) {
@@ -487,6 +811,16 @@ export default function Home() {
 
   useEffect(() => {
     let mounted = true;
+    const savedLanguage = window.localStorage.getItem("nischint-language");
+    const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
+
+    const restorePreferences = window.setTimeout(() => {
+      if (savedLanguage === "hi" || savedLanguage === "en") {
+        setLanguage(savedLanguage);
+        setVoiceStatus(languageCopy[savedLanguage].voiceReady);
+      }
+      if (savedVoiceAssist === "false") setVoiceAssist(false);
+    }, 0);
 
     async function loadCareState() {
       try {
@@ -506,12 +840,19 @@ export default function Home() {
 
     return () => {
       mounted = false;
+      window.clearTimeout(restorePreferences);
+      window.speechSynthesis?.cancel();
+      recognitionRef.current?.stop();
+      void wakeLockRef.current?.release();
     };
+    // The initial API and browser preference sync intentionally runs once.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <main
       className={`shell ${largeText ? "largeText" : ""} ${highContrast ? "highContrast" : ""}`}
+      lang={language === "hi" ? "hi" : "en"}
     >
       <header className="topBar" aria-label="Nischint navigation">
         <a className="brandLockup" href="#nischint-title" aria-label="Nischint home">
@@ -519,9 +860,9 @@ export default function Home() {
           <strong>Nischint</strong>
         </a>
         <nav aria-label="Page sections">
-          <a href="#care-services">Care</a>
-          <a href="#live-demo">Demo</a>
-          <a href="#privacy">Privacy</a>
+          <a href="#care-services">{copy.navCare}</a>
+          <a href="#live-demo">{copy.navDemo}</a>
+          <a href="#privacy">{copy.navPrivacy}</a>
         </nav>
       </header>
 
@@ -529,34 +870,31 @@ export default function Home() {
         <div className="heroCopy">
           <div className="brandPill">
             <span aria-hidden="true">नि</span>
-            Elder safety & family care
+            {copy.brandTag}
           </div>
           <p className="scriptName" aria-hidden="true">निश्चिंत</p>
-          <h1 id="nischint-title">Nischint</h1>
-          <p>
-            A calm mobile-first companion for seniors who may feel confused or
-            lost, and for families who need quick, clear safety updates.
-          </p>
+          <h1 className="heroWordmark" id="nischint-title">Nischint</h1>
+          <p>{copy.heroDescription}</p>
           <div className="heroActions" aria-label="Primary demo actions">
             <button
               className="primaryButton"
               type="button"
-              onClick={() => void syncLostMode(true)}
+              onClick={() => void activateLostMode()}
             >
-              I feel lost
+              {copy.lost}
             </button>
             <button
               className="softButton"
               type="button"
-              onClick={() => void syncCheckIn("ok")}
+              onClick={() => void completeCheckIn("ok")}
             >
-              I am safe
+              {copy.safe}
             </button>
           </div>
           <div className="trustStrip" aria-label="Safety highlights">
-            <span><strong>24/7</strong> ready</span>
-            <span><strong>PIN</strong> guarded</span>
-            <span><strong>Consent</strong> first</span>
+            <span><strong>24/7</strong> {copy.ready}</span>
+            <span><strong>PIN</strong> {copy.guarded}</span>
+            <span><strong>{language === "hi" ? "सहमति" : "Consent"}</strong> {copy.consentFirst}</span>
           </div>
 
           <div className="signalRail" aria-label="Production signal flow">
@@ -584,11 +922,51 @@ export default function Home() {
 
         <div className="phoneCard" aria-label="Senior safety screen">
           <div className="phoneTop">
-            <span>Senior view</span>
+            <span>{copy.seniorView}</span>
             <span className={`syncPill ${backendReady ? "" : "localOnly"}`}>
-              {backendReady ? "Care synced" : "Offline ready"}
+              {backendReady ? copy.synced : copy.offline}
             </span>
-            <strong>{careState.lostMode ? "Help mode" : "Today"}</strong>
+            <strong>{careState.lostMode ? copy.helpMode : copy.today}</strong>
+          </div>
+
+          <div className="assistPanel" aria-label={copy.languageLabel}>
+            <div className="assistHeader">
+              <div className="languageSegment" role="group" aria-label={copy.languageLabel}>
+                <button
+                  className={language === "en" ? "active" : ""}
+                  type="button"
+                  aria-pressed={language === "en"}
+                  onClick={() => selectLanguage("en")}
+                >
+                  English
+                </button>
+                <button
+                  className={language === "hi" ? "active" : ""}
+                  type="button"
+                  aria-pressed={language === "hi"}
+                  onClick={() => selectLanguage("hi")}
+                >
+                  हिंदी
+                </button>
+              </div>
+              <label className="voiceAssistToggle">
+                <input
+                  checked={voiceAssist}
+                  type="checkbox"
+                  onChange={(event) => setVoicePreference(event.target.checked)}
+                />
+                <span>{copy.autoVoice}</span>
+              </label>
+            </div>
+            <div className="voiceActions">
+              <button type="button" onClick={readCurrentScreen}>
+                {voicePlaying ? copy.stop : copy.listen}
+              </button>
+              <button type="button" disabled={isListening} onClick={listenForCommand}>
+                {isListening ? copy.listening : copy.speak}
+              </button>
+            </div>
+            <p className="voiceStatus" aria-live="polite">{voiceStatus}</p>
           </div>
 
           <div className={`statusBanner ${status.className}`}>
@@ -597,45 +975,52 @@ export default function Home() {
           </div>
 
           <div className="orientationCard">
-            <span className="smallLabel">Right now</span>
-            <h2>Today, 8:30 AM</h2>
+            <span className="smallLabel">{copy.rightNow}</span>
+            <h2>{copy.nowTitle}</h2>
             <p>
-              {careState.patient.name} is near {careState.location.label}. Home
-              is saved as {careState.patient.homeAddress}.
+              {copy.orientation(
+                careState.patient.name,
+                careState.location.label,
+                careState.patient.homeAddress
+              )}
             </p>
           </div>
 
           <button
             className={`lostButton ${careState.lostMode ? "isActive" : ""}`}
             type="button"
-            onClick={() => void syncLostMode(true)}
+            onClick={() => void activateLostMode()}
           >
-            <span>I feel lost</span>
-            <small>Share location and alert family</small>
+            <span>{copy.lost}</span>
+            <small>{copy.lostSubtitle}</small>
           </button>
 
           <div className="quickGrid" aria-label="Daily check in">
-            <button type="button" onClick={() => void syncCheckIn("ok")}>
-              <span>I am okay</span>
+            <button type="button" onClick={() => void completeCheckIn("ok")}>
+              <span>{copy.okay}</span>
             </button>
-            <button type="button" onClick={() => void syncCheckIn("help")}>
-              <span>I need help</span>
+            <button type="button" onClick={() => void completeCheckIn("help")}>
+              <span>{copy.needHelp}</span>
             </button>
-            <button type="button" onClick={() => void syncCheckIn("medicine")}>
-              <span>I took medicine</span>
+            <button type="button" onClick={() => void completeCheckIn("medicine")}>
+              <span>{copy.medicine}</span>
             </button>
           </div>
 
           <div className="emergencyCard" aria-label="Emergency information card">
-            <span className="smallLabel">Show if help is needed</span>
-            <h3>{careState.patient.name} may be confused</h3>
-            <p>{careState.patient.emergencyInfo}</p>
+            <span className="smallLabel">{copy.emergencyLabel}</span>
+            <h3>{careState.patient.name} {copy.needsSupport}</h3>
+            <p>
+              {language === "hi"
+                ? "कभी-कभी भ्रम हो सकता है। पेनिसिलिन से एलर्जी है। सुबह की दवा 8:30 बजे है।"
+                : careState.patient.emergencyInfo}
+            </p>
             <div className="emergencyActions">
               <a href={caregiverDialHref()}>
-                Call {careState.contacts[0]?.name ?? "caregiver"}
+                {copy.call} {careState.contacts[0]?.name ?? "caregiver"}
               </a>
               <button type="button" onClick={() => void notifyCaregiver("sms")}>
-                Send alert
+                {copy.sendAlert}
               </button>
             </div>
           </div>
@@ -773,12 +1158,12 @@ export default function Home() {
         <div className="patientPanel">
           <div className="sectionHeading">
             <span>Calm guidance</span>
-            <h2>{guidance.title}</h2>
+            <h2>{activeGuidance.title}</h2>
           </div>
-          <p className="panelCopy">{guidance.message}</p>
+          <p className="panelCopy">{activeGuidance.message}</p>
 
           <div className="stepList">
-            {guidance.steps.map((step, index) => (
+            {activeGuidance.steps.map((step, index) => (
               <div className="stepItem" key={step}>
                 <strong>{index + 1}</strong>
                 <p>{step}</p>
@@ -788,19 +1173,27 @@ export default function Home() {
 
           <div className="voiceCard">
             <div>
-              <span className="smallLabel">Family voice note</span>
+              <span className="smallLabel">{copy.familyVoice}</span>
               <h3>
-                {voicePlaying ? "Playing family message" : `${careState.contacts[0]?.name ?? "Family"} says you are safe`}
+                {voicePlaying
+                  ? copy.playingMessage
+                  : copy.familySays(careState.contacts[0]?.name ?? "Family")}
               </h3>
-              <p>"{careState.patient.calmingMessage}"</p>
+              <p>&ldquo;{language === "hi" ? copy.calmingMessage : careState.patient.calmingMessage}&rdquo;</p>
             </div>
             <button
               className="roundButton"
               type="button"
-              aria-label={voicePlaying ? "Pause voice note" : "Play voice note"}
-              onClick={() => setVoicePlaying((value) => !value)}
+              aria-label={voicePlaying ? copy.stop : copy.play}
+              onClick={() =>
+                voicePlaying
+                  ? stopSpeaking()
+                  : speakText(
+                      language === "hi" ? copy.calmingMessage : careState.patient.calmingMessage
+                    )
+              }
             >
-              {voicePlaying ? "II" : "Play"}
+              {voicePlaying ? copy.stop : copy.play}
             </button>
           </div>
         </div>

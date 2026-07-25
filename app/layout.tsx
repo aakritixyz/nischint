@@ -1,25 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Lora } from "next/font/google";
 import "./globals.css";
-
-const interfaceFont = Instrument_Sans({
-  variable: "--font-care",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const displayFont = Lora({
-  variable: "--font-display",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nischint-rho.vercel.app"),
   applicationName: "Nischint",
   title: "Nischint | Elder Safety Companion",
   description:
-    "A mobile-first elder safety and family care companion with lost-mode support, location sharing, reminders, and calming guidance.",
+    "A bilingual elder safety and family care companion with voice assistance, lost-mode support, location sharing, reminders, and calming guidance.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/favicon.svg",
@@ -29,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Nischint | Elder Safety Companion",
     description:
-      "Simple real-time safety support for older adults and clearer care updates for families.",
+      "Bilingual, voice-assisted safety support for older adults and clear real-time care updates for families.",
     url: "https://nischint-rho.vercel.app",
     siteName: "Nischint",
     type: "website",
@@ -38,7 +25,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Nischint | Elder Safety Companion",
     description:
-      "Lost-mode support, caregiver alerts, safe-zone status, reminders, and calming guidance for elder care.",
+      "English and Hindi voice assistance, lost-mode support, caregiver alerts, safe-zone status, reminders, and calming guidance.",
   },
 };
 
@@ -52,10 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      className={`${interfaceFont.variable} ${displayFont.variable}`}
-      lang="en"
-    >
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

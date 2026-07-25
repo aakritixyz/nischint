@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  --font-care: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Iowan Old Style", Baskerville, Georgia, "Times New Roman", serif;
   --background: #fbf7f5;
   --foreground: #31232b;
   --ink: #3a2432;
@@ -2336,5 +2338,219 @@ textarea {
 @media (min-width: 1180px) {
   h1 {
     font-size: 5.8rem;
+  }
+}
+
+
+/* Bilingual voice assistance */
+.heroWordmark {
+  width: fit-content;
+  color: var(--ink);
+  font-family: var(--font-display), "Iowan Old Style", Baskerville, Georgia, serif;
+  font-size: clamp(3.35rem, 16vw, 5.2rem);
+  font-style: italic;
+  font-weight: 750;
+  line-height: 0.9;
+  text-wrap: balance;
+  overflow-wrap: normal;
+}
+
+.heroWordmark::after {
+  content: "";
+  display: block;
+  width: 46%;
+  height: 3px;
+  margin: 9px 0 0 42%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--rose), var(--coral));
+  opacity: 0.72;
+  transform: rotate(-2deg);
+}
+
+.scriptName {
+  color: var(--rose-dark);
+  font-size: clamp(2.25rem, 10vw, 3.35rem);
+  font-weight: 700;
+}
+
+.assistPanel {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(74, 117, 107, 0.18);
+  border-radius: 17px;
+  background: #f1eef2;
+  padding: 10px;
+  box-shadow: inset 3px 0 0 rgba(174, 88, 115, 0.38);
+}
+
+.assistHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.languageSegment {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 176px);
+  min-width: 0;
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 3px;
+}
+
+.languageSegment button,
+.voiceActions button {
+  border: 0;
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.languageSegment button {
+  min-width: 0;
+  min-height: 36px;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 0.78rem;
+  padding: 6px 8px;
+}
+
+.languageSegment button.active {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(63, 55, 62, 0.14);
+}
+
+.voiceAssistToggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.voiceAssistToggle input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+  accent-color: var(--rose-dark);
+}
+
+.voiceActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.voiceActions button {
+  min-height: 43px;
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 12px;
+  background: #fffafb;
+  font-size: 0.82rem;
+  padding: 8px 10px;
+}
+
+.voiceActions button:first-child {
+  border-color: rgba(174, 88, 115, 0.24);
+  color: var(--rose-dark);
+}
+
+.voiceActions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.voiceStatus {
+  min-height: 1.1em;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 550;
+  line-height: 1.35;
+}
+
+.shell[lang="hi"] {
+  font-family: "Kohinoor Devanagari", "Noto Sans Devanagari", Mangal, var(--font-care), sans-serif;
+}
+
+.shell[lang="hi"] .heroWordmark,
+.shell[lang="hi"] .brandLockup strong {
+  font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
+}
+
+.shell[lang="hi"] .lostButton span {
+  font-size: clamp(1.55rem, 7vw, 2.05rem);
+  line-height: 1.18;
+}
+
+@media (max-width: 420px) {
+  .heroWordmark {
+    font-size: 3.25rem;
+  }
+
+  .phoneCard {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .phoneTop {
+    gap: 6px;
+    font-size: 0.78rem;
+  }
+
+  .syncPill {
+    padding: 5px 7px;
+    font-size: 0.65rem;
+  }
+
+  .assistPanel {
+    gap: 7px;
+    border-radius: 15px;
+    padding: 8px;
+  }
+
+  .languageSegment {
+    width: 154px;
+  }
+
+  .languageSegment button {
+    min-height: 34px;
+    font-size: 0.72rem;
+    padding: 5px 6px;
+  }
+
+  .voiceAssistToggle {
+    max-width: 96px;
+    font-size: 0.67rem;
+  }
+
+  .voiceActions button {
+    min-height: 40px;
+    font-size: 0.76rem;
+  }
+
+  .voiceStatus {
+    font-size: 0.66rem;
+  }
+}
+
+@media (min-width: 860px) {
+  .heroWordmark {
+    font-size: 5.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .languageSegment button,
+  .voiceActions button {
+    transition: none;
   }
 }

@@ -18,8 +18,10 @@ function hasDatabaseUrl() {
   return Boolean(process.env.DATABASE_URL);
 }
 
-async function bestEffort(_operation: string, _payload: unknown) {
+async function bestEffort(operation: string, payload: unknown) {
   if (!hasDatabaseUrl()) return;
+  void operation;
+  void payload;
 
   // Vercel deployment note:
   // Add Neon/Supabase/Vercel Postgres client code here once DATABASE_URL is set.

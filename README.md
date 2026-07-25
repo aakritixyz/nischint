@@ -34,7 +34,10 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 - Saved home address and current location label
 - Emergency medical information card
 - One-tap caregiver call link
-- Calming family voice-message simulation
+- Real device read-aloud for the current safety screen
+- English/Hindi interface and spoken guidance toggle
+- Voice commands for lost mode, okay check-ins, and medicine confirmation
+- Spoken family reassurance, haptic feedback, and screen wake lock during lost mode
 - Large text and high contrast accessibility controls
 - Mobile-first layout with large touch targets
 
@@ -70,6 +73,12 @@ Nischint includes Next.js API routes for:
 
 Without provider keys, the app still works as a polished demo and simulates delivery. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
 
+## Voice And Language Accessibility
+
+The senior screen can switch between English and Hindi and stores that preference on the device. **Listen** reads the person's name, current location, saved home address, and help instruction aloud. **Speak** listens for a short command such as “I feel lost,” “I am okay,” “I took medicine,” “मुझे मदद चाहिए,” or “मैं ठीक हूं.”
+
+Automatic voice guidance speaks after emergency and check-in actions. During lost mode, supported phones also vibrate and request a screen wake lock so the instructions remain visible. Read-aloud uses the browser's speech synthesis. Voice-command availability depends on browser support and may use the browser vendor's speech service, so production privacy notices should explain that behavior.
+
 ## Tech Stack
 
 - **Framework:** Next.js
@@ -87,9 +96,11 @@ Without provider keys, the app still works as a polished demo and simulates deli
 3. Watch the senior view enter help mode.
 4. Press **Share live location** and allow GPS permission.
 5. Send a simulated SMS, WhatsApp, or push alert.
-6. Toggle **Large text** or **High contrast**.
-7. Add a reminder and caregiver note.
-8. Show the caregiver live view and event history.
+6. Switch between **English** and **Hindi**, then use **Listen** to hear the safety screen.
+7. Press **Speak** and say a help or check-in command.
+8. Toggle **Large text** or **High contrast**.
+9. Add a reminder and caregiver note.
+10. Show the caregiver live view and event history.
 
 This makes the project easy to explain in a presentation:
 
@@ -192,12 +203,12 @@ Before using it with real families, the project needs:
 - Real persistent care profiles
 - Medication adherence escalation
 - Production safe-zone distance logic with configurable zones
-- Audio recording/upload for real family voice notes
-- Multilingual senior guidance in Hindi and English
+- Audio recording/upload for personalized family voice notes
+- Additional regional languages and dialect testing
 - Caregiver notification preferences
 - Admin audit logs and consent history
 - Better offline emergency card support
 
 ## Project Status
 
-Nischint is ready to deploy as a meaningful MVP. It demonstrates the full care flow clearly, has a professional mobile-first interface, visible production-safety concepts, and backend routes for the main safety actions.
+Nischint is ready to deploy as a meaningful, voice-assisted MVP. It demonstrates the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, visible production-safety concepts, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.

@@ -20,13 +20,20 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Production safety layer/);
   assert.match(page, /Caregiver access code/);
   assert.match(page, /signalRail/);
+  assert.match(page, /हिंदी/);
+  assert.match(page, /SpeechSynthesisUtterance/);
+  assert.match(page, /webkitSpeechRecognition/);
+  assert.match(page, /wakeLock/);
+  assert.match(page, /activateLostMode/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
 });
 
 test("metadata and PWA manifest are branded for Nischint", async () => {
-  const [layout, manifestText] = await Promise.all([
+  const [layout, manifestText, styles, serviceWorker] = await Promise.all([
     readProjectFile("app/layout.tsx"),
     readProjectFile("public/manifest.webmanifest"),
+    readProjectFile("app/globals.css"),
+    readProjectFile("public/sw.js"),
   ]);
   const manifest = JSON.parse(manifestText);
 
@@ -36,4 +43,9 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.equal(manifest.theme_color, "#8f6f7d");
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.orientation, "portrait-primary");
+  assert.match(manifest.description, /Bilingual/);
+  assert.match(styles, /Bilingual voice assistance/);
+  assert.match(styles, /heroWordmark/);
+  assert.match(styles, /assistPanel/);
+  assert.match(serviceWorker, /nischint-offline-v3/);
 });
