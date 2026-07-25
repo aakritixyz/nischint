@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 type CheckIn = "ok" | "help" | "medicine";
 type Language = "en" | "hi";
+type AppTab = "senior" | "care" | "demo" | "family" | "privacy";
 
 type BrowserSpeechRecognition = {
   lang: string;
@@ -455,10 +456,19 @@ const faqItems = [
   },
 ];
 
+const appTabs: Array<{ id: AppTab; label: string; hint: string }> = [
+  { id: "senior", label: "Senior", hint: "Main safety screen" },
+  { id: "care", label: "Care", hint: "How it works" },
+  { id: "demo", label: "Demo", hint: "Try flows" },
+  { id: "family", label: "Family", hint: "Caregiver view" },
+  { id: "privacy", label: "Privacy", hint: "Settings and help" },
+];
+
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
   const [hasEntered, setHasEntered] = useState(false);
+  const [activeTab, setActiveTab] = useState<AppTab>("senior");
   const [backendReady, setBackendReady] = useState(false);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
@@ -1210,11 +1220,18 @@ export default function Home() {
           <span>नि</span>
           <strong>Nischint</strong>
         </a>
-        <nav aria-label="Page sections">
-          <a href="#care-services">{copy.navCare}</a>
-          <a href="#live-demo">{copy.navDemo}</a>
-          <a href="#privacy">{copy.navPrivacy}</a>
-          <a href="#help">Help</a>
+        <nav aria-label="App sections">
+          {appTabs.slice(0, 4).map((tab) => (
+            <button
+              className={activeTab === tab.id ? "active" : ""}
+              key={tab.id}
+              type="button"
+              aria-pressed={activeTab === tab.id}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </nav>
       </header>
 
@@ -1230,6 +1247,31 @@ export default function Home() {
         Emergency
       </button>
 
+      <div className="tabRail" role="tablist" aria-label="Nischint category tabs">
+        {appTabs.map((tab) => (
+          <button
+            className={activeTab === tab.id ? "active" : ""}
+            id={`tab-${tab.id}`}
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            aria-controls={`panel-${tab.id}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <span>{tab.label}</span>
+            <small>{tab.hint}</small>
+          </button>
+        ))}
+      </div>
+
+      <section
+        className="tabPanel"
+        id="panel-senior"
+        role="tabpanel"
+        aria-labelledby="tab-senior"
+        hidden={activeTab !== "senior"}
+      >
       <section className="hero" aria-labelledby="nischint-title">
         <div className="heroCopy">
           <div className="brandPill">
@@ -1406,7 +1448,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </section>
 
+      <section
+        className="tabPanel"
+        id="panel-care"
+        role="tabpanel"
+        aria-labelledby="tab-care"
+        hidden={activeTab !== "care"}
+      >
       <section id="care-services" className="careIntro" aria-label="Nischint care services">
         <div className="sectionHeading">
           <span>How Nischint helps</span>
@@ -1448,7 +1498,15 @@ export default function Home() {
           </article>
         ))}
       </section>
+      </section>
 
+      <section
+        className="tabPanel"
+        id="panel-demo"
+        role="tabpanel"
+        aria-labelledby="tab-demo"
+        hidden={activeTab !== "demo"}
+      >
       <section id="live-demo" className="toolGrid" aria-label="Nischint controls">
         <article className="patientPanel">
           <div className="sectionHeading">
@@ -1565,7 +1623,15 @@ export default function Home() {
           <p className="panelCopy">{notificationStatus}</p>
         </article>
       </section>
+      </section>
 
+      <section
+        className="tabPanel"
+        id="panel-family"
+        role="tabpanel"
+        aria-labelledby="tab-family"
+        hidden={activeTab !== "family"}
+      >
       <section className="dashboard" aria-label="Nischint feature demo">
         <div className="patientPanel">
           <div className="sectionHeading">
@@ -1702,7 +1768,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </section>
 
+      <section
+        className="tabPanel"
+        id="panel-privacy"
+        role="tabpanel"
+        aria-labelledby="tab-privacy"
+        hidden={activeTab !== "privacy"}
+      >
       <section className="productionBand" aria-label="Production safety controls">
         <div className="sectionHeading">
           <span>For real families</span>
@@ -1963,6 +2037,7 @@ export default function Home() {
             ))}
           </div>
         </article>
+      </section>
       </section>
     </main>
   );
