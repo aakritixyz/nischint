@@ -176,6 +176,8 @@ const languageCopy = {
     voiceChoiceOff: "Use buttons only",
     startApp: "Continue",
     skipSetup: "Skip to quick demo",
+    loginButton: "Login",
+    codeError: "Use demo code 2486 or skip to quick demo.",
     progressStep: "Step 1 of 3",
     demoMode: "Demo mode",
     loginTitle: "Family login",
@@ -262,6 +264,8 @@ const languageCopy = {
     voiceChoiceOff: "सिर्फ बटन इस्तेमाल करें",
     startApp: "आगे बढ़ें",
     skipSetup: "सीधे डेमो खोलें",
+    loginButton: "लॉगिन",
+    codeError: "डेमो कोड 2486 डालें या सीधे डेमो खोलें।",
     progressStep: "चरण 1 / 3",
     demoMode: "डेमो मोड",
     loginTitle: "परिवार लॉगिन",
@@ -518,6 +522,7 @@ export default function Home() {
   const [voiceAssist, setVoiceAssist] = useState(true);
   const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
   const [voiceTone, setVoiceTone] = useState<VoiceTone>("calm");
+  const [loginMessage, setLoginMessage] = useState("");
   const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
@@ -691,12 +696,20 @@ export default function Home() {
     speakText(copy.languageSelected);
   }
 
-  function enterNischint() {
+  function enterNischint(nextTab: AppTab = "senior", requireCode = true) {
+    if (requireCode && caregiverAccessCode.trim() !== "2486") {
+      setLoginMessage(copy.codeError);
+      setScreenAnnouncement(copy.codeError);
+      return;
+    }
+
     setVoiceAssist(onboardingVoiceAssist);
     window.localStorage.setItem("nischint-has-entered", "true");
     window.localStorage.setItem("nischint-voice-assist", String(onboardingVoiceAssist));
     window.localStorage.setItem("nischint-language", language);
     window.localStorage.setItem("nischint-voice-tone", voiceTone);
+    setActiveTab(nextTab);
+    setLoginMessage("");
     setHasEntered(true);
 
     if (onboardingVoiceAssist) {
@@ -1220,6 +1233,9 @@ export default function Home() {
               />
               <small>{copy.demoCodeHint}</small>
             </label>
+            {loginMessage ? (
+              <p className="loginError" role="alert">{loginMessage}</p>
+            ) : null}
 
             <div className="welcomeChoice">
               <span>{copy.languageLabel}</span>
@@ -1285,10 +1301,10 @@ export default function Home() {
             <p className="privacyPromise">{copy.privacyPromise}</p>
 
             <div className="welcomeActions">
-              <button className="primaryButton" type="button" onClick={enterNischint}>
+              <button className="primaryButton" type="button" onClick={() => enterNischint("senior", true)}>
                 {copy.startApp}
               </button>
-              <button className="softButton" type="button" onClick={enterNischint}>
+              <button className="softButton" type="button" onClick={() => enterNischint("demo", false)}>
                 {copy.skipSetup}
               </button>
             </div>
@@ -1322,6 +1338,9 @@ export default function Home() {
               {tab.label}
             </button>
           ))}
+          <button type="button" onClick={() => setHasEntered(false)}>
+            {copy.loginButton}
+          </button>
         </nav>
       </header>
 

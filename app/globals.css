@@ -2823,6 +2823,18 @@ textarea {
   line-height: 1.35;
 }
 
+.loginError {
+  margin: -2px 0 0;
+  border: 1px solid rgba(184, 50, 70, 0.22);
+  border-radius: 14px;
+  background: #f6dfe4;
+  color: #8a2435;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+  padding: 10px 11px;
+}
+
 .welcomeForm small {
   color: var(--muted);
   font-size: 0.78rem;
@@ -2837,6 +2849,14 @@ textarea {
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.64);
   padding: 12px;
+}
+
+.welcomeChoice {
+  box-shadow: inset 4px 0 0 rgba(184, 50, 70, 0.18);
+}
+
+.welcomeVoiceGroup {
+  box-shadow: inset 4px 0 0 rgba(74, 117, 107, 0.18);
 }
 
 .welcomeChoice > span,
@@ -2860,6 +2880,12 @@ textarea {
   font-weight: 650;
   text-align: left;
   padding: 11px 13px;
+}
+
+.welcomeChoice .languageSegment button {
+  min-height: 48px;
+  border-radius: 11px;
+  font-size: 0.88rem;
 }
 
 .welcomeVoiceGroup button.active {
@@ -2897,6 +2923,11 @@ textarea {
   display: grid;
   grid-template-columns: 1fr;
   gap: 9px;
+}
+
+.welcomeActions .primaryButton,
+.welcomeActions .softButton {
+  min-height: 58px;
 }
 
 .returningHint {
