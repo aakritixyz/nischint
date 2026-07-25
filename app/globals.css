@@ -2586,6 +2586,11 @@ textarea {
   display: grid;
   min-height: 100vh;
   align-items: center;
+  background:
+    linear-gradient(90deg, rgba(174, 88, 115, 0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(74, 117, 107, 0.05) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(231, 240, 235, 0.68), rgba(246, 223, 228, 0.38) 48%, rgba(255, 250, 251, 0.9));
+  background-size: 34px 34px, 34px 34px, auto;
   padding-top: max(18px, env(safe-area-inset-top));
   padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
@@ -2597,11 +2602,38 @@ textarea {
   margin: 0 auto;
   border: 1px solid rgba(63, 55, 62, 0.12);
   border-radius: 28px;
-  background:
-    linear-gradient(180deg, rgba(255, 250, 251, 0.96), rgba(247, 241, 243, 0.96)),
-    #fffafb;
+  background: rgba(255, 250, 251, 0.94);
+  backdrop-filter: blur(14px);
   box-shadow: 0 22px 60px rgba(63, 55, 62, 0.13);
   padding: clamp(18px, 5vw, 34px);
+}
+
+.welcomeMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.welcomeMeta span,
+.welcomeMeta strong {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 750;
+  padding: 0 11px;
+}
+
+.welcomeMeta span {
+  background: #e7f0eb;
+  color: #226747;
+}
+
+.welcomeMeta strong {
+  background: #40363e;
+  color: #fffafb;
 }
 
 .welcomeBrand {
@@ -2651,6 +2683,94 @@ textarea {
   font-size: 1rem;
   font-weight: 450;
   line-height: 1.5;
+}
+
+.welcomePurpose {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid rgba(63, 55, 62, 0.1);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.66);
+  padding: 12px;
+}
+
+.welcomePurpose strong {
+  color: var(--ink);
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.welcomePurpose p {
+  margin-top: 5px;
+  color: #675d65;
+  font-size: 0.84rem;
+  font-weight: 450;
+  line-height: 1.35;
+}
+
+.careIllustration {
+  position: relative;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 22px;
+  background: #e7f0eb;
+  color: #226747;
+}
+
+.careIllustration::before,
+.careIllustration::after,
+.careIllustration i {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+}
+
+.careIllustration::before {
+  width: 28px;
+  height: 28px;
+  background: #fffafb;
+  box-shadow: 0 0 0 7px rgba(34, 103, 71, 0.09);
+}
+
+.careIllustration::after {
+  width: 28px;
+  height: 16px;
+  border: 3px solid #226747;
+  border-top: 0;
+  border-radius: 0 0 999px 999px;
+  transform: translateY(11px);
+}
+
+.careIllustration i {
+  width: 16px;
+  height: 16px;
+  background: #d9788a;
+  transform: translate(15px, -14px);
+}
+
+.setupProgress {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.setupProgress span {
+  display: grid;
+  min-height: 8px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8dde3;
+  color: transparent;
+}
+
+.setupProgress span.active {
+  background: #b83246;
 }
 
 .welcomeForm {
@@ -2703,10 +2823,45 @@ textarea {
   box-shadow: inset 4px 0 0 var(--sage);
 }
 
+.comfortGroup {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.comfortGroup > span {
+  grid-column: 1 / -1;
+}
+
+.comfortGroup button {
+  min-height: 46px;
+  text-align: center;
+  padding: 9px 8px;
+}
+
+.privacyPromise {
+  border: 1px solid rgba(74, 117, 107, 0.16);
+  border-radius: 16px;
+  background: #e7f0eb;
+  color: #315c49;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.38;
+  padding: 11px 12px;
+}
+
+.welcomeActions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
 @media (min-width: 700px) {
   .welcomeGate {
     grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.7fr);
     align-items: center;
+  }
+
+  .welcomeMeta {
+    grid-column: 1 / -1;
   }
 
   .welcomeBrand,
@@ -2716,7 +2871,7 @@ textarea {
 
   .welcomeForm {
     grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-row: 2 / span 2;
   }
 }
 
@@ -2752,6 +2907,20 @@ textarea {
 
   .welcomeCopy p:not(.scriptName) {
     font-size: 0.9rem;
+  }
+
+  .welcomePurpose {
+    align-items: start;
+  }
+
+  .careIllustration {
+    width: 50px;
+    height: 50px;
+    border-radius: 18px;
+  }
+
+  .comfortGroup {
+    grid-template-columns: 1fr;
   }
 }
 

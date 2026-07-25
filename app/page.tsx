@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 type CheckIn = "ok" | "help" | "medicine";
 type Language = "en" | "hi";
 type AppTab = "senior" | "care" | "demo" | "family" | "privacy";
+type VoiceTone = "calm" | "standard" | "energetic";
 
 type BrowserSpeechRecognition = {
   lang: string;
@@ -173,7 +174,17 @@ const languageCopy = {
     voiceChoice: "Voice guidance",
     voiceChoiceOn: "Keep voice guidance on",
     voiceChoiceOff: "Use buttons only",
-    startApp: "Enter Nischint",
+    startApp: "Continue",
+    skipSetup: "Skip to quick demo",
+    progressStep: "Step 1 of 3",
+    demoMode: "Demo mode",
+    privacyPromise: "Consent stays visible. Location is shared only after permission.",
+    nextPreview: "Next: open the Senior tab, try the safe check-in, or simulate an emergency.",
+    purposePreview: "Nischint helps a senior stay calm, see where they are, and reach family fast.",
+    voiceTone: "Voice comfort",
+    calmTone: "Calm",
+    standardTone: "Standard",
+    energeticTone: "Energetic",
     demoCodeHint: "Demo access code: 2486",
     voiceOff: "Voice guidance is off. Button actions will still work.",
     recognized: (phrase: string) => `Heard: "${phrase}".`,
@@ -246,7 +257,17 @@ const languageCopy = {
     voiceChoice: "आवाज की सहायता",
     voiceChoiceOn: "आवाज की सहायता चालू रखें",
     voiceChoiceOff: "सिर्फ बटन इस्तेमाल करें",
-    startApp: "निश्चिंत खोलें",
+    startApp: "आगे बढ़ें",
+    skipSetup: "सीधे डेमो खोलें",
+    progressStep: "चरण 1 / 3",
+    demoMode: "डेमो मोड",
+    privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
+    nextPreview: "आगे: वरिष्ठ स्क्रीन खुलेगी, सुरक्षित चेक-इन या आपातकालीन डेमो आजमा सकते हैं।",
+    purposePreview: "निश्चिंत वरिष्ठों को शांत रहने, स्थान समझने, और परिवार तक जल्दी पहुंचने में मदद करता है।",
+    voiceTone: "आवाज का तरीका",
+    calmTone: "शांत",
+    standardTone: "सामान्य",
+    energeticTone: "ऊर्जावान",
     demoCodeHint: "डेमो एक्सेस कोड: 2486",
     voiceOff: "आवाज की सहायता बंद है। बटन फिर भी काम करेंगे।",
     recognized: (phrase: string) => `सुना गया: "${phrase}"।`,
@@ -490,6 +511,7 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("en");
   const [voiceAssist, setVoiceAssist] = useState(true);
   const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
+  const [voiceTone, setVoiceTone] = useState<VoiceTone>("calm");
   const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
@@ -602,7 +624,8 @@ export default function Home() {
 
     utterance.lang = matchingVoice?.lang ?? locale;
     if (matchingVoice) utterance.voice = matchingVoice;
-    utterance.rate = spokenLanguage === "hi" ? 0.78 : 0.82;
+    const toneRate = voiceTone === "calm" ? 0.76 : voiceTone === "energetic" ? 0.94 : 0.84;
+    utterance.rate = spokenLanguage === "hi" ? Math.max(0.72, toneRate - 0.04) : toneRate;
     utterance.pitch = 0.96;
     utterance.volume = 1;
     utterance.onstart = () => {
@@ -667,6 +690,7 @@ export default function Home() {
     window.localStorage.setItem("nischint-has-entered", "true");
     window.localStorage.setItem("nischint-voice-assist", String(onboardingVoiceAssist));
     window.localStorage.setItem("nischint-language", language);
+    window.localStorage.setItem("nischint-voice-tone", voiceTone);
     setHasEntered(true);
 
     if (onboardingVoiceAssist) {
@@ -1069,6 +1093,7 @@ export default function Home() {
     const savedLanguage = window.localStorage.getItem("nischint-language");
     const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
     const savedHasEntered = window.localStorage.getItem("nischint-has-entered");
+    const savedVoiceTone = window.localStorage.getItem("nischint-voice-tone");
     const tick = window.setInterval(() => setDemoTime(new Date()), 30000);
 
     const restorePreferences = window.setTimeout(() => {
@@ -1081,6 +1106,9 @@ export default function Home() {
         setOnboardingVoiceAssist(false);
       }
       if (savedVoiceAssist === "true") setOnboardingVoiceAssist(true);
+      if (savedVoiceTone === "calm" || savedVoiceTone === "standard" || savedVoiceTone === "energetic") {
+        setVoiceTone(savedVoiceTone);
+      }
       if (savedHasEntered === "true") setHasEntered(true);
     }, 0);
 
@@ -1121,6 +1149,11 @@ export default function Home() {
         lang={language === "hi" ? "hi" : "en"}
       >
         <section className="welcomeGate" aria-labelledby="welcome-title">
+          <div className="welcomeMeta">
+            <span>{copy.progressStep}</span>
+            <strong>{copy.demoMode}</strong>
+          </div>
+
           <div className="welcomeBrand">
             <span aria-hidden="true">नि</span>
             <div>
@@ -1133,6 +1166,20 @@ export default function Home() {
             <p className="scriptName" aria-hidden="true">निश्चिंत</p>
             <h2>{copy.welcomeTitle}</h2>
             <p>{copy.welcomeCopy}</p>
+            <div className="welcomePurpose" aria-label="What Nischint does">
+              <span className="careIllustration" aria-hidden="true">
+                <i />
+              </span>
+              <div>
+                <strong>{copy.purposePreview}</strong>
+                <p>{copy.nextPreview}</p>
+              </div>
+            </div>
+            <div className="setupProgress" aria-label={copy.progressStep}>
+              <span className="active">1</span>
+              <span>2</span>
+              <span>3</span>
+            </div>
           </div>
 
           <div className="welcomeForm" aria-label="Nischint start setup">
@@ -1201,9 +1248,35 @@ export default function Home() {
               </button>
             </div>
 
-            <button className="primaryButton" type="button" onClick={enterNischint}>
-              {copy.startApp}
-            </button>
+            <div className="welcomeVoiceGroup comfortGroup" aria-label={copy.voiceTone}>
+              <span>{copy.voiceTone}</span>
+              {[
+                { id: "calm", label: copy.calmTone },
+                { id: "standard", label: copy.standardTone },
+                { id: "energetic", label: copy.energeticTone },
+              ].map((tone) => (
+                <button
+                  className={voiceTone === tone.id ? "active" : ""}
+                  key={tone.id}
+                  type="button"
+                  aria-pressed={voiceTone === tone.id}
+                  onClick={() => setVoiceTone(tone.id as VoiceTone)}
+                >
+                  {tone.label}
+                </button>
+              ))}
+            </div>
+
+            <p className="privacyPromise">{copy.privacyPromise}</p>
+
+            <div className="welcomeActions">
+              <button className="primaryButton" type="button" onClick={enterNischint}>
+                {copy.startApp}
+              </button>
+              <button className="softButton" type="button" onClick={enterNischint}>
+                {copy.skipSetup}
+              </button>
+            </div>
           </div>
         </section>
       </main>

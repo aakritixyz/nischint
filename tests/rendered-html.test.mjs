@@ -13,6 +13,14 @@ test("Nischint page contains the launch-ready product experience", async () => {
 
   assert.match(page, /Nischint/);
   assert.match(page, /Set up gentle support before entering/);
+  assert.match(page, /Step 1 of 3/);
+  assert.match(page, /Demo mode/);
+  assert.match(page, /Skip to quick demo/);
+  assert.match(page, /Voice comfort/);
+  assert.match(page, /Calm/);
+  assert.match(page, /Energetic/);
+  assert.match(page, /Consent stays visible/);
+  assert.match(page, /Next: open the Senior tab/);
   assert.match(page, /tabRail/);
   assert.match(page, /role="tab"/);
   assert.match(page, /Main safety screen/);
@@ -66,6 +74,10 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /heroWordmark/);
   assert.match(styles, /assistPanel/);
   assert.match(styles, /welcomeGate/);
+  assert.match(styles, /welcomeMeta/);
+  assert.match(styles, /careIllustration/);
+  assert.match(styles, /setupProgress/);
+  assert.match(styles, /comfortGroup/);
   assert.match(styles, /welcomeVoiceGroup/);
   assert.match(styles, /stickyEmergency/);
   assert.match(styles, /tabPanel\[hidden\]/);
