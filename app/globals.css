@@ -2585,27 +2585,27 @@ textarea {
 .welcomeShell {
   display: grid;
   min-height: 100vh;
-  align-items: center;
+  align-items: start;
   background:
     linear-gradient(90deg, rgba(174, 88, 115, 0.05) 1px, transparent 1px),
     linear-gradient(0deg, rgba(74, 117, 107, 0.05) 1px, transparent 1px),
     linear-gradient(135deg, rgba(231, 240, 235, 0.68), rgba(246, 223, 228, 0.38) 48%, rgba(255, 250, 251, 0.9));
   background-size: 34px 34px, 34px 34px, auto;
-  padding-top: max(18px, env(safe-area-inset-top));
+  padding-top: max(12px, env(safe-area-inset-top));
   padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
 .welcomeGate {
   display: grid;
-  gap: 18px;
-  width: min(100%, 760px);
+  gap: 12px;
+  width: min(100%, 980px);
   margin: 0 auto;
   border: 1px solid rgba(63, 55, 62, 0.12);
   border-radius: 28px;
   background: rgba(255, 250, 251, 0.94);
   backdrop-filter: blur(14px);
   box-shadow: 0 22px 60px rgba(63, 55, 62, 0.13);
-  padding: clamp(18px, 5vw, 34px);
+  padding: clamp(14px, 3vw, 24px);
 }
 
 .welcomeMeta {
@@ -2639,16 +2639,16 @@ textarea {
 .welcomeBrand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .welcomeBrand > span {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   background: #ead8df;
   color: var(--rose-dark);
   font-family: "Kohinoor Devanagari", "Noto Sans Devanagari", Georgia, serif;
@@ -2657,30 +2657,34 @@ textarea {
 }
 
 .welcomeBrand .heroWordmark {
-  font-size: clamp(2.8rem, 11vw, 4.7rem);
+  font-size: clamp(2.5rem, 8vw, 4rem);
 }
 
 .welcomeCopy {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 
 .welcomeCopy .scriptName {
-  font-size: clamp(2rem, 10vw, 3rem);
+  font-size: clamp(1.85rem, 7vw, 2.75rem);
 }
 
 .welcomeCopy h2 {
   color: var(--ink);
   font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
-  font-size: clamp(1.65rem, 7vw, 2.45rem);
+  font-size: clamp(1.5rem, 5vw, 2.15rem);
   font-weight: 650;
   line-height: 1.04;
+}
+
+.welcomeShell h2 {
+  text-wrap: balance;
 }
 
 .welcomeCopy p:not(.scriptName) {
   max-width: 620px;
   color: #675d65;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 450;
   line-height: 1.5;
 }
@@ -2692,12 +2696,12 @@ textarea {
   border: 1px solid rgba(63, 55, 62, 0.1);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.66);
-  padding: 12px;
+  padding: 10px;
 }
 
 .welcomePurpose strong {
   color: var(--ink);
-  font-size: 0.96rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.28;
 }
@@ -2705,7 +2709,7 @@ textarea {
 .welcomePurpose p {
   margin-top: 5px;
   color: #675d65;
-  font-size: 0.84rem;
+  font-size: 0.78rem;
   font-weight: 450;
   line-height: 1.35;
 }
@@ -2715,9 +2719,9 @@ textarea {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 22px;
+  width: 50px;
+  height: 50px;
+  border-radius: 18px;
   background: #e7f0eb;
   color: #226747;
 }
@@ -2756,7 +2760,7 @@ textarea {
 .setupProgress {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  gap: 7px;
 }
 
 .setupProgress span {
@@ -2775,32 +2779,32 @@ textarea {
 
 .welcomeForm {
   display: grid;
-  gap: 12px;
+  gap: 9px;
 }
 
 .loginCard {
   border: 1px solid rgba(63, 55, 62, 0.12);
-  border-radius: 24px;
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.78);
   box-shadow: 0 18px 40px rgba(63, 55, 62, 0.1);
-  padding: 14px;
+  padding: 12px;
 }
 
 .loginHeader {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
   border-bottom: 1px solid rgba(63, 55, 62, 0.1);
-  padding-bottom: 12px;
+  padding-bottom: 9px;
 }
 
 .loginHeader > span {
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 15px;
+  width: 36px;
+  height: 36px;
+  border-radius: 13px;
   background: #ead8df;
   color: var(--rose-dark);
   font-weight: 850;
@@ -2809,7 +2813,7 @@ textarea {
 .loginHeader h2 {
   color: var(--ink);
   font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
-  font-size: 1.45rem;
+  font-size: 1.22rem;
   font-weight: 700;
   line-height: 1.05;
 }
@@ -2818,7 +2822,7 @@ textarea {
 .returningHint {
   margin-top: 4px;
   color: #675d65;
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   font-weight: 500;
   line-height: 1.35;
 }
@@ -2837,18 +2841,18 @@ textarea {
 
 .welcomeForm small {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 500;
 }
 
 .welcomeChoice,
 .welcomeVoiceGroup {
   display: grid;
-  gap: 8px;
+  gap: 7px;
   border: 1px solid rgba(63, 55, 62, 0.11);
-  border-radius: 18px;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.64);
-  padding: 12px;
+  padding: 10px;
 }
 
 .welcomeChoice {
@@ -2862,7 +2866,7 @@ textarea {
 .welcomeChoice > span,
 .welcomeVoiceGroup > span {
   color: var(--ink);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 650;
 }
 
@@ -2871,21 +2875,21 @@ textarea {
 }
 
 .welcomeVoiceGroup button {
-  min-height: 50px;
+  min-height: 44px;
   border: 1px solid rgba(63, 55, 62, 0.12);
-  border-radius: 14px;
+  border-radius: 13px;
   background: #fffafb;
   color: var(--ink);
   cursor: pointer;
   font-weight: 650;
   text-align: left;
-  padding: 11px 13px;
+  padding: 9px 10px;
 }
 
 .welcomeChoice .languageSegment button {
-  min-height: 48px;
+  min-height: 42px;
   border-radius: 11px;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
 }
 
 .welcomeVoiceGroup button.active {
@@ -2895,28 +2899,32 @@ textarea {
 }
 
 .comfortGroup {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .comfortGroup > span {
-  grid-column: 1 / -1;
+  flex: 0 0 100%;
 }
 
 .comfortGroup button {
-  min-height: 46px;
+  flex: 1 1 86px;
+  min-width: 0;
+  min-height: 42px;
   text-align: center;
-  padding: 9px 8px;
+  overflow-wrap: anywhere;
+  padding: 8px 6px;
 }
 
 .privacyPromise {
   border: 1px solid rgba(74, 117, 107, 0.16);
-  border-radius: 16px;
+  border-radius: 14px;
   background: #e7f0eb;
   color: #315c49;
-  font-size: 0.82rem;
+  font-size: 0.74rem;
   font-weight: 600;
   line-height: 1.38;
-  padding: 11px 12px;
+  padding: 9px 10px;
 }
 
 .welcomeActions {
@@ -2927,7 +2935,7 @@ textarea {
 
 .welcomeActions .primaryButton,
 .welcomeActions .softButton {
-  min-height: 58px;
+  min-height: 50px;
 }
 
 .returningHint {
@@ -2937,8 +2945,8 @@ textarea {
 
 @media (min-width: 700px) {
   .welcomeGate {
-    grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.7fr);
-    align-items: center;
+    grid-template-columns: minmax(0, 0.92fr) minmax(340px, 0.7fr);
+    align-items: start;
   }
 
   .welcomeMeta {
@@ -2953,6 +2961,21 @@ textarea {
   .welcomeForm {
     grid-column: 2;
     grid-row: 2 / span 2;
+  }
+}
+
+@media (min-width: 900px) {
+  .welcomeShell {
+    padding-top: max(10px, env(safe-area-inset-top));
+  }
+
+  .welcomeCopy h2 {
+    max-width: 470px;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+  }
+
+  .welcomeCopy p:not(.scriptName) {
+    max-width: 520px;
   }
 }
 
