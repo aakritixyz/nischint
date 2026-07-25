@@ -399,6 +399,62 @@ const productionTiles = [
   },
 ];
 
+const howItWorks = [
+  {
+    step: "1",
+    title: "Set preferences",
+    detail: "Choose language, voice support, caregiver contact, and consent.",
+  },
+  {
+    step: "2",
+    title: "Use one clear action",
+    detail: "Press lost, okay, help, or medicine with large senior-friendly buttons.",
+  },
+  {
+    step: "3",
+    title: "Family gets context",
+    detail: "Caregivers see location status, home address, escalation, and notes.",
+  },
+];
+
+const escalationSteps = [
+  { time: "0 min", title: "Primary alert", detail: "Asha receives SMS, location, and emergency card." },
+  { time: "10 min", title: "Backup contact", detail: "Ravi is notified if the alert is still unresolved." },
+  { time: "20 min", title: "Care handoff", detail: "Doctor or neighbor handoff appears for the family." },
+];
+
+const trustSignals = [
+  { label: "Consent-led", detail: "Location and emergency info are separate permissions." },
+  { label: "Offline card", detail: "Key safety details remain visible during poor network." },
+  { label: "Family use case", detail: "Built around check-ins, wandering risk, and medicine routines." },
+];
+
+const familyUseCases = [
+  {
+    quote: "My father can press one button instead of explaining where he is.",
+    family: "Caregiver for a senior living independently",
+  },
+  {
+    quote: "The medicine check-in makes the daily call calmer for everyone.",
+    family: "Daughter coordinating morning care",
+  },
+];
+
+const faqItems = [
+  {
+    question: "Is this an emergency service?",
+    answer: "No. It is a care-support prototype and should be paired with real emergency plans.",
+  },
+  {
+    question: "Does voice always work?",
+    answer: "Read-aloud works in most modern browsers. Voice commands depend on browser support.",
+  },
+  {
+    question: "Can families control privacy?",
+    answer: "The demo separates location, emergency-card consent, export, and delete requests.",
+  },
+];
+
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
@@ -407,8 +463,11 @@ export default function Home() {
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
-  const [locationStatus, setLocationStatus] = useState("Location not shared yet");
-  const [notificationStatus, setNotificationStatus] = useState("Alerts are simulated");
+  const [locationStatus, setLocationStatus] = useState("Demo mode: GPS has not been shared yet");
+  const [notificationStatus, setNotificationStatus] = useState("Demo mode: alerts are simulated until provider keys are added");
+  const [actionBusy, setActionBusy] = useState<string | null>(null);
+  const [demoTime, setDemoTime] = useState(new Date());
+  const [screenAnnouncement, setScreenAnnouncement] = useState("Nischint is ready");
   const [noteDraft, setNoteDraft] = useState("");
   const [reminderTitle, setReminderTitle] = useState("Evening walk");
   const [reminderTime, setReminderTime] = useState("17:30");
@@ -427,6 +486,22 @@ export default function Home() {
   const wakeLockRef = useRef<{ release: () => Promise<void> } | null>(null);
   const copy = languageCopy[language];
   const activeGuidance = language === "hi" ? hindiGuidance : guidance;
+  const formattedDemoTime = demoTime.toLocaleTimeString("en-IN", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  const networkLabel =
+    careState.location.networkStatus === "offline"
+      ? "Offline mode"
+      : careState.location.networkStatus === "weak"
+        ? "Weak network"
+        : "Online";
+  const networkClass =
+    careState.location.networkStatus === "offline"
+      ? "offline"
+      : careState.location.networkStatus === "weak"
+        ? "caution"
+        : "safe";
 
   const status = useMemo(() => {
     if (careState.lostMode) {
@@ -434,6 +509,7 @@ export default function Home() {
         label: copy.statusAlert,
         detail: copy.statusAlertDetail(careState.contacts[0]?.name ?? "Family"),
         className: "statusAlert",
+        icon: "!",
       };
     }
 
@@ -442,6 +518,7 @@ export default function Home() {
         label: copy.statusHelp,
         detail: copy.statusHelpDetail,
         className: "statusWatch",
+        icon: "?",
       };
     }
 
@@ -450,6 +527,7 @@ export default function Home() {
         label: copy.statusMedicine,
         detail: copy.statusMedicineDetail,
         className: "statusGood",
+        icon: "✓",
       };
     }
 
@@ -457,6 +535,7 @@ export default function Home() {
       label: copy.statusOkay,
       detail: copy.statusOkayDetail,
       className: "statusGood",
+      icon: "✓",
     };
   }, [careState, copy]);
 
@@ -641,15 +720,26 @@ export default function Home() {
   }
 
   async function activateLostMode() {
+    setActionBusy("lost");
+    setScreenAnnouncement("Emergency demo started. Caregiver alert is active.");
     navigator.vibrate?.([180, 90, 180]);
     void keepScreenAwake();
     if (voiceAssist) speakText(copy.lostVoice);
     await syncLostMode(true);
     if (locationConsent) void shareLocation();
     void notifyCaregiver("sms");
+    setActionBusy(null);
   }
 
   async function completeCheckIn(checkIn: CheckIn) {
+    setActionBusy(checkIn);
+    setScreenAnnouncement(
+      checkIn === "help"
+        ? "Help request sent to caregiver."
+        : checkIn === "medicine"
+          ? "Medicine check-in recorded."
+          : "Safe check-in recorded."
+    );
     navigator.vibrate?.(80);
     if (voiceAssist) {
       const spokenMessage =
@@ -666,6 +756,46 @@ export default function Home() {
       void wakeLockRef.current?.release();
       wakeLockRef.current = null;
     }
+    setActionBusy(null);
+  }
+
+  async function simulateEmergencyFlow() {
+    setNotificationStatus("Demo emergency: primary caregiver notified, backup timer started");
+    setLocationStatus("Demo emergency: using saved safe-zone location until GPS is allowed");
+    await activateLostMode();
+  }
+
+  async function resetDemo() {
+    stopSpeaking();
+    setActionBusy("reset");
+    setCareState(fallbackState);
+    setGuidance(defaultGuidance);
+    setLocationStatus("Demo mode: GPS has not been shared yet");
+    setNotificationStatus("Demo mode: alerts are simulated until provider keys are added");
+    setPrivacyStatus("No privacy request queued");
+    setScreenAnnouncement("Demo reset. Nischint is ready.");
+    setNoteDraft("");
+    setReminderTitle("Evening walk");
+    setReminderTime("17:30");
+    setActionBusy(null);
+  }
+
+  function toggleOfflineDemo() {
+    setCareState((state) => {
+      const nextNetwork = state.location.networkStatus === "offline" ? "online" : "offline";
+      setScreenAnnouncement(
+        nextNetwork === "offline"
+          ? "Offline mode demo is on. Emergency card remains visible."
+          : "Online mode restored."
+      );
+      return {
+        ...state,
+        location: {
+          ...state.location,
+          networkStatus: nextNetwork,
+        },
+      };
+    });
   }
 
   function listenForCommand() {
@@ -767,29 +897,36 @@ export default function Home() {
   }
 
   async function saveOnboarding() {
+    setActionBusy("profile");
     try {
       const payload = await callApi("/api/nischint/onboarding", {
         patient: careState.patient,
         contacts: careState.contacts,
       });
       if (payload.state) applyState(payload.state);
+      setScreenAnnouncement("Care profile saved.");
     } catch {
       setBackendReady(false);
+    } finally {
+      setActionBusy(null);
     }
   }
 
   async function shareLocation() {
     if (!locationConsent) {
       setLocationStatus("Location consent is off");
+      setScreenAnnouncement("Location consent is off.");
       return;
     }
 
     if (!("geolocation" in navigator)) {
       setLocationStatus("GPS is unavailable on this device");
+      setScreenAnnouncement("GPS is unavailable on this device.");
       return;
     }
 
     setLocationStatus("Requesting GPS permission...");
+    setActionBusy("location");
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const shouldSetSafeZone =
@@ -803,6 +940,7 @@ export default function Home() {
           networkStatus: navigator.onLine ? "online" : "offline",
         };
         setLocationStatus("Live location shared with caregiver");
+        setScreenAnnouncement("Live location shared with caregiver.");
         if (shouldSetSafeZone) {
           setCareState((state) => ({
             ...state,
@@ -818,14 +956,21 @@ export default function Home() {
           if (payload.state) applyState(payload.state);
         } catch {
           setBackendReady(false);
+        } finally {
+          setActionBusy(null);
         }
       },
-      () => setLocationStatus("Location permission was not granted"),
+      () => {
+        setLocationStatus("GPS permission was not granted. Demo safe-zone view is still available.");
+        setScreenAnnouncement("GPS permission was not granted.");
+        setActionBusy(null);
+      },
       { enableHighAccuracy: true, timeout: 8000 }
     );
   }
 
   async function notifyCaregiver(channel: "sms" | "whatsapp" | "push") {
+    setActionBusy(channel);
     if (channel === "push" && "Notification" in window) {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
@@ -839,8 +984,11 @@ export default function Home() {
       const payload = await callApi("/api/nischint/notify", { channel });
       if (payload.state) applyState(payload.state);
       setNotificationStatus(payload.delivery ?? `${channel} alert queued`);
+      setScreenAnnouncement(`${channel} caregiver alert queued.`);
     } catch {
       setBackendReady(false);
+    } finally {
+      setActionBusy(null);
     }
   }
 
@@ -855,6 +1003,7 @@ export default function Home() {
         author: "Asha",
       });
       if (payload.state) applyState(payload.state);
+      setScreenAnnouncement("Caregiver note added.");
     } catch {
       setBackendReady(false);
     }
@@ -869,6 +1018,7 @@ export default function Home() {
         escalationMinutes: 15,
       });
       if (payload.state) applyState(payload.state);
+      setScreenAnnouncement("Reminder added.");
     } catch {
       setBackendReady(false);
     }
@@ -882,6 +1032,7 @@ export default function Home() {
         role: "Family caregiver",
       });
       if (payload.state) applyState(payload.state);
+      setScreenAnnouncement("Caregiver invite created.");
     } catch {
       setBackendReady(false);
     }
@@ -896,6 +1047,7 @@ export default function Home() {
           ? "Data export queued"
           : "Deletion request queued for caregiver review"
       );
+      setScreenAnnouncement(type === "export" ? "Data export queued." : "Delete request queued.");
     } catch {
       setBackendReady(false);
     }
@@ -906,6 +1058,7 @@ export default function Home() {
     const savedLanguage = window.localStorage.getItem("nischint-language");
     const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
     const savedHasEntered = window.localStorage.getItem("nischint-has-entered");
+    const tick = window.setInterval(() => setDemoTime(new Date()), 30000);
 
     const restorePreferences = window.setTimeout(() => {
       if (savedLanguage === "hi" || savedLanguage === "en") {
@@ -939,6 +1092,7 @@ export default function Home() {
     return () => {
       mounted = false;
       window.clearTimeout(restorePreferences);
+      window.clearInterval(tick);
       window.speechSynthesis?.cancel();
       recognitionRef.current?.stop();
       void wakeLockRef.current?.release();
@@ -1059,8 +1213,21 @@ export default function Home() {
           <a href="#care-services">{copy.navCare}</a>
           <a href="#live-demo">{copy.navDemo}</a>
           <a href="#privacy">{copy.navPrivacy}</a>
+          <a href="#help">Help</a>
         </nav>
       </header>
+
+      <p className="srOnly" role="status" aria-live="assertive">
+        {screenAnnouncement}
+      </p>
+
+      <button
+        className={`stickyEmergency ${careState.lostMode ? "active" : ""}`}
+        type="button"
+        onClick={() => void simulateEmergencyFlow()}
+      >
+        Emergency
+      </button>
 
       <section className="hero" aria-labelledby="nischint-title">
         <div className="heroCopy">
@@ -1073,11 +1240,11 @@ export default function Home() {
           <p>{copy.heroDescription}</p>
           <div className="heroActions" aria-label="Primary demo actions">
             <button
-              className="primaryButton"
+              className="primaryButton emergencyPrimary"
               type="button"
               onClick={() => void activateLostMode()}
             >
-              {copy.lost}
+              {actionBusy === "lost" ? "Alerting family..." : copy.lost}
             </button>
             <button
               className="softButton"
@@ -1091,6 +1258,14 @@ export default function Home() {
             <span><strong>24/7</strong> {copy.ready}</span>
             <span><strong>PIN</strong> {copy.guarded}</span>
             <span><strong>{language === "hi" ? "सहमति" : "Consent"}</strong> {copy.consentFirst}</span>
+          </div>
+
+          <div className="statusLegend" aria-label="Live demo status">
+            <span className="stateChip safe"><i />Safe</span>
+            <span className="stateChip caution"><i />Caution</span>
+            <span className="stateChip danger"><i />Emergency</span>
+            <span className={`stateChip ${networkClass}`}><i />{networkLabel}</span>
+            <span className="stateChip neutral"><i />{formattedDemoTime}</span>
           </div>
 
           <div className="signalRail" aria-label="Production signal flow">
@@ -1123,6 +1298,7 @@ export default function Home() {
               {backendReady ? copy.synced : copy.offline}
             </span>
             <strong>{careState.lostMode ? copy.helpMode : copy.today}</strong>
+            <span className={`networkPill ${networkClass}`}>{networkLabel}</span>
           </div>
 
           <div className="assistPanel" aria-label={copy.languageLabel}>
@@ -1163,16 +1339,17 @@ export default function Home() {
               </button>
             </div>
             <p className="voiceStatus" aria-live="polite">{voiceStatus}</p>
+            <p className="voiceHint">{copy.commandHelp}</p>
           </div>
 
           <div className={`statusBanner ${status.className}`}>
-            <span>{status.label}</span>
+            <span><i aria-hidden="true">{status.icon}</i>{status.label}</span>
             <p>{status.detail}</p>
           </div>
 
           <div className="orientationCard">
             <span className="smallLabel">{copy.rightNow}</span>
-            <h2>{copy.nowTitle}</h2>
+            <h2>{language === "hi" ? copy.nowTitle : `Today, ${formattedDemoTime}`}</h2>
             <p>
               {copy.orientation(
                 careState.patient.name,
@@ -1187,7 +1364,7 @@ export default function Home() {
             type="button"
             onClick={() => void activateLostMode()}
           >
-            <span>{copy.lost}</span>
+            <span>{actionBusy === "lost" ? "Alerting..." : copy.lost}</span>
             <small>{copy.lostSubtitle}</small>
           </button>
 
@@ -1236,6 +1413,22 @@ export default function Home() {
         <div className="serviceCloud" aria-label="Available care features">
           {serviceHighlights.map((service) => (
             <span className="serviceChip" key={service}>{service}</span>
+          ))}
+        </div>
+      </section>
+
+      <section className="howBand" aria-label="How Nischint works">
+        <div className="sectionHeading">
+          <span>How it works</span>
+          <h2>Three calm steps for a stressful moment</h2>
+        </div>
+        <div className="howGrid">
+          {howItWorks.map((item) => (
+            <article key={item.step}>
+              <strong>{item.step}</strong>
+              <h3>{item.title}</h3>
+              <p>{item.detail}</p>
+            </article>
           ))}
         </div>
       </section>
@@ -1294,8 +1487,13 @@ export default function Home() {
               }
             />
           </label>
+          <div className="profilePreview" aria-label="Saved profile preview">
+            <span>Saved profile</span>
+            <p><strong>{careState.patient.name}</strong> · {careState.patient.preferredLanguage}</p>
+            <p>{careState.patient.homeAddress}</p>
+          </div>
           <button className="softButton" type="button" onClick={() => void saveOnboarding()}>
-            Save setup
+            {actionBusy === "profile" ? "Saving..." : "Save setup"}
           </button>
         </article>
 
@@ -1333,17 +1531,28 @@ export default function Home() {
           </div>
           <p className="panelCopy">{locationStatus}</p>
           <button className="primaryButton" type="button" onClick={() => void shareLocation()}>
-            Share live location
+            {actionBusy === "location" ? "Requesting GPS..." : "Share live location"}
           </button>
+          <div className="demoControlRow">
+            <button className="dangerButton" type="button" onClick={() => void simulateEmergencyFlow()}>
+              Simulate emergency
+            </button>
+            <button className="softButton compact" type="button" onClick={toggleOfflineDemo}>
+              {careState.location.networkStatus === "offline" ? "Restore online" : "Demo offline"}
+            </button>
+            <button className="softButton compact" type="button" onClick={() => void resetDemo()}>
+              {actionBusy === "reset" ? "Resetting..." : "Reset demo"}
+            </button>
+          </div>
           <div className="toggleRow">
             <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("sms")}>
-              SMS
+              {actionBusy === "sms" ? "Sending..." : "SMS"}
             </button>
             <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("whatsapp")}>
-              WhatsApp
+              {actionBusy === "whatsapp" ? "Sending..." : "WhatsApp"}
             </button>
             <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("push")}>
-              Push
+              {actionBusy === "push" ? "Sending..." : "Push"}
             </button>
           </div>
           <p className="panelCopy">{notificationStatus}</p>
@@ -1423,6 +1632,28 @@ export default function Home() {
             </button>
           </div>
 
+          <div className="timelineCard" aria-label="Caregiver escalation timeline">
+            <span className="smallLabel">Escalation timeline</span>
+            {escalationSteps.map((step, index) => (
+              <div
+                className={`timelineItem ${
+                  careState.lostMode && index === 0
+                    ? "active"
+                    : careState.lostMode && index === 1
+                      ? "waiting"
+                      : ""
+                }`}
+                key={step.time}
+              >
+                <strong>{step.time}</strong>
+                <div>
+                  <h3>{step.title}</h3>
+                  <p>{step.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="mapCard" aria-label="Safe zone map demo">
             <div className="mapSurface">
               <span className="homeDot">Home</span>
@@ -1481,7 +1712,65 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="trustBand" aria-label="Trust and family use cases">
+        <div className="sectionHeading">
+          <span>Trust signals</span>
+          <h2>Designed around consent, clarity, and family care</h2>
+        </div>
+        <div className="trustGrid">
+          {trustSignals.map((item) => (
+            <article key={item.label}>
+              <span className="badgeMark" aria-hidden="true">नि</span>
+              <strong>{item.label}</strong>
+              <p>{item.detail}</p>
+            </article>
+          ))}
+        </div>
+        <div className="useCaseGrid">
+          {familyUseCases.map((item) => (
+            <article key={item.quote}>
+              <p>&ldquo;{item.quote}&rdquo;</p>
+              <span>{item.family}</span>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="toolGrid" aria-label="Caregiver history and privacy">
+        <article className="caregiverPanel settingsPanel">
+          <div className="sectionHeading">
+            <span>Settings</span>
+            <h2>Preferences</h2>
+          </div>
+          <label className="switchRow">
+            <input
+              checked={voiceAssist}
+              type="checkbox"
+              onChange={(event) => setVoicePreference(event.target.checked)}
+            />
+            <span>Voice guidance</span>
+          </label>
+          <label className="switchRow">
+            <input
+              checked={largeText}
+              type="checkbox"
+              onChange={(event) => setLargeText(event.target.checked)}
+            />
+            <span>Large text</span>
+          </label>
+          <label className="switchRow">
+            <input
+              checked={highContrast}
+              type="checkbox"
+              onChange={(event) => setHighContrast(event.target.checked)}
+            />
+            <span>High contrast</span>
+          </label>
+          <button className="softButton" type="button" onClick={() => setHasEntered(false)}>
+            Reopen start setup
+          </button>
+        </article>
+
         <article className="caregiverPanel">
           <div className="sectionHeading">
             <span>Reminders</span>
@@ -1629,6 +1918,12 @@ export default function Home() {
               onChange={(event) => setCaregiverAccessCode(event.target.value)}
             />
           </label>
+          <div className="consentFlow">
+            <span className={locationConsent ? "complete" : ""}>Ask</span>
+            <span className={locationConsent ? "complete" : ""}>Allow</span>
+            <span className={careState.lostMode ? "active" : ""}>Share</span>
+            <span className={privacyStatus.includes("queued") ? "active" : ""}>Audit</span>
+          </div>
           <div className="escalationStack">
             <p><strong>0 min</strong> Primary caregiver alert</p>
             <p><strong>10 min</strong> Backup family contact</p>
@@ -1645,6 +1940,21 @@ export default function Home() {
           <p className="panelCopy">
             {privacyStatus}. Location: {locationConsent ? "allowed" : "off"}. Emergency card: {emergencyConsent ? "visible" : "hidden"}.
           </p>
+        </article>
+
+        <article id="help" className="caregiverPanel faqPanel">
+          <div className="sectionHeading">
+            <span>Help</span>
+            <h2>Family FAQ</h2>
+          </div>
+          <div className="faqList">
+            {faqItems.map((item) => (
+              <details key={item.question}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
         </article>
       </section>
     </main>

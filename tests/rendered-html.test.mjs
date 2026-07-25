@@ -18,6 +18,15 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Use buttons only/);
   assert.match(page, /Elder safety & family care/);
   assert.match(page, /I feel lost/);
+  assert.match(page, /Emergency/);
+  assert.match(page, /Simulate emergency/);
+  assert.match(page, /Reset demo/);
+  assert.match(page, /Offline mode/);
+  assert.match(page, /Escalation timeline/);
+  assert.match(page, /Three calm steps/);
+  assert.match(page, /Family FAQ/);
+  assert.match(page, /Preferences/);
+  assert.match(page, /screenAnnouncement/);
   assert.match(page, /Share live location/);
   assert.match(page, /Consent-first design/);
   assert.match(page, /Demo-ready, not medical advice/);
@@ -55,5 +64,8 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /assistPanel/);
   assert.match(styles, /welcomeGate/);
   assert.match(styles, /welcomeVoiceGroup/);
+  assert.match(styles, /stickyEmergency/);
+  assert.match(styles, /timelineCard/);
+  assert.match(styles, /content-visibility/);
   assert.match(serviceWorker, /nischint-offline-v3/);
 });
