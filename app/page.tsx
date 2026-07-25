@@ -178,6 +178,9 @@ const languageCopy = {
     skipSetup: "Skip to quick demo",
     progressStep: "Step 1 of 3",
     demoMode: "Demo mode",
+    loginTitle: "Family login",
+    loginSubtitle: "Use the demo code to enter the care app.",
+    returningUser: "Already set up?",
     privacyPromise: "Consent stays visible. Location is shared only after permission.",
     nextPreview: "Next: open the Senior tab, try the safe check-in, or simulate an emergency.",
     purposePreview: "Nischint helps a senior stay calm, see where they are, and reach family fast.",
@@ -261,6 +264,9 @@ const languageCopy = {
     skipSetup: "सीधे डेमो खोलें",
     progressStep: "चरण 1 / 3",
     demoMode: "डेमो मोड",
+    loginTitle: "परिवार लॉगिन",
+    loginSubtitle: "केयर ऐप खोलने के लिए डेमो कोड इस्तेमाल करें।",
+    returningUser: "पहले से सेटअप है?",
     privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
     nextPreview: "आगे: वरिष्ठ स्क्रीन खुलेगी, सुरक्षित चेक-इन या आपातकालीन डेमो आजमा सकते हैं।",
     purposePreview: "निश्चिंत वरिष्ठों को शांत रहने, स्थान समझने, और परिवार तक जल्दी पहुंचने में मदद करता है।",
@@ -1182,7 +1188,15 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="welcomeForm" aria-label="Nischint start setup">
+          <div className="welcomeForm loginCard" aria-label="Nischint family login">
+            <div className="loginHeader">
+              <span aria-hidden="true">नि</span>
+              <div>
+                <h2>{copy.loginTitle}</h2>
+                <p>{copy.loginSubtitle}</p>
+              </div>
+            </div>
+
             <label>
               {copy.personName}
               <input
@@ -1200,6 +1214,7 @@ export default function Home() {
               {copy.accessCode}
               <input
                 inputMode="numeric"
+                type="password"
                 value={caregiverAccessCode}
                 onChange={(event) => setCaregiverAccessCode(event.target.value)}
               />
@@ -1277,6 +1292,8 @@ export default function Home() {
                 {copy.skipSetup}
               </button>
             </div>
+
+            <p className="returningHint">{copy.returningUser} {copy.skipSetup}</p>
           </div>
         </section>
       </main>

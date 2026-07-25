@@ -2778,6 +2778,51 @@ textarea {
   gap: 12px;
 }
 
+.loginCard {
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 40px rgba(63, 55, 62, 0.1);
+  padding: 14px;
+}
+
+.loginHeader {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid rgba(63, 55, 62, 0.1);
+  padding-bottom: 12px;
+}
+
+.loginHeader > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  background: #ead8df;
+  color: var(--rose-dark);
+  font-weight: 850;
+}
+
+.loginHeader h2 {
+  color: var(--ink);
+  font-family: var(--font-display), "Iowan Old Style", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.loginHeader p,
+.returningHint {
+  margin-top: 4px;
+  color: #675d65;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
 .welcomeForm small {
   color: var(--muted);
   font-size: 0.78rem;
@@ -2852,6 +2897,11 @@ textarea {
   display: grid;
   grid-template-columns: 1fr;
   gap: 9px;
+}
+
+.returningHint {
+  margin: 0;
+  text-align: center;
 }
 
 @media (min-width: 700px) {
