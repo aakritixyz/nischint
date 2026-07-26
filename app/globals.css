@@ -724,6 +724,102 @@ textarea:focus {
   background: #fffdf8;
 }
 
+.aiCareCard {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(74, 117, 107, 0.18);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.98), rgba(240, 247, 242, 0.92)),
+    #fffdf8;
+  box-shadow: 0 16px 36px rgba(57, 35, 48, 0.08);
+  padding: 14px;
+}
+
+.aiCareHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aiSpark {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 16px;
+  background: #e7f0eb;
+  color: #2f6f55;
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.aiCareCard h3 {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.aiGuidanceText {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #4d3f49;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1.42;
+  padding: 12px;
+}
+
+.aiCapabilityRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.aiCapabilityRow span {
+  border: 1px solid rgba(86, 58, 74, 0.1);
+  border-radius: 999px;
+  background: #f7f2f4;
+  color: #705866;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 6px 8px;
+}
+
+.aiCapabilityRow span.ready {
+  border-color: rgba(59, 118, 89, 0.2);
+  background: #e8f4ed;
+  color: #316850;
+}
+
+.aiWhy {
+  border-top: 1px solid rgba(86, 58, 74, 0.1);
+  color: #675d65;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding-top: 10px;
+}
+
+.aiWhy summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.aiWhy p {
+  margin-top: 7px;
+  line-height: 1.45;
+}
+
+.aiActionRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
 .voiceCard h3,
 .alertCard h3,
 .mapCard h3 {
@@ -856,6 +952,10 @@ textarea:focus {
 
   .contactList,
   .featureRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .aiActionRow {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 

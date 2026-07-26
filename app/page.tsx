@@ -124,6 +124,15 @@ type ProductionAudit = {
   nextSteps: string[];
 };
 
+type AiCapability = {
+  id: string;
+  label: string;
+  model: string;
+  provider: string;
+  ready: boolean;
+  env: string[];
+};
+
 type CaregiverSession = {
   patientId: string;
   caregiverName: string;
@@ -603,6 +612,10 @@ const fallbackAudit: ProductionAudit = {
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
+  const [aiGuidance, setAiGuidance] = useState(
+    "AI care guidance is ready to generate calm support once the app syncs."
+  );
+  const [aiCapabilities, setAiCapabilities] = useState<AiCapability[]>([]);
   const [hasEntered, setHasEntered] = useState(false);
   const [activeTab, setActiveTab] = useState<AppTab>("senior");
   const [backendReady, setBackendReady] = useState(false);
@@ -1049,6 +1062,8 @@ export default function Home() {
     return response.json() as Promise<{
       state?: CareState;
       guidance?: Guidance;
+      ai?: string;
+      capabilities?: AiCapability[];
       delivery?: string;
       audit?: ProductionAudit;
       authenticated?: boolean;
@@ -1061,6 +1076,8 @@ export default function Home() {
     try {
       const payload = await callApi("/api/nischint/guidance");
       if (payload.guidance) setGuidance(payload.guidance);
+      if (payload.ai) setAiGuidance(payload.ai);
+      if (payload.capabilities) setAiCapabilities(payload.capabilities);
     } catch {
       setBackendReady(false);
     }
@@ -1946,6 +1963,41 @@ export default function Home() {
                 <p>{step}</p>
               </div>
             ))}
+          </div>
+
+          <div className="aiCareCard" aria-label="AI Care Assistant">
+            <div className="aiCareHeader">
+              <span className="aiSpark" aria-hidden="true">AI</span>
+              <div>
+                <span className="smallLabel">AI Care Assistant</span>
+                <h3>Generated calm support</h3>
+              </div>
+            </div>
+            <p className="aiGuidanceText">&ldquo;{aiGuidance}&rdquo;</p>
+            <div className="aiCapabilityRow" aria-label="Configured AI capabilities">
+              {(aiCapabilities.length ? aiCapabilities : [
+                { id: "guidance", label: "Guidance", model: "Groq/Gemini", provider: "AI", ready: true, env: [] },
+              ]).map((capability) => (
+                <span className={capability.ready ? "ready" : ""} key={capability.id}>
+                  {capability.label}
+                </span>
+              ))}
+            </div>
+            <details className="aiWhy">
+              <summary>Why this suggestion?</summary>
+              <p>
+                Nischint combines current care state, lost-mode status, location label, and safety rules.
+                It asks the model for short, non-medical, calming language and falls back safely if AI fails.
+              </p>
+            </details>
+            <div className="aiActionRow">
+              <button className="softButton compact" type="button" onClick={() => void refreshGuidance()}>
+                Regenerate guidance
+              </button>
+              <button className="softButton compact" type="button" onClick={() => speakText(aiGuidance)}>
+                Read AI guidance
+              </button>
+            </div>
           </div>
 
           <div className="voiceCard">

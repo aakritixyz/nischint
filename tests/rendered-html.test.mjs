@@ -58,6 +58,12 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /updateConsent/);
   assert.match(page, /Caregiver access code/);
   assert.match(page, /contactPhone/);
+  assert.match(page, /AI Care Assistant/);
+  assert.match(page, /Generated calm support/);
+  assert.match(page, /Regenerate guidance/);
+  assert.match(page, /Read AI guidance/);
+  assert.match(page, /Why this suggestion/);
+  assert.match(page, /aiCapabilities/);
   assert.match(page, /signalRail/);
   assert.match(page, /हिंदी/);
   assert.match(page, /SpeechSynthesisUtterance/);
@@ -104,6 +110,9 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /auditGrid/);
   assert.match(styles, /readinessMeter/);
   assert.match(styles, /contactPhone/);
+  assert.match(styles, /aiCareCard/);
+  assert.match(styles, /aiCapabilityRow/);
+  assert.match(styles, /aiActionRow/);
   assert.match(styles, /white-space: nowrap/);
   assert.match(styles, /max-width: 420px/);
   assert.match(styles, /content-visibility/);
