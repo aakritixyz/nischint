@@ -146,6 +146,7 @@ test("production hardening backend pieces exist", async () => {
     store,
     schema,
     architectureDoc,
+    technicalDoc,
     readme,
     packageJson,
   ] = await Promise.all([
@@ -164,6 +165,7 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("lib/nischintStore.ts"),
     readProjectFile("db/schema.ts"),
     readProjectFile("docs/PRODUCTION_ARCHITECTURE.md"),
+    readProjectFile("docs/TECHNICAL_IMPLEMENTATION.md"),
     readProjectFile("README.md"),
     readProjectFile("package.json"),
   ]);
@@ -203,6 +205,11 @@ test("production hardening backend pieces exist", async () => {
   assert.match(architectureLib, /Senior App/);
   assert.match(architectureLib, /Family Dashboard/);
   assert.match(architectureLib, /AWS Mumbai/);
+  assert.match(architectureLib, /React Native/);
+  assert.match(architectureLib, /React Query/);
+  assert.match(architectureLib, /Prisma Migrate/);
+  assert.match(architectureLib, /GDPR/);
+  assert.match(architectureLib, /99\.99% emergency-service target/);
   assert.match(packageJson, /"postgres"/);
   assert.match(store, /accessLevel/);
   assert.match(store, /hydrateCareState/);
@@ -210,8 +217,15 @@ test("production hardening backend pieces exist", async () => {
   assert.match(schema, /consentLogs/);
   assert.match(architectureDoc, /Target Multi-App Architecture/);
   assert.match(architectureDoc, /Senior UX Guardrails/);
+  assert.match(architectureDoc, /Technical Implementation Direction/);
+  assert.match(technicalDoc, /Technical Implementation Roadmap/);
+  assert.match(technicalDoc, /React Native 0\.73/);
+  assert.match(technicalDoc, /Twilio SMS/);
+  assert.match(technicalDoc, /WCAG 2\.1 AAA/);
+  assert.match(technicalDoc, /RPO 5 minutes/);
   assert.match(readme, /Production readiness/);
   assert.match(readme, /PRODUCTION_ARCHITECTURE/);
+  assert.match(readme, /TECHNICAL_IMPLEMENTATION/);
   assert.match(readme, /signed session/);
   assert.match(readme, /Groq/);
   assert.match(readme, /Gemini/);

@@ -102,7 +102,7 @@ Read-aloud uses the browser's speech synthesis. Voice-command availability depen
 - **PWA:** Web app manifest and service worker
 - **Providers:** Twilio SMS, WhatsApp Cloud API, Groq, Gemini, and OpenAI guidance hooks
 
-For a scale-up plan covering separate senior/family/admin apps, microservices, real-time location, AWS deployment, and accessibility guardrails, see [docs/PRODUCTION_ARCHITECTURE.md](docs/PRODUCTION_ARCHITECTURE.md).
+For a scale-up plan covering separate senior/family/admin apps, microservices, real-time location, AWS deployment, and accessibility guardrails, see [docs/PRODUCTION_ARCHITECTURE.md](docs/PRODUCTION_ARCHITECTURE.md). For the deeper production stack, integrations, security, accessibility, and operations roadmap, see [docs/TECHNICAL_IMPLEMENTATION.md](docs/TECHNICAL_IMPLEMENTATION.md).
 
 ## Demo Flow
 

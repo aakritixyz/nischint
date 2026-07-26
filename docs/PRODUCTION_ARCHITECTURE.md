@@ -46,6 +46,14 @@ This document separates the current deployable MVP from the future full-scale ar
 - Notes and AI interactions: document store
 - Static assets and emergency documents: S3 + CloudFront
 
+## Technical Implementation Direction
+
+- Senior native app: React Native + Expo, Zustand, React Navigation, voice recognition, background geolocation, push notifications, and offline storage.
+- Family/admin web: Next.js App Router, React Query, Zustand, shadcn/ui, maps, realtime updates, charts, React Hook Form, and Zod.
+- Backend services: Node.js + TypeScript, OpenAPI, Zod validation, OAuth 2.0/JWT, Redis rate limiting, structured logs, and service containers on ECS Fargate.
+- Security/compliance: TLS 1.3, AES-256, AWS KMS, MFA, RBAC, consent withdrawal, access logs, GDPR, HIPAA-ready controls, India DPDP, SOC 2, and ISO 27001 targets.
+- Operations: protected GitHub main branch, lint/test/build/deploy CI, blue-green releases, canaries, Sentry, CloudWatch, X-Ray, PagerDuty, and disaster-recovery drills.
+
 ## Real-Time Direction
 
 - WebSocket cluster for live location
