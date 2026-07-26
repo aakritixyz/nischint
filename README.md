@@ -168,6 +168,7 @@ All environment variables are optional for the demo deployment. Do not add blank
 | Variable | Purpose |
 | --- | --- |
 | `DATABASE_URL` | Production database connection, such as Neon, Supabase, or Vercel Postgres |
+| `NISCHINT_SESSION_SECRET` | Secret used to sign caregiver demo sessions |
 | `TWILIO_ACCOUNT_SID` | Twilio account SID for SMS alerts |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
 | `TWILIO_FROM_NUMBER` | Twilio sender number |
@@ -199,6 +200,8 @@ Nischint now includes a production-readiness layer that checks whether the deplo
 
 The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
 
+The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default demo code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so demo sessions are signed with a private production value.
+
 ## Important Safety Note
 
 Nischint is currently a polished MVP for demos, portfolios, and judged project presentations. It is not medical advice, an emergency-response service, or a replacement for professional care.
@@ -206,7 +209,7 @@ Nischint is currently a polished MVP for demos, portfolios, and judged project p
 Before using it with real families, the project still needs:
 
 1. Secure production database storage.
-2. Authentication and caregiver roles.
+2. Full caregiver accounts through Auth.js, Clerk, Supabase Auth, or Vercel auth.
 3. Verified caregiver phone numbers.
 4. Real SMS/WhatsApp provider credentials.
 5. Legal/privacy review for consent-based location sharing.

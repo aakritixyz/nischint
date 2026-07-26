@@ -31,6 +31,10 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /role="tab"/);
   assert.match(page, /Main safety screen/);
   assert.match(page, /nischint-has-entered/);
+  assert.match(page, /caregiverSession/);
+  assert.match(page, /api\/nischint\/login/);
+  assert.match(page, /api\/nischint\/logout/);
+  assert.match(page, /Signed in as/);
   assert.match(page, /Keep voice guidance on/);
   assert.match(page, /Use buttons only/);
   assert.match(page, /Elder safety & family care/);
@@ -103,9 +107,24 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
 });
 
 test("production hardening backend pieces exist", async () => {
-  const [productionRoute, consentRoute, productionLib, store, schema, readme] = await Promise.all([
+  const [
+    productionRoute,
+    consentRoute,
+    loginRoute,
+    logoutRoute,
+    meRoute,
+    authLib,
+    productionLib,
+    store,
+    schema,
+    readme,
+  ] = await Promise.all([
     readProjectFile("app/api/nischint/production/route.ts"),
     readProjectFile("app/api/nischint/consent/route.ts"),
+    readProjectFile("app/api/nischint/login/route.ts"),
+    readProjectFile("app/api/nischint/logout/route.ts"),
+    readProjectFile("app/api/nischint/me/route.ts"),
+    readProjectFile("lib/nischintAuth.ts"),
     readProjectFile("lib/nischintProduction.ts"),
     readProjectFile("lib/nischintStore.ts"),
     readProjectFile("db/schema.ts"),
@@ -114,10 +133,18 @@ test("production hardening backend pieces exist", async () => {
 
   assert.match(productionRoute, /getProductionAudit/);
   assert.match(consentRoute, /recordConsent/);
+  assert.match(loginRoute, /createCaregiverSession/);
+  assert.match(logoutRoute, /clearCaregiverSession/);
+  assert.match(meRoute, /getCaregiverSession/);
+  assert.match(authLib, /nischint_session/);
+  assert.match(authLib, /crypto\.subtle/);
+  assert.match(authLib, /httpOnly/);
   assert.match(productionLib, /DATABASE_URL/);
+  assert.match(productionLib, /NISCHINT_SESSION_SECRET/);
   assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
   assert.match(store, /accessLevel/);
   assert.match(store, /consentLog/);
   assert.match(schema, /consentLogs/);
   assert.match(readme, /Production readiness/);
+  assert.match(readme, /signed session/);
 });

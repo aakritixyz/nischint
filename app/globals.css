@@ -167,6 +167,19 @@ a {
   color: var(--ink);
 }
 
+.sessionStrip {
+  width: fit-content;
+  max-width: 100%;
+  margin: -6px 0 14px auto;
+  border: 1px solid rgba(70, 105, 91, 0.16);
+  border-radius: 999px;
+  background: #eef7f0;
+  color: #315f4f;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
 .hero,
 .dashboard,
 .heroCopy,

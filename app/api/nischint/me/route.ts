@@ -1,12 +1,12 @@
-import { getChatGPTUser } from "../../../chatgpt-auth";
+import { getCaregiverSession } from "../../../../lib/nischintAuth";
 
 export async function GET() {
-  const user = await getChatGPTUser();
+  const session = await getCaregiverSession();
 
   return Response.json({
-    authenticated: Boolean(user),
-    user,
+    authenticated: Boolean(session),
+    session,
     authModel:
-      "Identity endpoint placeholder. Connect Vercel Auth, Clerk, Auth.js, or Supabase Auth for production role checks.",
+      "Signed caregiver session cookie for the Nischint demo. Add Auth.js, Clerk, Supabase Auth, or Vercel auth before real-family production use.",
   });
 }

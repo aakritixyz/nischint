@@ -124,6 +124,14 @@ type ProductionAudit = {
   nextSteps: string[];
 };
 
+type CaregiverSession = {
+  patientId: string;
+  caregiverName: string;
+  role: string;
+  accessLevel: "owner" | "backup" | "clinical";
+  issuedAt: number;
+};
+
 const fallbackState: CareState = {
   patient: {
     name: "Meera",
@@ -621,6 +629,7 @@ export default function Home() {
   const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
   const [voiceTone, setVoiceTone] = useState<VoiceTone>("calm");
   const [loginMessage, setLoginMessage] = useState("");
+  const [caregiverSession, setCaregiverSession] = useState<CaregiverSession | null>(null);
   const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
@@ -794,10 +803,30 @@ export default function Home() {
     speakText(copy.languageSelected);
   }
 
-  function enterNischint(nextTab: AppTab = "senior", requireCode = true) {
-    if (requireCode && caregiverAccessCode.trim() !== "2486") {
-      setLoginMessage(copy.codeError);
-      setScreenAnnouncement(copy.codeError);
+  async function loginCaregiver(quickDemo = false) {
+    try {
+      const payload = await callApi("/api/nischint/login", {
+        accessCode: caregiverAccessCode,
+        quickDemo,
+      });
+      if (!payload.authenticated || !payload.session) {
+        setLoginMessage(payload.error ?? copy.codeError);
+        setScreenAnnouncement(payload.error ?? copy.codeError);
+        return false;
+      }
+      setCaregiverSession(payload.session);
+      return true;
+    } catch {
+      const message = "Login is temporarily unavailable. Please try again.";
+      setLoginMessage(message);
+      setScreenAnnouncement(message);
+      return false;
+    }
+  }
+
+  async function enterNischint(nextTab: AppTab = "senior", requireCode = true) {
+    const isLoggedIn = await loginCaregiver(!requireCode);
+    if (!isLoggedIn) {
       return;
     }
 
@@ -815,6 +844,18 @@ export default function Home() {
     } else {
       setVoiceStatus(copy.voiceOff);
     }
+  }
+
+  async function logoutCaregiver() {
+    try {
+      await callApi("/api/nischint/logout", {});
+    } catch {
+      // Local sign-out still clears the sensitive demo state if the network is unavailable.
+    }
+    window.localStorage.removeItem("nischint-has-entered");
+    setCaregiverSession(null);
+    setHasEntered(false);
+    setScreenAnnouncement("Signed out of Nischint.");
   }
 
   function normalizeCommand(phrase: string) {
@@ -1010,6 +1051,9 @@ export default function Home() {
       guidance?: Guidance;
       delivery?: string;
       audit?: ProductionAudit;
+      authenticated?: boolean;
+      session?: CaregiverSession | null;
+      error?: string;
     }>;
   }
 
@@ -1264,6 +1308,14 @@ export default function Home() {
       try {
         const payload = await callApi("/api/nischint/state");
         if (mounted && payload.state) applyState(payload.state);
+        const me = await callApi("/api/nischint/me");
+        if (mounted && me.session) {
+          setCaregiverSession(me.session);
+        }
+        if (mounted && savedHasEntered === "true" && !me.authenticated) {
+          setHasEntered(false);
+          window.localStorage.removeItem("nischint-has-entered");
+        }
         await refreshGuidance();
         await refreshProductionAudit();
       } catch {
@@ -1431,10 +1483,10 @@ export default function Home() {
             <p className="privacyPromise">{copy.privacyPromise}</p>
 
             <div className="welcomeActions">
-              <button className="primaryButton" type="button" onClick={() => enterNischint("senior", true)}>
+              <button className="primaryButton" type="button" onClick={() => void enterNischint("senior", true)}>
                 {copy.startApp}
               </button>
-              <button className="softButton" type="button" onClick={() => enterNischint("demo", false)}>
+              <button className="softButton" type="button" onClick={() => void enterNischint("demo", false)}>
                 {copy.skipSetup}
               </button>
             </div>
@@ -1468,11 +1520,19 @@ export default function Home() {
               {tab.label}
             </button>
           ))}
-          <button type="button" onClick={() => setHasEntered(false)}>
-            {copy.loginButton}
+          <button
+            type="button"
+            onClick={() => caregiverSession ? void logoutCaregiver() : setHasEntered(false)}
+          >
+            {caregiverSession ? "Logout" : copy.loginButton}
           </button>
         </nav>
       </header>
+      {caregiverSession ? (
+        <p className="sessionStrip">
+          Signed in as {caregiverSession.caregiverName} · {caregiverSession.accessLevel} caregiver
+        </p>
+      ) : null}
 
       <p className="srOnly" role="status" aria-live="assertive">
         {screenAnnouncement}

@@ -22,10 +22,18 @@ export function getProductionAudit() {
     {
       id: "auth",
       label: "Caregiver authentication",
-      ready: hasEnv("AUTH_SECRET") || hasEnv("NEXTAUTH_SECRET") || hasEnv("CLERK_SECRET_KEY"),
-      detail: hasEnv("AUTH_SECRET") || hasEnv("NEXTAUTH_SECRET") || hasEnv("CLERK_SECRET_KEY")
-        ? "An auth secret is configured. Connect role checks before real use."
-        : "Demo access code is active. Add Auth.js, Clerk, Supabase Auth, or Vercel auth for production.",
+      ready:
+        hasEnv("NISCHINT_SESSION_SECRET") ||
+        hasEnv("AUTH_SECRET") ||
+        hasEnv("NEXTAUTH_SECRET") ||
+        hasEnv("CLERK_SECRET_KEY"),
+      detail:
+        hasEnv("NISCHINT_SESSION_SECRET") ||
+        hasEnv("AUTH_SECRET") ||
+        hasEnv("NEXTAUTH_SECRET") ||
+        hasEnv("CLERK_SECRET_KEY")
+          ? "Signed caregiver sessions are configured. Add named caregiver accounts before real use."
+          : "Demo access code is active. Add NISCHINT_SESSION_SECRET and a full auth provider for production.",
     },
     {
       id: "sms",
