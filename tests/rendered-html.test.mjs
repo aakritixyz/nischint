@@ -57,6 +57,7 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Consent audit/);
   assert.match(page, /updateConsent/);
   assert.match(page, /Caregiver access code/);
+  assert.match(page, /contactPhone/);
   assert.match(page, /signalRail/);
   assert.match(page, /हिंदी/);
   assert.match(page, /SpeechSynthesisUtterance/);
@@ -102,6 +103,9 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /timelineCard/);
   assert.match(styles, /auditGrid/);
   assert.match(styles, /readinessMeter/);
+  assert.match(styles, /contactPhone/);
+  assert.match(styles, /white-space: nowrap/);
+  assert.match(styles, /max-width: 420px/);
   assert.match(styles, /content-visibility/);
   assert.match(serviceWorker, /nischint-offline-v3/);
 });
@@ -114,10 +118,12 @@ test("production hardening backend pieces exist", async () => {
     logoutRoute,
     meRoute,
     authLib,
+    persistenceLib,
     productionLib,
     store,
     schema,
     readme,
+    packageJson,
   ] = await Promise.all([
     readProjectFile("app/api/nischint/production/route.ts"),
     readProjectFile("app/api/nischint/consent/route.ts"),
@@ -125,10 +131,12 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("app/api/nischint/logout/route.ts"),
     readProjectFile("app/api/nischint/me/route.ts"),
     readProjectFile("lib/nischintAuth.ts"),
+    readProjectFile("lib/nischintPersistence.ts"),
     readProjectFile("lib/nischintProduction.ts"),
     readProjectFile("lib/nischintStore.ts"),
     readProjectFile("db/schema.ts"),
     readProjectFile("README.md"),
+    readProjectFile("package.json"),
   ]);
 
   assert.match(productionRoute, /getProductionAudit/);
@@ -139,10 +147,16 @@ test("production hardening backend pieces exist", async () => {
   assert.match(authLib, /nischint_session/);
   assert.match(authLib, /crypto\.subtle/);
   assert.match(authLib, /httpOnly/);
+  assert.match(persistenceLib, /postgres/);
+  assert.match(persistenceLib, /nischint_care_state/);
+  assert.match(persistenceLib, /jsonb/);
+  assert.match(persistenceLib, /hydrateCareState/);
   assert.match(productionLib, /DATABASE_URL/);
   assert.match(productionLib, /NISCHINT_SESSION_SECRET/);
   assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
+  assert.match(packageJson, /"postgres"/);
   assert.match(store, /accessLevel/);
+  assert.match(store, /hydrateCareState/);
   assert.match(store, /consentLog/);
   assert.match(schema, /consentLogs/);
   assert.match(readme, /Production readiness/);

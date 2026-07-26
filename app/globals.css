@@ -806,10 +806,16 @@ textarea:focus {
 }
 
 .contactList article {
+  display: grid;
+  grid-template-columns: 1fr;
   align-items: start;
-  justify-content: space-between;
   min-height: 86px;
+  gap: 10px;
   background: #fffdf8;
+}
+
+.contactMeta {
+  min-width: 0;
 }
 
 .contactList strong,
@@ -820,6 +826,19 @@ textarea:focus {
 .contactList strong {
   color: var(--ink);
   font-size: 1.04rem;
+}
+
+.contactPhone {
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  background: #f4eef2;
+  color: #563a4a;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  overflow-wrap: normal;
+  white-space: nowrap;
+  padding: 7px 10px;
 }
 
 @media (min-width: 560px) {
@@ -2142,6 +2161,21 @@ textarea {
     padding: 11px 12px;
   }
 
+  .contactList article {
+    min-height: auto;
+  }
+
+  .contactList span {
+    display: block;
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .contactPhone {
+    justify-self: start;
+    font-size: clamp(0.92rem, 4.5vw, 1.03rem);
+  }
+
   .statusBanner span {
     font-size: 0.9rem;
   }
@@ -2453,9 +2487,51 @@ textarea {
 }
 
 @media (max-width: 420px) {
+  .shell {
+    width: min(100% - 18px, 430px);
+  }
+
+  .topBar {
+    border-radius: 20px;
+    padding: 6px;
+  }
+
+  .topBar nav {
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .topBar nav a,
+  .topBar nav button {
+    min-height: 36px;
+    font-size: 0.72rem;
+    padding: 7px 6px;
+  }
+
   .topBar nav a:nth-child(2),
   .topBar nav button:nth-child(4) {
     display: none;
+  }
+
+  .mapSurface {
+    min-height: 132px;
+  }
+
+  .homeDot,
+  .personDot {
+    min-width: 70px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+
+  .contactList article {
+    gap: 8px;
+  }
+
+  .contactPhone {
+    font-size: 0.92rem;
+    padding: 7px 9px;
   }
 }
 

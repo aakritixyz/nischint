@@ -235,6 +235,11 @@ export function getCareState() {
   return currentState();
 }
 
+export function hydrateCareState(nextState: CareState) {
+  store.nischintCareState = nextState;
+  return store.nischintCareState;
+}
+
 export function updateOnboarding(payload: {
   patient?: Partial<PatientProfile>;
   contacts?: CareContact[];

@@ -1,5 +1,6 @@
 import type { CareState, CheckIn, LocationState } from "./nischintStore";
-import { getCareState } from "./nischintStore";
+import { getCareState, hydrateCareState } from "./nischintStore";
+import postgres from "postgres";
 
 type PersistableReminder = {
   title: string;
@@ -15,60 +16,128 @@ type PersistableInvite = {
 };
 
 function hasDatabaseUrl() {
-  return Boolean(process.env.DATABASE_URL);
+  return Boolean(process.env.DATABASE_URL?.trim());
 }
 
-async function bestEffort(operation: string, payload: unknown) {
-  if (!hasDatabaseUrl()) return;
-  void operation;
-  void payload;
+const database = globalThis as typeof globalThis & {
+  nischintSql?: postgres.Sql;
+  nischintTableReady?: Promise<void>;
+};
 
-  // Vercel deployment note:
-  // Add Neon/Supabase/Vercel Postgres client code here once DATABASE_URL is set.
-  // The current app remains fully usable as a demo without crashing in serverless.
+function getSql() {
+  if (!hasDatabaseUrl()) return null;
+
+  if (!database.nischintSql) {
+    database.nischintSql = postgres(process.env.DATABASE_URL!, {
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 10,
+      ssl: process.env.DATABASE_URL?.includes("sslmode=disable") ? false : "require",
+    });
+  }
+
+  return database.nischintSql;
+}
+
+async function ensureStateTable(sql: postgres.Sql) {
+  database.nischintTableReady ??= sql`
+    create table if not exists nischint_care_state (
+      patient_id text primary key,
+      state jsonb not null,
+      updated_at timestamptz not null default now()
+    )
+  `.then(() => undefined);
+  await database.nischintTableReady;
+}
+
+async function saveCareState(state: CareState) {
+  const sql = getSql();
+  if (!sql) return;
+
+  try {
+    await ensureStateTable(sql);
+    await sql`
+      insert into nischint_care_state (patient_id, state, updated_at)
+      values (${state.patientId}, ${sql.json(state)}, now())
+      on conflict (patient_id)
+      do update set state = excluded.state, updated_at = now()
+    `;
+  } catch (error) {
+    console.error("Nischint persistence write failed", error);
+  }
 }
 
 export async function loadPersistedState() {
+  const sql = getSql();
+  if (!sql) return getCareState();
+
+  try {
+    await ensureStateTable(sql);
+    const rows = await sql<{ state: CareState }[]>`
+      select state
+      from nischint_care_state
+      where patient_id = ${getCareState().patientId}
+      limit 1
+    `;
+    if (rows[0]?.state) {
+      return hydrateCareState(rows[0].state);
+    }
+    await saveCareState(getCareState());
+  } catch (error) {
+    console.error("Nischint persistence load failed", error);
+  }
+
   return getCareState();
 }
 
 export async function persistOnboarding(state: CareState) {
-  await bestEffort("onboarding", state);
+  await saveCareState(state);
 }
 
 export async function persistCheckIn(state: CareState, checkIn: CheckIn) {
-  await bestEffort("check-in", { patientId: state.patientId, checkIn });
+  void checkIn;
+  await saveCareState(state);
 }
 
 export async function persistLostMode(state: CareState, active: boolean) {
-  await bestEffort("lost-mode", { patientId: state.patientId, active });
+  void active;
+  await saveCareState(state);
 }
 
 export async function persistLocation(
   state: CareState,
   location: Partial<LocationState>
 ) {
-  await bestEffort("location", { patientId: state.patientId, location });
+  void location;
+  await saveCareState(state);
 }
 
 export async function persistCaregiverNote(state: CareState, note: string) {
-  await bestEffort("caregiver-note", { patientId: state.patientId, note });
+  void note;
+  await saveCareState(state);
 }
 
 export async function persistReminder(
   state: CareState,
   reminder: PersistableReminder
 ) {
-  await bestEffort("reminder", { patientId: state.patientId, reminder });
+  void reminder;
+  await saveCareState(state);
 }
 
 export async function persistInvite(state: CareState, invite: PersistableInvite) {
-  await bestEffort("invite", { patientId: state.patientId, invite });
+  void invite;
+  await saveCareState(state);
 }
 
 export async function persistPrivacyRequest(
   state: CareState,
   type: "export" | "delete"
 ) {
-  await bestEffort("privacy-request", { patientId: state.patientId, type });
+  void type;
+  await saveCareState(state);
+}
+
+export async function persistConsent(state: CareState) {
+  await saveCareState(state);
 }

@@ -2057,14 +2057,14 @@ export default function Home() {
           <div className="contactList">
             {careState.contacts.map((contact) => (
               <article key={contact.name}>
-                <div>
+                <div className="contactMeta">
                   <strong>{contact.name}</strong>
                   <span>
                     {contact.role} · {contact.accessLevel}
                     {contact.canReceiveAlerts ? " · alerts on" : " · view only"}
                   </span>
                 </div>
-                <p>{contact.phone}</p>
+                <p className="contactPhone">{contact.phone}</p>
               </article>
             ))}
           </div>

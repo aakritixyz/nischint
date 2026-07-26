@@ -200,6 +200,8 @@ Nischint now includes a production-readiness layer that checks whether the deplo
 
 The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
 
+When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory demo state.
+
 The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default demo code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so demo sessions are signed with a private production value.
 
 ## Important Safety Note

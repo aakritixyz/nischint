@@ -1,4 +1,5 @@
 import { recordConsent } from "../../../../lib/nischintStore";
+import { persistConsent } from "../../../../lib/nischintPersistence";
 
 const scopes = new Set(["location", "emergency-card", "caregiver-access"]);
 
@@ -16,7 +17,8 @@ export async function POST(request: Request) {
     );
   }
 
-  return Response.json({
-    state: recordConsent(payload.scope, payload.allowed, payload.actor ?? "Asha"),
-  });
+  const state = recordConsent(payload.scope, payload.allowed, payload.actor ?? "Asha");
+  await persistConsent(state);
+
+  return Response.json({ state });
 }
