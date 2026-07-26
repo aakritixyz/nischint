@@ -1398,6 +1398,28 @@ export default function Home() {
               <span>2</span>
               <span>3</span>
             </div>
+            <div className="welcomeLiveStack" aria-label="Nischint live safety preview">
+              <article>
+                <span>01</span>
+                <strong>Lost-mode support</strong>
+                <p>One large action shares location, home address, and calm instructions.</p>
+              </article>
+              <article>
+                <span>02</span>
+                <strong>Family alert chain</strong>
+                <p>Caregivers can receive SMS alerts, check-ins, notes, and reminders.</p>
+              </article>
+              <article>
+                <span>03</span>
+                <strong>AI guidance ready</strong>
+                <p>Groq, Gemini, and OpenRouter power calm support when keys are configured.</p>
+              </article>
+            </div>
+            <div className="welcomeSignalStrip" aria-label="Production readiness preview">
+              <span>Database synced</span>
+              <span>Voice optional</span>
+              <span>Consent first</span>
+            </div>
           </div>
 
           <div className="welcomeForm loginCard" aria-label="Nischint family login">
