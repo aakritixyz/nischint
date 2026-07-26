@@ -12,7 +12,6 @@ test("Nischint page contains the launch-ready product experience", async () => {
   const page = await readProjectFile("app/page.tsx");
 
   assert.match(page, /Nischint/);
-  assert.match(page, /Set up gentle support before entering/);
   assert.match(page, /Step 1 of 3/);
   assert.match(page, /Demo mode/);
   assert.match(page, /Start setup/);
@@ -22,6 +21,9 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /enterNischint\("demo", false\)/);
   assert.match(page, /enterNischint\("senior", true\)/);
   assert.match(page, /Skip to quick demo/);
+  assert.match(page, /aria-pressed={language === "en"}/);
+  assert.match(page, /aria-pressed={onboardingVoiceAssist}/);
+  assert.match(page, /aria-pressed={voiceTone === tone.id}/);
   assert.match(page, /Voice comfort/);
   assert.match(page, /Calm/);
   assert.match(page, /Energetic/);
@@ -73,6 +75,8 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /activateLostMode/);
   assert.doesNotMatch(page, /Groq, Gemini, and OpenRouter power calm support/);
   assert.doesNotMatch(page, /Lost-mode support/);
+  assert.doesNotMatch(page, /Choose the language and voice comfort level first/);
+  assert.doesNotMatch(page, /Choose simple preferences before opening Nischint/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
 });
 

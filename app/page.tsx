@@ -237,9 +237,6 @@ const hindiGuidance: Guidance = {
 const languageCopy = {
   en: {
     welcomeEyebrow: "Welcome to Nischint",
-    welcomeTitle: "Set up gentle support before entering",
-    welcomeCopy:
-      "Choose the language and voice comfort level first, so the app feels calm and personal from the very first screen.",
     personName: "Senior name",
     accessCode: "Family access code",
     voiceChoice: "Voice guidance",
@@ -252,7 +249,6 @@ const languageCopy = {
     progressStep: "Step 1 of 3",
     demoMode: "Demo mode",
     loginTitle: "Start setup",
-    loginSubtitle: "Choose simple preferences before opening Nischint.",
     returningUser: "Already set up?",
     privacyPromise: "Consent stays visible. Location is shared only after permission.",
     voiceTone: "Voice comfort",
@@ -323,9 +319,6 @@ const languageCopy = {
   },
   hi: {
     welcomeEyebrow: "निश्चिंत में आपका स्वागत है",
-    welcomeTitle: "पहले अपनी सुविधा चुनें",
-    welcomeCopy:
-      "भाषा और आवाज की सुविधा पहले चुनें, ताकि ऐप शुरुआत से ही सरल और शांत लगे।",
     personName: "वरिष्ठ का नाम",
     accessCode: "परिवार का एक्सेस कोड",
     voiceChoice: "आवाज की सहायता",
@@ -338,7 +331,6 @@ const languageCopy = {
     progressStep: "चरण 1 / 3",
     demoMode: "डेमो मोड",
     loginTitle: "सेटअप शुरू करें",
-    loginSubtitle: "निश्चिंत खोलने से पहले सरल विकल्प चुनें।",
     returningUser: "पहले से सेटअप है?",
     privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
     voiceTone: "आवाज का तरीका",
@@ -1378,8 +1370,6 @@ export default function Home() {
 
           <div className="welcomeCopy">
             <p className="scriptName" aria-hidden="true">निश्चिंत</p>
-            <h2>{copy.welcomeTitle}</h2>
-            <p>{copy.welcomeCopy}</p>
             <div className="setupProgress" aria-label={copy.progressStep}>
               <span className="active">1</span>
               <span>2</span>
@@ -1392,36 +1382,8 @@ export default function Home() {
               <span aria-hidden="true">नि</span>
               <div>
                 <h2>{copy.loginTitle}</h2>
-                <p>{copy.loginSubtitle}</p>
               </div>
             </div>
-
-            <label>
-              {copy.personName}
-              <input
-                value={careState.patient.name}
-                onChange={(event) =>
-                  setCareState((state) => ({
-                    ...state,
-                    patient: { ...state.patient, name: event.target.value },
-                  }))
-                }
-              />
-            </label>
-
-            <label>
-              {copy.accessCode}
-              <input
-                inputMode="numeric"
-                type="password"
-                value={caregiverAccessCode}
-                onChange={(event) => setCaregiverAccessCode(event.target.value)}
-              />
-              <small>{copy.demoCodeHint}</small>
-            </label>
-            {loginMessage ? (
-              <p className="loginError" role="alert">{loginMessage}</p>
-            ) : null}
 
             <div className="welcomeChoice">
               <span>{copy.languageLabel}</span>
@@ -1483,6 +1445,33 @@ export default function Home() {
                 </button>
               ))}
             </div>
+
+            <label>
+              {copy.personName}
+              <input
+                value={careState.patient.name}
+                onChange={(event) =>
+                  setCareState((state) => ({
+                    ...state,
+                    patient: { ...state.patient, name: event.target.value },
+                  }))
+                }
+              />
+            </label>
+
+            <label>
+              {copy.accessCode}
+              <input
+                inputMode="numeric"
+                type="password"
+                value={caregiverAccessCode}
+                onChange={(event) => setCaregiverAccessCode(event.target.value)}
+              />
+              <small>{copy.demoCodeHint}</small>
+            </label>
+            {loginMessage ? (
+              <p className="loginError" role="alert">{loginMessage}</p>
+            ) : null}
 
             <p className="privacyPromise">{copy.privacyPromise}</p>
 

@@ -2895,7 +2895,7 @@ textarea {
 
 .welcomeGate {
   display: grid;
-  gap: 12px;
+  gap: 14px;
   width: min(100%, 680px);
   margin: 0 auto;
   border: 1px solid rgba(63, 55, 62, 0.12);
@@ -2961,11 +2961,11 @@ textarea {
 .welcomeCopy {
   display: grid;
   align-content: start;
-  gap: 9px;
+  gap: 8px;
 }
 
 .welcomeCopy .scriptName {
-  font-size: clamp(1.85rem, 7vw, 2.75rem);
+  font-size: clamp(1.9rem, 7vw, 2.7rem);
 }
 
 .welcomeCopy h2 {
@@ -3058,6 +3058,10 @@ textarea {
   line-height: 1.35;
 }
 
+.loginHeader p {
+  display: none;
+}
+
 .loginError {
   margin: -2px 0 0;
   border: 1px solid rgba(184, 50, 70, 0.22);
@@ -3079,11 +3083,11 @@ textarea {
 .welcomeChoice,
 .welcomeVoiceGroup {
   display: grid;
-  gap: 7px;
+  gap: 9px;
   border: 1px solid rgba(63, 55, 62, 0.11);
-  border-radius: 16px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.64);
-  padding: 10px;
+  padding: 12px;
 }
 
 .welcomeChoice {
@@ -3097,8 +3101,8 @@ textarea {
 .welcomeChoice > span,
 .welcomeVoiceGroup > span {
   color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 650;
+  font-size: 0.9rem;
+  font-weight: 850;
 }
 
 .welcomeChoice .languageSegment {
@@ -3118,9 +3122,9 @@ textarea {
 }
 
 .welcomeChoice .languageSegment button {
-  min-height: 42px;
-  border-radius: 11px;
-  font-size: 0.82rem;
+  min-height: 50px;
+  border-radius: 13px;
+  font-size: 0.92rem;
 }
 
 .welcomeVoiceGroup button.active {
@@ -3141,7 +3145,7 @@ textarea {
 .comfortGroup button {
   flex: 1 1 86px;
   min-width: 0;
-  min-height: 42px;
+  min-height: 48px;
   text-align: center;
   overflow-wrap: anywhere;
   padding: 8px 6px;
@@ -3166,7 +3170,7 @@ textarea {
 
 .welcomeActions .primaryButton,
 .welcomeActions .softButton {
-  min-height: 50px;
+  min-height: 54px;
 }
 
 .returningHint {
