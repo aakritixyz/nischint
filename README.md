@@ -69,6 +69,7 @@ Nischint includes Next.js API routes for:
 - Location updates: `/api/nischint/location`
 - Notifications: `/api/nischint/notify`
 - Guidance: `/api/nischint/guidance`
+- AI capability map: `/api/nischint/ai-capabilities`
 - Onboarding: `/api/nischint/onboarding`
 - Notes: `/api/nischint/notes`
 - Reminders: `/api/nischint/reminders`
@@ -176,10 +177,15 @@ All environment variables are optional for the demo deployment. Do not add blank
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
 | `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
 | `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
+| `OPENROUTER_API_KEY` | OpenRouter key for configurable per-round action planning |
 | `OPENAI_API_KEY` | Optional OpenAI fallback for model-generated calming guidance |
 | `AI_PROVIDER` | Optional preference: `groq`, `gemini`, or `openai` |
 | `GROQ_GUIDANCE_MODEL` | Optional Groq guidance model override, default `openai/gpt-oss-20b` |
 | `GEMINI_GUIDANCE_MODEL` | Optional Gemini guidance model override, default `gemini-2.5-pro` |
+| `GEMINI_LIVE_MODEL` | Optional voice conversation model, default `gemini-2.5-flash-native-audio` |
+| `GROQ_ORCHESTRATION_MODEL` | Optional Groq drafting/orchestration model, default `meta-llama/llama-4-scout-17b-16e-instruct` |
+| `GROQ_SCREENSHOT_MODEL` | Optional Groq multimodal verification model, default `meta-llama/llama-4-scout-17b-16e-instruct` |
+| `OPENROUTER_PLANNER_MODEL` | Optional OpenRouter planning model, default `best-available` |
 
 Suggested AI model map:
 
@@ -190,6 +196,15 @@ Suggested AI model map:
 | Code generation | `openai/gpt-oss-120b` |
 | Optimization | `deepseek-r1-distill-llama-70b` |
 | Enrichment | `gemini-2.5-pro` |
+
+Advanced AI capability map:
+
+| Capability | Model | Provider |
+| --- | --- | --- |
+| Voice conversation + intent detection | `gemini-2.5-flash-native-audio` | Gemini Live WebSocket |
+| Orchestration + content drafting | `llama-4-scout` / `llama-4-maverick` | Groq REST API |
+| Per-round action planning | Configurable, default best available | OpenRouter REST API |
+| Screenshot verification | `llama-4-scout` multimodal | Groq REST API |
 
 ## Custom Domain
 
@@ -219,7 +234,7 @@ When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Post
 
 The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default demo code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so demo sessions are signed with a private production value.
 
-AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice.
+AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice. The `/api/nischint/ai-capabilities` endpoint reports whether voice conversation, orchestration, planning, and screenshot verification providers are configured.
 
 ## Important Safety Note
 

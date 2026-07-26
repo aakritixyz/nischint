@@ -9,17 +9,27 @@ type ProviderEnv = {
   OPENAI_API_KEY?: string;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;
+  OPENROUTER_API_KEY?: string;
   AI_PROVIDER?: string;
   GROQ_GUIDANCE_MODEL?: string;
   GEMINI_GUIDANCE_MODEL?: string;
+  GEMINI_LIVE_MODEL?: string;
+  GROQ_ORCHESTRATION_MODEL?: string;
+  GROQ_SCREENSHOT_MODEL?: string;
+  OPENROUTER_PLANNER_MODEL?: string;
 };
 
 const aiModelPlan = {
   analysis: "meta-llama/llama-4-scout-17b-16e-instruct",
+  orchestration: "meta-llama/llama-4-scout-17b-16e-instruct",
+  maverick: "meta-llama/llama-4-maverick-17b-128e-instruct",
   design: "openai/gpt-oss-20b",
   codeGeneration: "openai/gpt-oss-120b",
   optimization: "deepseek-r1-distill-llama-70b",
   enrichment: "gemini-2.5-pro",
+  voiceConversation: "gemini-2.5-flash-native-audio",
+  screenshotVerification: "meta-llama/llama-4-scout-17b-16e-instruct",
+  actionPlanning: "best-available",
 };
 
 function providerEnv() {
@@ -32,10 +42,53 @@ function providerEnv() {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
     AI_PROVIDER: process.env.AI_PROVIDER,
     GROQ_GUIDANCE_MODEL: process.env.GROQ_GUIDANCE_MODEL,
     GEMINI_GUIDANCE_MODEL: process.env.GEMINI_GUIDANCE_MODEL,
+    GEMINI_LIVE_MODEL: process.env.GEMINI_LIVE_MODEL,
+    GROQ_ORCHESTRATION_MODEL: process.env.GROQ_ORCHESTRATION_MODEL,
+    GROQ_SCREENSHOT_MODEL: process.env.GROQ_SCREENSHOT_MODEL,
+    OPENROUTER_PLANNER_MODEL: process.env.OPENROUTER_PLANNER_MODEL,
   } satisfies ProviderEnv;
+}
+
+export function getAiCapabilityMap() {
+  const vars = providerEnv();
+  return [
+    {
+      id: "voice-conversation",
+      label: "Voice conversation + intent detection",
+      model: vars.GEMINI_LIVE_MODEL ?? aiModelPlan.voiceConversation,
+      provider: "Gemini Live WebSocket",
+      ready: Boolean(vars.GEMINI_API_KEY),
+      env: ["GEMINI_API_KEY", "GEMINI_LIVE_MODEL"],
+    },
+    {
+      id: "orchestration-content",
+      label: "Orchestration + content drafting",
+      model: vars.GROQ_ORCHESTRATION_MODEL ?? aiModelPlan.orchestration,
+      provider: "Groq REST API",
+      ready: Boolean(vars.GROQ_API_KEY),
+      env: ["GROQ_API_KEY", "GROQ_ORCHESTRATION_MODEL"],
+    },
+    {
+      id: "action-planning",
+      label: "Per-round action planning",
+      model: vars.OPENROUTER_PLANNER_MODEL ?? aiModelPlan.actionPlanning,
+      provider: "OpenRouter REST API",
+      ready: Boolean(vars.OPENROUTER_API_KEY),
+      env: ["OPENROUTER_API_KEY", "OPENROUTER_PLANNER_MODEL"],
+    },
+    {
+      id: "screenshot-verification",
+      label: "Screenshot verification",
+      model: vars.GROQ_SCREENSHOT_MODEL ?? aiModelPlan.screenshotVerification,
+      provider: "Groq REST API",
+      ready: Boolean(vars.GROQ_API_KEY),
+      env: ["GROQ_API_KEY", "GROQ_SCREENSHOT_MODEL"],
+    },
+  ];
 }
 
 export async function sendCareNotification(
@@ -250,14 +303,15 @@ async function generateWithOpenAi(prompt: string, vars: ProviderEnv) {
 
 export function getAiProviderSummary() {
   const vars = providerEnv();
+  const readyCapabilities = getAiCapabilityMap().filter((capability) => capability.ready).length;
   if (vars.GROQ_API_KEY) {
-    return `Groq ready with ${vars.GROQ_GUIDANCE_MODEL ?? aiModelPlan.design}.`;
+    return `Groq ready with ${vars.GROQ_GUIDANCE_MODEL ?? aiModelPlan.design}. ${readyCapabilities}/4 AI capabilities configured.`;
   }
   if (vars.GEMINI_API_KEY) {
-    return `Gemini ready with ${vars.GEMINI_GUIDANCE_MODEL ?? aiModelPlan.enrichment}.`;
+    return `Gemini ready with ${vars.GEMINI_GUIDANCE_MODEL ?? aiModelPlan.enrichment}. ${readyCapabilities}/4 AI capabilities configured.`;
   }
   if (vars.OPENAI_API_KEY) {
     return "OpenAI ready for optional calming guidance.";
   }
-  return "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.";
+  return "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY, or OPENAI_API_KEY.";
 }

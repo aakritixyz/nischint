@@ -6,7 +6,16 @@ type ProductionCheck = {
 };
 
 function aiReady() {
-  return hasEnv("GROQ_API_KEY") || hasEnv("GEMINI_API_KEY") || hasEnv("OPENAI_API_KEY");
+  return (
+    hasEnv("GROQ_API_KEY") ||
+    hasEnv("GEMINI_API_KEY") ||
+    hasEnv("OPENROUTER_API_KEY") ||
+    hasEnv("OPENAI_API_KEY")
+  );
+}
+
+function advancedAiReady() {
+  return hasEnv("GROQ_API_KEY") && hasEnv("GEMINI_API_KEY") && hasEnv("OPENROUTER_API_KEY");
 }
 
 function hasEnv(key: string) {
@@ -59,8 +68,16 @@ export function getProductionAudit() {
       label: "AI calming guidance",
       ready: aiReady(),
       detail: aiReady()
-        ? "Groq, Gemini, or OpenAI guidance credentials are configured."
-        : "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.",
+        ? "Groq, Gemini, OpenRouter, or OpenAI guidance credentials are configured."
+        : "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY, or OPENAI_API_KEY.",
+    },
+    {
+      id: "advanced-ai",
+      label: "Advanced AI capability map",
+      ready: advancedAiReady(),
+      detail: advancedAiReady()
+        ? "Voice, orchestration, planning, and screenshot verification providers are configured."
+        : "Add GEMINI_API_KEY, GROQ_API_KEY, and OPENROUTER_API_KEY to unlock the full AI stack.",
     },
     {
       id: "privacy",

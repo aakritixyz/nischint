@@ -113,6 +113,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
 test("production hardening backend pieces exist", async () => {
   const [
     productionRoute,
+    aiCapabilitiesRoute,
     consentRoute,
     loginRoute,
     logoutRoute,
@@ -127,6 +128,7 @@ test("production hardening backend pieces exist", async () => {
     packageJson,
   ] = await Promise.all([
     readProjectFile("app/api/nischint/production/route.ts"),
+    readProjectFile("app/api/nischint/ai-capabilities/route.ts"),
     readProjectFile("app/api/nischint/consent/route.ts"),
     readProjectFile("app/api/nischint/login/route.ts"),
     readProjectFile("app/api/nischint/logout/route.ts"),
@@ -142,6 +144,7 @@ test("production hardening backend pieces exist", async () => {
   ]);
 
   assert.match(productionRoute, /getProductionAudit/);
+  assert.match(aiCapabilitiesRoute, /getAiCapabilityMap/);
   assert.match(consentRoute, /recordConsent/);
   assert.match(loginRoute, /createCaregiverSession/);
   assert.match(logoutRoute, /clearCaregiverSession/);
@@ -155,6 +158,11 @@ test("production hardening backend pieces exist", async () => {
   assert.match(persistenceLib, /hydrateCareState/);
   assert.match(providersLib, /GROQ_API_KEY/);
   assert.match(providersLib, /GEMINI_API_KEY/);
+  assert.match(providersLib, /OPENROUTER_API_KEY/);
+  assert.match(providersLib, /gemini-2\.5-flash-native-audio/);
+  assert.match(providersLib, /llama-4-maverick/);
+  assert.match(providersLib, /OPENROUTER_PLANNER_MODEL/);
+  assert.match(providersLib, /GROQ_SCREENSHOT_MODEL/);
   assert.match(providersLib, /api\.groq\.com/);
   assert.match(providersLib, /generativelanguage\.googleapis\.com/);
   assert.match(providersLib, /meta-llama\/llama-4-scout-17b-16e-instruct/);
@@ -163,6 +171,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(productionLib, /NISCHINT_SESSION_SECRET/);
   assert.match(productionLib, /GROQ_API_KEY/);
   assert.match(productionLib, /GEMINI_API_KEY/);
+  assert.match(productionLib, /OPENROUTER_API_KEY/);
+  assert.match(productionLib, /Advanced AI capability map/);
   assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
   assert.match(packageJson, /"postgres"/);
   assert.match(store, /accessLevel/);
@@ -173,4 +183,7 @@ test("production hardening backend pieces exist", async () => {
   assert.match(readme, /signed session/);
   assert.match(readme, /Groq/);
   assert.match(readme, /Gemini/);
+  assert.match(readme, /OpenRouter/);
+  assert.match(readme, /Gemini Live WebSocket/);
+  assert.match(readme, /Screenshot verification/);
 });
