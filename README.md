@@ -98,7 +98,7 @@ Read-aloud uses the browser's speech synthesis. Voice-command availability depen
 - **Production audit:** Environment-aware readiness endpoint
 - **Deployment:** Vercel-ready
 - **PWA:** Web app manifest and service worker
-- **Providers:** Twilio SMS, WhatsApp Cloud API, and OpenAI guidance hooks
+- **Providers:** Twilio SMS, WhatsApp Cloud API, Groq, Gemini, and OpenAI guidance hooks
 
 ## Demo Flow
 
@@ -174,7 +174,22 @@ All environment variables are optional for the demo deployment. Do not add blank
 | `TWILIO_FROM_NUMBER` | Twilio sender number |
 | `WHATSAPP_ACCESS_TOKEN` | WhatsApp Cloud API token |
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
-| `OPENAI_API_KEY` | Optional AI-generated calming guidance |
+| `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
+| `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
+| `OPENAI_API_KEY` | Optional OpenAI fallback for model-generated calming guidance |
+| `AI_PROVIDER` | Optional preference: `groq`, `gemini`, or `openai` |
+| `GROQ_GUIDANCE_MODEL` | Optional Groq guidance model override, default `openai/gpt-oss-20b` |
+| `GEMINI_GUIDANCE_MODEL` | Optional Gemini guidance model override, default `gemini-2.5-pro` |
+
+Suggested AI model map:
+
+| Role | Model |
+| --- | --- |
+| Analysis | `meta-llama/llama-4-scout-17b-16e-instruct` |
+| Design | `openai/gpt-oss-20b` |
+| Code generation | `openai/gpt-oss-120b` |
+| Optimization | `deepseek-r1-distill-llama-70b` |
+| Enrichment | `gemini-2.5-pro` |
 
 ## Custom Domain
 
@@ -203,6 +218,8 @@ The data model includes caregiver access levels, alert permissions, radius-based
 When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory demo state.
 
 The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default demo code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so demo sessions are signed with a private production value.
+
+AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice.
 
 ## Important Safety Note
 

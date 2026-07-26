@@ -119,6 +119,7 @@ test("production hardening backend pieces exist", async () => {
     meRoute,
     authLib,
     persistenceLib,
+    providersLib,
     productionLib,
     store,
     schema,
@@ -132,6 +133,7 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("app/api/nischint/me/route.ts"),
     readProjectFile("lib/nischintAuth.ts"),
     readProjectFile("lib/nischintPersistence.ts"),
+    readProjectFile("lib/nischintProviders.ts"),
     readProjectFile("lib/nischintProduction.ts"),
     readProjectFile("lib/nischintStore.ts"),
     readProjectFile("db/schema.ts"),
@@ -151,8 +153,16 @@ test("production hardening backend pieces exist", async () => {
   assert.match(persistenceLib, /nischint_care_state/);
   assert.match(persistenceLib, /jsonb/);
   assert.match(persistenceLib, /hydrateCareState/);
+  assert.match(providersLib, /GROQ_API_KEY/);
+  assert.match(providersLib, /GEMINI_API_KEY/);
+  assert.match(providersLib, /api\.groq\.com/);
+  assert.match(providersLib, /generativelanguage\.googleapis\.com/);
+  assert.match(providersLib, /meta-llama\/llama-4-scout-17b-16e-instruct/);
+  assert.match(providersLib, /gemini-2\.5-pro/);
   assert.match(productionLib, /DATABASE_URL/);
   assert.match(productionLib, /NISCHINT_SESSION_SECRET/);
+  assert.match(productionLib, /GROQ_API_KEY/);
+  assert.match(productionLib, /GEMINI_API_KEY/);
   assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
   assert.match(packageJson, /"postgres"/);
   assert.match(store, /accessLevel/);
@@ -161,4 +171,6 @@ test("production hardening backend pieces exist", async () => {
   assert.match(schema, /consentLogs/);
   assert.match(readme, /Production readiness/);
   assert.match(readme, /signed session/);
+  assert.match(readme, /Groq/);
+  assert.match(readme, /Gemini/);
 });

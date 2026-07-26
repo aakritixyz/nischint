@@ -5,6 +5,10 @@ type ProductionCheck = {
   detail: string;
 };
 
+function aiReady() {
+  return hasEnv("GROQ_API_KEY") || hasEnv("GEMINI_API_KEY") || hasEnv("OPENAI_API_KEY");
+}
+
 function hasEnv(key: string) {
   return Boolean(process.env[key]?.trim());
 }
@@ -53,10 +57,10 @@ export function getProductionAudit() {
     {
       id: "ai",
       label: "AI calming guidance",
-      ready: hasEnv("OPENAI_API_KEY"),
-      detail: hasEnv("OPENAI_API_KEY")
-        ? "OPENAI_API_KEY is configured for optional guidance generation."
-        : "Fallback calm guidance is active. Add OPENAI_API_KEY for AI-generated guidance.",
+      ready: aiReady(),
+      detail: aiReady()
+        ? "Groq, Gemini, or OpenAI guidance credentials are configured."
+        : "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.",
     },
     {
       id: "privacy",

@@ -7,6 +7,19 @@ type ProviderEnv = {
   WHATSAPP_ACCESS_TOKEN?: string;
   WHATSAPP_PHONE_NUMBER_ID?: string;
   OPENAI_API_KEY?: string;
+  GROQ_API_KEY?: string;
+  GEMINI_API_KEY?: string;
+  AI_PROVIDER?: string;
+  GROQ_GUIDANCE_MODEL?: string;
+  GEMINI_GUIDANCE_MODEL?: string;
+};
+
+const aiModelPlan = {
+  analysis: "meta-llama/llama-4-scout-17b-16e-instruct",
+  design: "openai/gpt-oss-20b",
+  codeGeneration: "openai/gpt-oss-120b",
+  optimization: "deepseek-r1-distill-llama-70b",
+  enrichment: "gemini-2.5-pro",
 };
 
 function providerEnv() {
@@ -17,6 +30,11 @@ function providerEnv() {
     WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
     WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    AI_PROVIDER: process.env.AI_PROVIDER,
+    GROQ_GUIDANCE_MODEL: process.env.GROQ_GUIDANCE_MODEL,
+    GEMINI_GUIDANCE_MODEL: process.env.GEMINI_GUIDANCE_MODEL,
   } satisfies ProviderEnv;
 }
 
@@ -111,6 +129,102 @@ async function sendWhatsApp(to: string, body: string) {
 
 export async function generateGuidanceWithAi(prompt: string) {
   const vars = providerEnv();
+  const providerPreference = vars.AI_PROVIDER?.toLowerCase();
+
+  if (providerPreference === "gemini") {
+    return (
+      (await generateWithGemini(prompt, vars)) ??
+      (await generateWithGroq(prompt, vars)) ??
+      (await generateWithOpenAi(prompt, vars))
+    );
+  }
+
+  if (providerPreference === "openai") {
+    return (
+      (await generateWithOpenAi(prompt, vars)) ??
+      (await generateWithGroq(prompt, vars)) ??
+      (await generateWithGemini(prompt, vars))
+    );
+  }
+
+  return (
+    (await generateWithGroq(prompt, vars)) ??
+    (await generateWithGemini(prompt, vars)) ??
+    (await generateWithOpenAi(prompt, vars))
+  );
+}
+
+async function generateWithGroq(prompt: string, vars: ProviderEnv) {
+  if (!vars.GROQ_API_KEY) return null;
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${vars.GROQ_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      model: vars.GROQ_GUIDANCE_MODEL ?? aiModelPlan.design,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You write calm, short, safety-first guidance for older adults and caregivers. Avoid diagnosis, medical advice, panic, and long paragraphs.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.35,
+      max_tokens: 180,
+    }),
+  });
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  return payload.choices?.[0]?.message?.content?.trim() ?? null;
+}
+
+async function generateWithGemini(prompt: string, vars: ProviderEnv) {
+  if (!vars.GEMINI_API_KEY) return null;
+
+  const model = vars.GEMINI_GUIDANCE_MODEL ?? aiModelPlan.enrichment;
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${vars.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: `Write calm, short, safety-first guidance for an elder safety app. Avoid diagnosis and medical advice.\n\n${prompt}`,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0.35,
+          maxOutputTokens: 180,
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+  return payload.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? null;
+}
+
+async function generateWithOpenAi(prompt: string, vars: ProviderEnv) {
   if (!vars.OPENAI_API_KEY) return null;
 
   const response = await fetch("https://api.openai.com/v1/responses", {
@@ -132,4 +246,18 @@ export async function generateGuidanceWithAi(prompt: string) {
     output_text?: string;
   };
   return payload.output_text ?? null;
+}
+
+export function getAiProviderSummary() {
+  const vars = providerEnv();
+  if (vars.GROQ_API_KEY) {
+    return `Groq ready with ${vars.GROQ_GUIDANCE_MODEL ?? aiModelPlan.design}.`;
+  }
+  if (vars.GEMINI_API_KEY) {
+    return `Gemini ready with ${vars.GEMINI_GUIDANCE_MODEL ?? aiModelPlan.enrichment}.`;
+  }
+  if (vars.OPENAI_API_KEY) {
+    return "OpenAI ready for optional calming guidance.";
+  }
+  return "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, or OPENAI_API_KEY.";
 }
