@@ -1862,6 +1862,39 @@ body {
   line-height: 1.38;
 }
 
+.architectureCard {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(63, 55, 62, 0.12);
+  border-radius: 18px;
+  background: #fffdf8;
+  color: #675d65;
+  padding: 14px;
+}
+
+.architectureCard h3 {
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 850;
+}
+
+.architectureCard p {
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.42;
+}
+
+.architectureCard a {
+  width: fit-content;
+  border-radius: 999px;
+  background: #e7f0eb;
+  color: #315f4d;
+  font-size: 0.82rem;
+  font-weight: 850;
+  text-decoration: none;
+  padding: 8px 10px;
+}
+
 .switchRow {
   display: flex;
   grid-template-columns: none;

@@ -55,6 +55,9 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Production safety layer/);
   assert.match(page, /productionAudit/);
   assert.match(page, /Production readiness checklist/);
+  assert.match(page, /Production architecture roadmap/);
+  assert.match(page, /Senior app, family dashboard, admin portal/);
+  assert.match(page, /api\/nischint\/architecture/);
   assert.match(page, /Consent audit/);
   assert.match(page, /updateConsent/);
   assert.match(page, /Caregiver access code/);
@@ -119,6 +122,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /aiCareCard/);
   assert.match(styles, /aiCapabilityRow/);
   assert.match(styles, /aiActionRow/);
+  assert.match(styles, /architectureCard/);
   assert.match(styles, /white-space: nowrap/);
   assert.match(styles, /max-width: 420px/);
   assert.match(styles, /content-visibility/);
@@ -128,6 +132,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
 test("production hardening backend pieces exist", async () => {
   const [
     productionRoute,
+    architectureRoute,
     aiCapabilitiesRoute,
     consentRoute,
     loginRoute,
@@ -137,12 +142,15 @@ test("production hardening backend pieces exist", async () => {
     persistenceLib,
     providersLib,
     productionLib,
+    architectureLib,
     store,
     schema,
+    architectureDoc,
     readme,
     packageJson,
   ] = await Promise.all([
     readProjectFile("app/api/nischint/production/route.ts"),
+    readProjectFile("app/api/nischint/architecture/route.ts"),
     readProjectFile("app/api/nischint/ai-capabilities/route.ts"),
     readProjectFile("app/api/nischint/consent/route.ts"),
     readProjectFile("app/api/nischint/login/route.ts"),
@@ -152,13 +160,16 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("lib/nischintPersistence.ts"),
     readProjectFile("lib/nischintProviders.ts"),
     readProjectFile("lib/nischintProduction.ts"),
+    readProjectFile("lib/nischintArchitecture.ts"),
     readProjectFile("lib/nischintStore.ts"),
     readProjectFile("db/schema.ts"),
+    readProjectFile("docs/PRODUCTION_ARCHITECTURE.md"),
     readProjectFile("README.md"),
     readProjectFile("package.json"),
   ]);
 
   assert.match(productionRoute, /getProductionAudit/);
+  assert.match(architectureRoute, /productionArchitecture/);
   assert.match(aiCapabilitiesRoute, /getAiCapabilityMap/);
   assert.match(consentRoute, /recordConsent/);
   assert.match(loginRoute, /createCaregiverSession/);
@@ -189,12 +200,18 @@ test("production hardening backend pieces exist", async () => {
   assert.match(productionLib, /OPENROUTER_API_KEY/);
   assert.match(productionLib, /Advanced AI capability map/);
   assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
+  assert.match(architectureLib, /Senior App/);
+  assert.match(architectureLib, /Family Dashboard/);
+  assert.match(architectureLib, /AWS Mumbai/);
   assert.match(packageJson, /"postgres"/);
   assert.match(store, /accessLevel/);
   assert.match(store, /hydrateCareState/);
   assert.match(store, /consentLog/);
   assert.match(schema, /consentLogs/);
+  assert.match(architectureDoc, /Target Multi-App Architecture/);
+  assert.match(architectureDoc, /Senior UX Guardrails/);
   assert.match(readme, /Production readiness/);
+  assert.match(readme, /PRODUCTION_ARCHITECTURE/);
   assert.match(readme, /signed session/);
   assert.match(readme, /Groq/);
   assert.match(readme, /Gemini/);

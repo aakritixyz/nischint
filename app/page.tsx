@@ -2142,6 +2142,18 @@ export default function Home() {
             </article>
           ))}
         </div>
+        <div className="architectureCard" aria-label="Production architecture roadmap">
+          <span className="smallLabel">Scale roadmap</span>
+          <h3>Senior app, family dashboard, admin portal</h3>
+          <p>
+            This MVP runs as one Vercel PWA. The production roadmap splits Nischint into
+            dedicated senior, family, admin, and public apps with services for auth,
+            location, alerts, profiles, AI, notifications, and immutable audit logs.
+          </p>
+          <a href="/api/nischint/architecture" target="_blank" rel="noreferrer">
+            View architecture JSON
+          </a>
+        </div>
       </section>
 
       <section className="trustBand" aria-label="Trust and family use cases">

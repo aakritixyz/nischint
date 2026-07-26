@@ -70,6 +70,7 @@ Nischint includes Next.js API routes for:
 - Notifications: `/api/nischint/notify`
 - Guidance: `/api/nischint/guidance`
 - AI capability map: `/api/nischint/ai-capabilities`
+- Production architecture: `/api/nischint/architecture`
 - Onboarding: `/api/nischint/onboarding`
 - Notes: `/api/nischint/notes`
 - Reminders: `/api/nischint/reminders`
@@ -100,6 +101,8 @@ Read-aloud uses the browser's speech synthesis. Voice-command availability depen
 - **Deployment:** Vercel-ready
 - **PWA:** Web app manifest and service worker
 - **Providers:** Twilio SMS, WhatsApp Cloud API, Groq, Gemini, and OpenAI guidance hooks
+
+For a scale-up plan covering separate senior/family/admin apps, microservices, real-time location, AWS deployment, and accessibility guardrails, see [docs/PRODUCTION_ARCHITECTURE.md](docs/PRODUCTION_ARCHITECTURE.md).
 
 ## Demo Flow
 
