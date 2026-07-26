@@ -2896,7 +2896,7 @@ textarea {
 .welcomeGate {
   display: grid;
   gap: 12px;
-  width: min(100%, 980px);
+  width: min(100%, 680px);
   margin: 0 auto;
   border: 1px solid rgba(63, 55, 62, 0.12);
   border-radius: 28px;
@@ -2961,7 +2961,7 @@ textarea {
 .welcomeCopy {
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 9px;
 }
 
 .welcomeCopy .scriptName {
@@ -2988,74 +2988,6 @@ textarea {
   line-height: 1.5;
 }
 
-.welcomePurpose {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border: 1px solid rgba(63, 55, 62, 0.1);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.66);
-  padding: 10px;
-}
-
-.welcomePurpose strong {
-  color: var(--ink);
-  font-size: 0.9rem;
-  font-weight: 700;
-  line-height: 1.28;
-}
-
-.welcomePurpose p {
-  margin-top: 5px;
-  color: #675d65;
-  font-size: 0.78rem;
-  font-weight: 450;
-  line-height: 1.35;
-}
-
-.careIllustration {
-  position: relative;
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 18px;
-  background: #e7f0eb;
-  color: #226747;
-}
-
-.careIllustration::before,
-.careIllustration::after,
-.careIllustration i {
-  content: "";
-  position: absolute;
-  border-radius: 999px;
-}
-
-.careIllustration::before {
-  width: 28px;
-  height: 28px;
-  background: #fffafb;
-  box-shadow: 0 0 0 7px rgba(34, 103, 71, 0.09);
-}
-
-.careIllustration::after {
-  width: 28px;
-  height: 16px;
-  border: 3px solid #226747;
-  border-top: 0;
-  border-radius: 0 0 999px 999px;
-  transform: translateY(11px);
-}
-
-.careIllustration i {
-  width: 16px;
-  height: 16px;
-  background: #d9788a;
-  transform: translate(15px, -14px);
-}
-
 .setupProgress {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3074,69 +3006,6 @@ textarea {
 
 .setupProgress span.active {
   background: #b83246;
-}
-
-.welcomeLiveStack {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 9px;
-  margin-top: 3px;
-}
-
-.welcomeLiveStack article {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  column-gap: 11px;
-  align-items: start;
-  border: 1px solid rgba(63, 55, 62, 0.1);
-  border-radius: 18px;
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(247, 242, 244, 0.72)),
-    #fffafb;
-  padding: 11px;
-}
-
-.welcomeLiveStack article span {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border-radius: 14px;
-  background: #e7f0eb;
-  color: #2d7055;
-  font-size: 0.74rem;
-  font-weight: 950;
-}
-
-.welcomeLiveStack article strong {
-  color: var(--ink);
-  font-size: 0.92rem;
-  font-weight: 850;
-}
-
-.welcomeLiveStack article p {
-  grid-column: 2;
-  margin-top: 3px;
-  color: #675d65;
-  font-size: 0.78rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.welcomeSignalStrip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.welcomeSignalStrip span {
-  border: 1px solid rgba(74, 117, 107, 0.14);
-  border-radius: 999px;
-  background: #edf5f0;
-  color: #315f4d;
-  font-size: 0.72rem;
-  font-weight: 800;
-  padding: 7px 9px;
 }
 
 .welcomeForm {
@@ -3307,22 +3176,7 @@ textarea {
 
 @media (min-width: 700px) {
   .welcomeGate {
-    grid-template-columns: minmax(0, 0.92fr) minmax(340px, 0.7fr);
-    align-items: start;
-  }
-
-  .welcomeMeta {
-    grid-column: 1 / -1;
-  }
-
-  .welcomeBrand,
-  .welcomeCopy {
-    grid-column: 1;
-  }
-
-  .welcomeForm {
-    grid-column: 2;
-    grid-row: 2 / span 3;
+    gap: 16px;
   }
 }
 
@@ -3341,26 +3195,11 @@ textarea {
   }
 
   .welcomeBrand {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
   }
 
   .welcomeCopy {
-    gap: 12px;
-  }
-
-  .welcomeLiveStack {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: 8px;
-  }
-
-  .welcomeLiveStack article {
-    grid-template-columns: 1fr;
-    min-height: 148px;
-    align-content: start;
-  }
-
-  .welcomeLiveStack article p {
-    grid-column: auto;
+    gap: 10px;
   }
 }
 
@@ -3398,35 +3237,6 @@ textarea {
     font-size: 0.9rem;
   }
 
-  .welcomePurpose {
-    align-items: start;
-  }
-
-  .welcomeLiveStack article {
-    grid-template-columns: 36px 1fr;
-    border-radius: 16px;
-    padding: 10px;
-  }
-
-  .welcomeLiveStack article span {
-    width: 34px;
-    height: 34px;
-    border-radius: 12px;
-  }
-
-  .welcomeLiveStack article strong {
-    font-size: 0.86rem;
-  }
-
-  .welcomeLiveStack article p {
-    font-size: 0.74rem;
-  }
-
-  .careIllustration {
-    width: 50px;
-    height: 50px;
-    border-radius: 18px;
-  }
 
   .comfortGroup {
     grid-template-columns: 1fr;

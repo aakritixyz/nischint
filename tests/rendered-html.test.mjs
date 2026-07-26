@@ -15,7 +15,7 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Set up gentle support before entering/);
   assert.match(page, /Step 1 of 3/);
   assert.match(page, /Demo mode/);
-  assert.match(page, /Family login/);
+  assert.match(page, /Start setup/);
   assert.match(page, /Already set up/);
   assert.match(page, /type="password"/);
   assert.match(page, /Use demo code 2486/);
@@ -26,11 +26,6 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Calm/);
   assert.match(page, /Energetic/);
   assert.match(page, /Consent stays visible/);
-  assert.match(page, /Next: open the Senior tab/);
-  assert.match(page, /Lost-mode support/);
-  assert.match(page, /Family alert chain/);
-  assert.match(page, /AI guidance ready/);
-  assert.match(page, /Database synced/);
   assert.match(page, /tabRail/);
   assert.match(page, /role="tab"/);
   assert.match(page, /Main safety screen/);
@@ -76,6 +71,8 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /I did not understand that/);
   assert.match(page, /wakeLock/);
   assert.match(page, /activateLostMode/);
+  assert.doesNotMatch(page, /Groq, Gemini, and OpenRouter power calm support/);
+  assert.doesNotMatch(page, /Lost-mode support/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
 });
 
@@ -103,12 +100,11 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /loginCard/);
   assert.match(styles, /loginHeader/);
   assert.match(styles, /loginError/);
-  assert.match(styles, /careIllustration/);
   assert.match(styles, /setupProgress/);
   assert.match(styles, /comfortGroup/);
   assert.match(styles, /welcomeVoiceGroup/);
-  assert.match(styles, /welcomeLiveStack/);
-  assert.match(styles, /welcomeSignalStrip/);
+  assert.doesNotMatch(styles, /welcomeLiveStack/);
+  assert.doesNotMatch(styles, /welcomeSignalStrip/);
   assert.match(styles, /stickyEmergency/);
   assert.match(styles, /tabPanel\[hidden\]/);
   assert.match(styles, /tabRail/);

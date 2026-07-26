@@ -251,12 +251,10 @@ const languageCopy = {
     codeError: "Use demo code 2486 or skip to quick demo.",
     progressStep: "Step 1 of 3",
     demoMode: "Demo mode",
-    loginTitle: "Family login",
-    loginSubtitle: "Use the demo code to enter the care app.",
+    loginTitle: "Start setup",
+    loginSubtitle: "Choose simple preferences before opening Nischint.",
     returningUser: "Already set up?",
     privacyPromise: "Consent stays visible. Location is shared only after permission.",
-    nextPreview: "Next: open the Senior tab, try the safe check-in, or simulate an emergency.",
-    purposePreview: "Nischint helps a senior stay calm, see where they are, and reach family fast.",
     voiceTone: "Voice comfort",
     calmTone: "Calm",
     standardTone: "Standard",
@@ -339,12 +337,10 @@ const languageCopy = {
     codeError: "डेमो कोड 2486 डालें या सीधे डेमो खोलें।",
     progressStep: "चरण 1 / 3",
     demoMode: "डेमो मोड",
-    loginTitle: "परिवार लॉगिन",
-    loginSubtitle: "केयर ऐप खोलने के लिए डेमो कोड इस्तेमाल करें।",
+    loginTitle: "सेटअप शुरू करें",
+    loginSubtitle: "निश्चिंत खोलने से पहले सरल विकल्प चुनें।",
     returningUser: "पहले से सेटअप है?",
     privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
-    nextPreview: "आगे: वरिष्ठ स्क्रीन खुलेगी, सुरक्षित चेक-इन या आपातकालीन डेमो आजमा सकते हैं।",
-    purposePreview: "निश्चिंत वरिष्ठों को शांत रहने, स्थान समझने, और परिवार तक जल्दी पहुंचने में मदद करता है।",
     voiceTone: "आवाज का तरीका",
     calmTone: "शांत",
     standardTone: "सामान्य",
@@ -1384,45 +1380,14 @@ export default function Home() {
             <p className="scriptName" aria-hidden="true">निश्चिंत</p>
             <h2>{copy.welcomeTitle}</h2>
             <p>{copy.welcomeCopy}</p>
-            <div className="welcomePurpose" aria-label="What Nischint does">
-              <span className="careIllustration" aria-hidden="true">
-                <i />
-              </span>
-              <div>
-                <strong>{copy.purposePreview}</strong>
-                <p>{copy.nextPreview}</p>
-              </div>
-            </div>
             <div className="setupProgress" aria-label={copy.progressStep}>
               <span className="active">1</span>
               <span>2</span>
               <span>3</span>
             </div>
-            <div className="welcomeLiveStack" aria-label="Nischint live safety preview">
-              <article>
-                <span>01</span>
-                <strong>Lost-mode support</strong>
-                <p>One large action shares location, home address, and calm instructions.</p>
-              </article>
-              <article>
-                <span>02</span>
-                <strong>Family alert chain</strong>
-                <p>Caregivers can receive SMS alerts, check-ins, notes, and reminders.</p>
-              </article>
-              <article>
-                <span>03</span>
-                <strong>AI guidance ready</strong>
-                <p>Groq, Gemini, and OpenRouter power calm support when keys are configured.</p>
-              </article>
-            </div>
-            <div className="welcomeSignalStrip" aria-label="Production readiness preview">
-              <span>Database synced</span>
-              <span>Voice optional</span>
-              <span>Consent first</span>
-            </div>
           </div>
 
-          <div className="welcomeForm loginCard" aria-label="Nischint family login">
+          <div className="welcomeForm loginCard" aria-label="Nischint setup">
             <div className="loginHeader">
               <span aria-hidden="true">नि</span>
               <div>
