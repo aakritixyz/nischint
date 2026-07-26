@@ -1577,6 +1577,107 @@ body {
   gap: 10px;
 }
 
+.readinessMeter,
+.auditGrid,
+.nextStepBox,
+.consentAudit {
+  display: grid;
+}
+
+.readinessMeter {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(74, 117, 107, 0.14);
+  border-radius: 18px;
+  background: #e7f0eb;
+  padding: 13px;
+}
+
+.readinessMeter strong {
+  display: grid;
+  place-items: center;
+  min-width: 64px;
+  height: 48px;
+  border-radius: 16px;
+  background: #226747;
+  color: white;
+  font-size: 1.08rem;
+}
+
+.readinessMeter p {
+  color: #315c49;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.auditGrid {
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.auditGrid article,
+.nextStepBox,
+.consentAudit {
+  border: 1px solid rgba(63, 55, 62, 0.1);
+  border-radius: 17px;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 13px;
+}
+
+.auditGrid article.ready {
+  box-shadow: inset 4px 0 0 #226747;
+}
+
+.auditGrid article.pending {
+  box-shadow: inset 4px 0 0 #b83246;
+}
+
+.auditGrid span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 26px;
+  align-items: center;
+  border-radius: 999px;
+  background: #f1eef2;
+  color: #675d65;
+  font-size: 0.68rem;
+  font-weight: 750;
+  padding: 0 9px;
+}
+
+.auditGrid article.ready span {
+  background: #e7f0eb;
+  color: #226747;
+}
+
+.auditGrid article.pending span {
+  background: #f6dfe4;
+  color: #8a2435;
+}
+
+.auditGrid strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.auditGrid p,
+.nextStepBox p,
+.consentAudit p {
+  margin-top: 6px;
+  color: #675d65;
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.38;
+}
+
+.nextStepBox,
+.consentAudit {
+  gap: 5px;
+}
+
 .productionTile {
   position: relative;
   min-height: 138px;
@@ -1741,6 +1842,10 @@ body {
   .productionGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .auditGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 860px) {
@@ -1751,6 +1856,10 @@ body {
 
   .productionGrid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .auditGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

@@ -54,6 +54,9 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 - Privacy export/delete request demo
 - Consent toggles for location and emergency-card visibility
 - Caregiver access-code concept
+- Caregiver access levels for owner, backup, and clinical contacts
+- Consent audit log for privacy-sensitive sharing changes
+- Production readiness checklist for database, auth, alerts, AI, privacy, and geofence setup
 - Escalation ladder for primary, backup, and doctor/neighbor handoff
 
 ### Backend/API Routes
@@ -71,6 +74,8 @@ Nischint includes Next.js API routes for:
 - Reminders: `/api/nischint/reminders`
 - Invites: `/api/nischint/invites`
 - Privacy requests: `/api/nischint/privacy`
+- Consent audit: `/api/nischint/consent`
+- Production readiness: `/api/nischint/production`
 
 Without provider keys, the app still works as a polished demo and simulates delivery. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
 
@@ -90,6 +95,7 @@ Read-aloud uses the browser's speech synthesis. Voice-command availability depen
 - **Language:** TypeScript
 - **UI:** React, CSS, Tailwind entry setup
 - **Persistence shape:** Drizzle schema included
+- **Production audit:** Environment-aware readiness endpoint
 - **Deployment:** Vercel-ready
 - **PWA:** Web app manifest and service worker
 - **Providers:** Twilio SMS, WhatsApp Cloud API, and OpenAI guidance hooks
@@ -187,17 +193,23 @@ nischint.life
 
 Then add it in Vercel under **Project Settings -> Domains** and follow the DNS instructions.
 
+## Production Hardening Added
+
+Nischint now includes a production-readiness layer that checks whether the deployment has durable storage, auth secrets, SMS, WhatsApp, and AI guidance configured. The UI shows which pieces are ready and what still needs provider setup.
+
+The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
+
 ## Important Safety Note
 
 Nischint is currently a polished MVP for demos, portfolios, and judged project presentations. It is not medical advice, an emergency-response service, or a replacement for professional care.
 
-Before using it with real families, the project needs:
+Before using it with real families, the project still needs:
 
 1. Secure production database storage.
 2. Authentication and caregiver roles.
 3. Verified caregiver phone numbers.
 4. Real SMS/WhatsApp provider credentials.
-5. Consent-based location sharing.
+5. Legal/privacy review for consent-based location sharing.
 6. Privacy and health-data compliance review.
 7. Clear emergency escalation policies.
 8. Field testing with caregivers and accessibility feedback from older adults.

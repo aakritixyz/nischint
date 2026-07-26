@@ -24,7 +24,7 @@ export async function sendCareNotification(
   channel: "sms" | "whatsapp" | "push",
   state: CareState
 ) {
-  const caregiver = state.contacts[0];
+  const caregiver = state.contacts.find((contact) => contact.canReceiveAlerts) ?? state.contacts[0];
   const message = `Nischint alert: ${state.patient.name} may need help near ${state.location.label}. Home: ${state.patient.homeAddress}.`;
 
   if (channel === "sms") {

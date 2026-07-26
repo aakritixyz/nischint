@@ -5,6 +5,8 @@ export type CareContact = {
   role: string;
   phone: string;
   tone: string;
+  accessLevel: "owner" | "backup" | "clinical";
+  canReceiveAlerts: boolean;
 };
 
 export type CareEvent = {
@@ -19,7 +21,8 @@ export type CareEvent = {
     | "caregiver-note"
     | "reminder"
     | "invite"
-    | "privacy";
+    | "privacy"
+    | "consent";
   message: string;
   createdAt: string;
 };
@@ -57,6 +60,7 @@ export type CareState = {
   reminders: Reminder[];
   invites: CaregiverInvite[];
   privacyRequests: PrivacyRequest[];
+  consentLog: ConsentLog[];
   events: CareEvent[];
 };
 
@@ -84,10 +88,39 @@ export type PrivacyRequest = {
   createdAt: string;
 };
 
+export type ConsentLog = {
+  id: number;
+  scope: "location" | "emergency-card" | "caregiver-access";
+  allowed: boolean;
+  actor: string;
+  createdAt: string;
+};
+
 const contacts: CareContact[] = [
-  { name: "Asha", role: "Daughter", phone: "+91 98765 43210", tone: "Primary" },
-  { name: "Ravi", role: "Neighbor", phone: "+91 98765 43211", tone: "Nearby" },
-  { name: "Dr. Meera", role: "Doctor", phone: "+91 98765 43212", tone: "Care" },
+  {
+    name: "Asha",
+    role: "Daughter",
+    phone: "+91 98765 43210",
+    tone: "Primary",
+    accessLevel: "owner",
+    canReceiveAlerts: true,
+  },
+  {
+    name: "Ravi",
+    role: "Neighbor",
+    phone: "+91 98765 43211",
+    tone: "Nearby",
+    accessLevel: "backup",
+    canReceiveAlerts: true,
+  },
+  {
+    name: "Dr. Meera",
+    role: "Doctor",
+    phone: "+91 98765 43212",
+    tone: "Care",
+    accessLevel: "clinical",
+    canReceiveAlerts: false,
+  },
 ];
 
 const initialState: CareState = {
@@ -145,6 +178,22 @@ const initialState: CareState = {
     },
   ],
   privacyRequests: [],
+  consentLog: [
+    {
+      id: 1,
+      scope: "location",
+      allowed: true,
+      actor: "Asha",
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 2,
+      scope: "emergency-card",
+      allowed: true,
+      actor: "Asha",
+      createdAt: new Date().toISOString(),
+    },
+  ],
   events: [
     {
       id: 1,
@@ -304,9 +353,10 @@ function degreesToRadians(value: number) {
 
 export function simulateNotification(channel: "sms" | "whatsapp" | "push") {
   const state = currentState();
+  const alertContact = state.contacts.find((contact) => contact.canReceiveAlerts);
   addEvent(state, {
     type: "notification",
-    message: `${channel.toUpperCase()} alert queued for ${state.contacts[0]?.name ?? "caregiver"}.`,
+    message: `${channel.toUpperCase()} alert queued for ${alertContact?.name ?? "caregiver"}.`,
   });
   return state;
 }
@@ -356,6 +406,27 @@ export function queuePrivacyRequest(type: "export" | "delete") {
       type === "export"
         ? "Data export request queued."
         : "Data deletion request queued for caregiver review.",
+  });
+  return state;
+}
+
+export function recordConsent(
+  scope: ConsentLog["scope"],
+  allowed: boolean,
+  actor = "Asha"
+) {
+  const state = currentState();
+  const entry = {
+    id: state.consentLog.length + 1,
+    scope,
+    allowed,
+    actor,
+    createdAt: new Date().toISOString(),
+  };
+  state.consentLog = [entry, ...state.consentLog].slice(0, 10);
+  addEvent(state, {
+    type: "consent",
+    message: `${actor} ${allowed ? "allowed" : "paused"} ${scope} sharing.`,
   });
   return state;
 }

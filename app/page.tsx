@@ -27,6 +27,8 @@ type CareContact = {
   role: string;
   phone: string;
   tone: string;
+  accessLevel: "owner" | "backup" | "clinical";
+  canReceiveAlerts: boolean;
 };
 
 type CareEvent = {
@@ -67,7 +69,16 @@ type CareState = {
   reminders: Reminder[];
   invites: CaregiverInvite[];
   privacyRequests: PrivacyRequest[];
+  consentLog: ConsentLog[];
   events: CareEvent[];
+};
+
+type ConsentLog = {
+  id: number;
+  scope: "location" | "emergency-card" | "caregiver-access";
+  allowed: boolean;
+  actor: string;
+  createdAt: string;
 };
 
 type Reminder = {
@@ -100,6 +111,19 @@ type Guidance = {
   steps: string[];
 };
 
+type ProductionAudit = {
+  mode: string;
+  readyCount: number;
+  totalCount: number;
+  checks: Array<{
+    id: string;
+    label: string;
+    ready: boolean;
+    detail: string;
+  }>;
+  nextSteps: string[];
+};
+
 const fallbackState: CareState = {
   patient: {
     name: "Meera",
@@ -124,9 +148,30 @@ const fallbackState: CareState = {
   lostMode: false,
   checkIn: "ok",
   contacts: [
-    { name: "Asha", role: "Daughter", phone: "+91 98765 43210", tone: "Primary" },
-    { name: "Ravi", role: "Neighbor", phone: "+91 98765 43211", tone: "Nearby" },
-    { name: "Dr. Meera", role: "Doctor", phone: "+91 98765 43212", tone: "Care" },
+    {
+      name: "Asha",
+      role: "Daughter",
+      phone: "+91 98765 43210",
+      tone: "Primary",
+      accessLevel: "owner",
+      canReceiveAlerts: true,
+    },
+    {
+      name: "Ravi",
+      role: "Neighbor",
+      phone: "+91 98765 43211",
+      tone: "Nearby",
+      accessLevel: "backup",
+      canReceiveAlerts: true,
+    },
+    {
+      name: "Dr. Meera",
+      role: "Doctor",
+      phone: "+91 98765 43212",
+      tone: "Care",
+      accessLevel: "clinical",
+      canReceiveAlerts: false,
+    },
   ],
   notes: ["Asha will visit after lunch."],
   reminders: [
@@ -141,6 +186,15 @@ const fallbackState: CareState = {
   ],
   invites: [],
   privacyRequests: [],
+  consentLog: [
+    {
+      id: 1,
+      scope: "location",
+      allowed: true,
+      actor: "Asha",
+      createdAt: new Date().toISOString(),
+    },
+  ],
   events: [
     {
       id: 1,
@@ -495,12 +549,56 @@ const appTabs: Array<{ id: AppTab; label: string; hint: string }> = [
   { id: "privacy", label: "Privacy", hint: "Settings and help" },
 ];
 
+const fallbackAudit: ProductionAudit = {
+  mode: "demo-hardened",
+  readyCount: 2,
+  totalCount: 7,
+  checks: [
+    {
+      id: "database",
+      label: "Durable database",
+      ready: false,
+      detail: "Add DATABASE_URL for persistent production storage.",
+    },
+    {
+      id: "auth",
+      label: "Caregiver authentication",
+      ready: false,
+      detail: "Demo code is active. Add a real auth provider for production accounts.",
+    },
+    {
+      id: "sms",
+      label: "Verified SMS alerts",
+      ready: false,
+      detail: "Add Twilio credentials and verified caregiver numbers.",
+    },
+    {
+      id: "privacy",
+      label: "Consent and audit trail",
+      ready: true,
+      detail: "Consent and privacy actions are tracked in the care timeline.",
+    },
+    {
+      id: "geofence",
+      label: "Safe-zone distance logic",
+      ready: true,
+      detail: "GPS updates use radius checks when safe-zone coordinates exist.",
+    },
+  ],
+  nextSteps: [
+    "Add DATABASE_URL for persistent production storage.",
+    "Add a real auth provider for production accounts.",
+    "Add Twilio credentials and verified caregiver numbers.",
+  ],
+};
+
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
   const [hasEntered, setHasEntered] = useState(false);
   const [activeTab, setActiveTab] = useState<AppTab>("senior");
   const [backendReady, setBackendReady] = useState(false);
+  const [productionAudit, setProductionAudit] = useState<ProductionAudit>(fallbackAudit);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
@@ -907,7 +1005,12 @@ export default function Home() {
       headers: body ? { "content-type": "application/json" } : undefined,
       body: body ? JSON.stringify(body) : undefined,
     });
-    return response.json() as Promise<{ state?: CareState; guidance?: Guidance; delivery?: string }>;
+    return response.json() as Promise<{
+      state?: CareState;
+      guidance?: Guidance;
+      delivery?: string;
+      audit?: ProductionAudit;
+    }>;
   }
 
   async function refreshGuidance() {
@@ -916,6 +1019,15 @@ export default function Home() {
       if (payload.guidance) setGuidance(payload.guidance);
     } catch {
       setBackendReady(false);
+    }
+  }
+
+  async function refreshProductionAudit() {
+    try {
+      const payload = await callApi("/api/nischint/production");
+      if (payload.audit) setProductionAudit(payload.audit);
+    } catch {
+      setProductionAudit(fallbackAudit);
     }
   }
 
@@ -1107,6 +1219,23 @@ export default function Home() {
     }
   }
 
+  async function updateConsent(scope: "location" | "emergency-card", allowed: boolean) {
+    if (scope === "location") setLocationConsent(allowed);
+    if (scope === "emergency-card") setEmergencyConsent(allowed);
+    setScreenAnnouncement(`${scope} consent ${allowed ? "allowed" : "paused"}.`);
+
+    try {
+      const payload = await callApi("/api/nischint/consent", {
+        scope,
+        allowed,
+        actor: careState.contacts[0]?.name ?? "Asha",
+      });
+      if (payload.state) applyState(payload.state);
+    } catch {
+      setBackendReady(false);
+    }
+  }
+
   useEffect(() => {
     let mounted = true;
     const savedLanguage = window.localStorage.getItem("nischint-language");
@@ -1136,6 +1265,7 @@ export default function Home() {
         const payload = await callApi("/api/nischint/state");
         if (mounted && payload.state) applyState(payload.state);
         await refreshGuidance();
+        await refreshProductionAudit();
       } catch {
         if (mounted) setBackendReady(false);
       }
@@ -1869,7 +1999,10 @@ export default function Home() {
               <article key={contact.name}>
                 <div>
                   <strong>{contact.name}</strong>
-                  <span>{contact.role}</span>
+                  <span>
+                    {contact.role} · {contact.accessLevel}
+                    {contact.canReceiveAlerts ? " · alerts on" : " · view only"}
+                  </span>
                 </div>
                 <p>{contact.phone}</p>
               </article>
@@ -1888,9 +2021,30 @@ export default function Home() {
       >
       <section className="productionBand" aria-label="Production safety controls">
         <div className="sectionHeading">
-          <span>For real families</span>
+          <span>For real families · {productionAudit.mode}</span>
           <h2>Production safety layer</h2>
         </div>
+        <div className="readinessMeter" aria-label="Production readiness score">
+          <strong>{productionAudit.readyCount}/{productionAudit.totalCount}</strong>
+          <p>production checks ready in this deployment</p>
+        </div>
+        <div className="auditGrid" aria-label="Production readiness checklist">
+          {productionAudit.checks.map((check) => (
+            <article className={check.ready ? "ready" : "pending"} key={check.id}>
+              <span>{check.ready ? "Ready" : "Needs setup"}</span>
+              <strong>{check.label}</strong>
+              <p>{check.detail}</p>
+            </article>
+          ))}
+        </div>
+        {productionAudit.nextSteps.length ? (
+          <div className="nextStepBox">
+            <span className="smallLabel">Next provider steps</span>
+            {productionAudit.nextSteps.map((step) => (
+              <p key={step}>{step}</p>
+            ))}
+          </div>
+        ) : null}
         <div className="productionGrid">
           {productionTiles.map((tile) => (
             <article className="productionTile" key={tile.title}>
@@ -2088,7 +2242,7 @@ export default function Home() {
             <input
               checked={locationConsent}
               type="checkbox"
-              onChange={(event) => setLocationConsent(event.target.checked)}
+              onChange={(event) => void updateConsent("location", event.target.checked)}
             />
             <span>Location sharing consent</span>
           </label>
@@ -2096,7 +2250,7 @@ export default function Home() {
             <input
               checked={emergencyConsent}
               type="checkbox"
-              onChange={(event) => setEmergencyConsent(event.target.checked)}
+              onChange={(event) => void updateConsent("emergency-card", event.target.checked)}
             />
             <span>Emergency card consent</span>
           </label>
@@ -2113,6 +2267,14 @@ export default function Home() {
             <span className={locationConsent ? "complete" : ""}>Allow</span>
             <span className={careState.lostMode ? "active" : ""}>Share</span>
             <span className={privacyStatus.includes("queued") ? "active" : ""}>Audit</span>
+          </div>
+          <div className="consentAudit">
+            <span className="smallLabel">Consent audit</span>
+            {careState.consentLog.slice(0, 4).map((entry) => (
+              <p key={entry.id}>
+                <strong>{entry.actor}</strong> {entry.allowed ? "allowed" : "paused"} {entry.scope}
+              </p>
+            ))}
           </div>
           <div className="escalationStack">
             <p><strong>0 min</strong> Primary caregiver alert</p>

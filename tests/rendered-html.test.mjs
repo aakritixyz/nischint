@@ -48,6 +48,10 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Consent-first design/);
   assert.match(page, /Demo-ready, not medical advice/);
   assert.match(page, /Production safety layer/);
+  assert.match(page, /productionAudit/);
+  assert.match(page, /Production readiness checklist/);
+  assert.match(page, /Consent audit/);
+  assert.match(page, /updateConsent/);
   assert.match(page, /Caregiver access code/);
   assert.match(page, /signalRail/);
   assert.match(page, /हिंदी/);
@@ -92,6 +96,28 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /tabPanel\[hidden\]/);
   assert.match(styles, /tabRail/);
   assert.match(styles, /timelineCard/);
+  assert.match(styles, /auditGrid/);
+  assert.match(styles, /readinessMeter/);
   assert.match(styles, /content-visibility/);
   assert.match(serviceWorker, /nischint-offline-v3/);
+});
+
+test("production hardening backend pieces exist", async () => {
+  const [productionRoute, consentRoute, productionLib, store, schema, readme] = await Promise.all([
+    readProjectFile("app/api/nischint/production/route.ts"),
+    readProjectFile("app/api/nischint/consent/route.ts"),
+    readProjectFile("lib/nischintProduction.ts"),
+    readProjectFile("lib/nischintStore.ts"),
+    readProjectFile("db/schema.ts"),
+    readProjectFile("README.md"),
+  ]);
+
+  assert.match(productionRoute, /getProductionAudit/);
+  assert.match(consentRoute, /recordConsent/);
+  assert.match(productionLib, /DATABASE_URL/);
+  assert.match(productionLib, /TWILIO_ACCOUNT_SID/);
+  assert.match(store, /accessLevel/);
+  assert.match(store, /consentLog/);
+  assert.match(schema, /consentLogs/);
+  assert.match(readme, /Production readiness/);
 });

@@ -20,11 +20,21 @@ export const caregivers = sqliteTable("caregivers", {
   patientId: text("patient_id").notNull(),
   name: text("name").notNull(),
   role: text("role").notNull(),
+  accessLevel: text("access_level").notNull().default("backup"),
   phone: text("phone").notNull(),
   email: text("email").notNull().default(""),
   canReceiveAlerts: integer("can_receive_alerts", { mode: "boolean" })
     .notNull()
     .default(true),
+  createdAt: text("created_at").notNull(),
+});
+
+export const consentLogs = sqliteTable("consent_logs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  patientId: text("patient_id").notNull(),
+  scope: text("scope").notNull(),
+  allowed: integer("allowed", { mode: "boolean" }).notNull(),
+  actor: text("actor").notNull(),
   createdAt: text("created_at").notNull(),
 });
 
