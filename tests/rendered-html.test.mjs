@@ -145,7 +145,10 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /white-space: nowrap/);
   assert.match(styles, /max-width: 420px/);
   assert.match(styles, /content-visibility/);
-  assert.match(serviceWorker, /nischint-offline-v3/);
+  assert.match(serviceWorker, /nischint-offline-v4/);
+  assert.match(serviceWorker, /event\.request\.mode === "navigate"/);
+  assert.match(serviceWorker, /cache: "no-store"/);
+  assert.match(serviceWorker, /caches\.delete/);
 });
 
 test("public information pages are real routes", async () => {
