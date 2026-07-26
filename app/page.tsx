@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 type CheckIn = "ok" | "help" | "medicine";
 type Language = "en" | "hi";
-type AppTab = "senior" | "care" | "demo" | "family" | "privacy";
+type AppTab = "safety" | "location" | "reminders" | "circle" | "notes" | "privacy" | "settings";
 type VoiceTone = "calm" | "standard" | "energetic";
 
 type BrowserSpeechRecognition = {
@@ -244,11 +244,11 @@ const languageCopy = {
     voiceChoiceOn: "Keep voice guidance on",
     voiceChoiceOff: "Use buttons only",
     startApp: "Continue",
-    skipSetup: "Skip to quick demo",
+    skipSetup: "Open Nischint",
     loginButton: "Login",
-    codeError: "Use demo code 2486 or skip to quick demo.",
+    codeError: "Use access code 2486 or open Nischint.",
     progressStep: "Step 1 of 3",
-    demoMode: "Demo mode",
+    demoMode: "Setup",
     loginTitle: "Start setup",
     returningUser: "Already set up?",
     privacyPromise: "Consent stays visible. Location is shared only after permission.",
@@ -256,7 +256,7 @@ const languageCopy = {
     calmTone: "Calm",
     standardTone: "Standard",
     energeticTone: "Energetic",
-    demoCodeHint: "Demo access code: 2486",
+    demoCodeHint: "Family access code: 2486",
     voiceOff: "Voice guidance is off. Button actions will still work.",
     recognized: (phrase: string) => `Heard: "${phrase}".`,
     commandNotFound: "I did not understand that. Try saying help, lost, okay, or medicine.",
@@ -264,7 +264,7 @@ const languageCopy = {
     heroDescription:
       "A calm mobile-first companion for seniors who may feel confused or lost, and for families who need quick, clear safety updates.",
     navCare: "Care",
-    navDemo: "Demo",
+    navDemo: "App",
     navPrivacy: "Privacy",
     lost: "I feel lost",
     lostSubtitle: "Share location and alert family",
@@ -326,11 +326,11 @@ const languageCopy = {
     voiceChoiceOn: "आवाज की सहायता चालू रखें",
     voiceChoiceOff: "सिर्फ बटन इस्तेमाल करें",
     startApp: "आगे बढ़ें",
-    skipSetup: "सीधे डेमो खोलें",
+    skipSetup: "निश्चिंत खोलें",
     loginButton: "लॉगिन",
-    codeError: "डेमो कोड 2486 डालें या सीधे डेमो खोलें।",
+    codeError: "एक्सेस कोड 2486 डालें या निश्चिंत खोलें।",
     progressStep: "चरण 1 / 3",
-    demoMode: "डेमो मोड",
+    demoMode: "सेटअप",
     loginTitle: "सेटअप शुरू करें",
     returningUser: "पहले से सेटअप है?",
     privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
@@ -338,7 +338,7 @@ const languageCopy = {
     calmTone: "शांत",
     standardTone: "सामान्य",
     energeticTone: "ऊर्जावान",
-    demoCodeHint: "डेमो एक्सेस कोड: 2486",
+    demoCodeHint: "परिवार एक्सेस कोड: 2486",
     voiceOff: "आवाज की सहायता बंद है। बटन फिर भी काम करेंगे।",
     recognized: (phrase: string) => `सुना गया: "${phrase}"।`,
     commandNotFound: "समझ नहीं आया। मदद, रास्ता, ठीक, या दवा बोलकर देखें।",
@@ -346,7 +346,7 @@ const languageCopy = {
     heroDescription:
       "वरिष्ठों के लिए एक सरल साथी, जो रास्ता भूलने या घबराहट के समय परिवार से जल्दी संपर्क कराता है।",
     navCare: "देखभाल",
-    navDemo: "डेमो",
+    navDemo: "ऐप",
     navPrivacy: "गोपनीयता",
     lost: "मुझे रास्ता नहीं मिल रहा",
     lostSubtitle: "स्थान साझा करें और परिवार को सूचना दें",
@@ -402,168 +402,31 @@ const languageCopy = {
   },
 } as const;
 
-const featureHighlights = [
-  {
-    title: "Emergency help",
-    copy: "One large action shares location, home address, and care details with family.",
-  },
-  {
-    title: "Daily assurance",
-    copy: "Simple check-ins for medicine, routines, and moments when support is needed.",
-  },
-  {
-    title: "Family live view",
-    copy: "Caregivers see the latest alert, safe-zone status, contacts, and care notes.",
-  },
-  {
-    title: "Calm guidance",
-    copy: "Gentle steps and familiar family messages help reduce panic during confusion.",
-  },
-];
-
-const serviceHighlights = [
-  "Live location sharing",
-  "Safe-zone demo",
-  "Emergency contacts",
-  "Medicine reminders",
-  "English + Hindi voice",
-  "Privacy requests",
-];
-
-const advancedTiles = [
-  {
-    kicker: "Signal 01",
-    title: "Safe-zone heartbeat",
-    copy: "Live geofence status with distance logic and caregiver escalation.",
-    metric: "500m",
-  },
-  {
-    kicker: "Signal 02",
-    title: "Family alert path",
-    copy: "Lost mode turns one simple action into a caregiver response chain.",
-    metric: "1 tap",
-  },
-  {
-    kicker: "Signal 03",
-    title: "Consent lock",
-    copy: "Location, emergency card, and caregiver access stay permission-based.",
-    metric: "PIN",
-  },
-  {
-    kicker: "Signal 04",
-    title: "Care routine pulse",
-    copy: "Medicine, notes, reminders, and check-ins stay visible without noise.",
-    metric: "8:30",
-  },
-];
-
-const signalRailItems = [
-  "GPS permission",
-  "Safe-zone math",
-  "Caregiver PIN",
-  "Consent audit",
-  "Escalation policy",
-  "SMS fallback",
-  "Offline card",
-  "Family handoff",
-];
-
-const productionTiles = [
-  {
-    title: "Caregiver access code",
-    detail: "Demo PIN 2486 models how family-only dashboards should be protected before real use.",
-    accent: "Secure",
-  },
-  {
-    title: "Consent gates",
-    detail: "Location sharing and emergency info are separated so families can explain exactly what is visible.",
-    accent: "Consent",
-  },
-  {
-    title: "Escalation ladder",
-    detail: "Primary caregiver first, backup contact after 10 minutes, doctor or neighbor after 20 minutes.",
-    accent: "20 min",
-  },
-  {
-    title: "Real provider path",
-    detail: "The app runs as a demo today and is wired for database, SMS, WhatsApp, and AI keys later.",
-    accent: "Ready",
-  },
-];
-
-const howItWorks = [
-  {
-    step: "1",
-    title: "Set preferences",
-    detail: "Choose language, voice support, caregiver contact, and consent.",
-  },
-  {
-    step: "2",
-    title: "Use one clear action",
-    detail: "Press lost, okay, help, or medicine with large senior-friendly buttons.",
-  },
-  {
-    step: "3",
-    title: "Family gets context",
-    detail: "Caregivers see location status, home address, escalation, and notes.",
-  },
-];
-
 const escalationSteps = [
   { time: "0 min", title: "Primary alert", detail: "Asha receives SMS, location, and emergency card." },
   { time: "10 min", title: "Backup contact", detail: "Ravi is notified if the alert is still unresolved." },
   { time: "20 min", title: "Care handoff", detail: "Doctor or neighbor handoff appears for the family." },
 ];
 
-const trustSignals = [
-  { label: "Consent-led", detail: "Location and emergency info are separate permissions." },
-  { label: "Offline card", detail: "Key safety details remain visible during poor network." },
-  { label: "Family use case", detail: "Built around check-ins, wandering risk, and medicine routines." },
-];
-
-const familyUseCases = [
-  {
-    quote: "My father can press one button instead of explaining where he is.",
-    family: "Caregiver for a senior living independently",
-  },
-  {
-    quote: "The medicine check-in makes the daily call calmer for everyone.",
-    family: "Daughter coordinating morning care",
-  },
-];
-
-const faqItems = [
-  {
-    question: "Is this an emergency service?",
-    answer: "No. It is a care-support prototype and should be paired with real emergency plans.",
-  },
-  {
-    question: "Does voice always work?",
-    answer: "Read-aloud works in most modern browsers. Voice commands depend on browser support.",
-  },
-  {
-    question: "Can families control privacy?",
-    answer: "The demo separates location, emergency-card consent, export, and delete requests.",
-  },
-];
-
 const appTabs: Array<{ id: AppTab; label: string; hint: string }> = [
-  { id: "senior", label: "Senior", hint: "Main safety screen" },
-  { id: "care", label: "Care", hint: "How it works" },
-  { id: "demo", label: "Demo", hint: "Try flows" },
-  { id: "family", label: "Family", hint: "Caregiver view" },
-  { id: "privacy", label: "Privacy", hint: "Settings and help" },
+  { id: "safety", label: "Safety", hint: "Help now" },
+  { id: "location", label: "Location", hint: "Safe zone" },
+  { id: "reminders", label: "Reminders", hint: "Medicine" },
+  { id: "circle", label: "Care circle", hint: "Family" },
+  { id: "notes", label: "Notes", hint: "Handoff" },
+  { id: "privacy", label: "Privacy", hint: "Consent" },
+  { id: "settings", label: "Settings", hint: "Profile" },
 ];
 
 const routeLinks = [
   { href: "/care", label: "Care" },
-  { href: "/demo", label: "Demo" },
+  { href: "/faq", label: "FAQ" },
   { href: "/privacy", label: "Privacy" },
   { href: "/about", label: "About" },
 ];
 
 const fallbackAudit: ProductionAudit = {
-  mode: "demo-hardened",
+  mode: "production-minded",
   readyCount: 2,
   totalCount: 7,
   checks: [
@@ -577,7 +440,7 @@ const fallbackAudit: ProductionAudit = {
       id: "auth",
       label: "Caregiver authentication",
       ready: false,
-      detail: "Demo code is active. Add a real auth provider for production accounts.",
+      detail: "Access code is active. Add a real auth provider for production accounts.",
     },
     {
       id: "sms",
@@ -613,14 +476,14 @@ export default function Home() {
   );
   const [aiCapabilities, setAiCapabilities] = useState<AiCapability[]>([]);
   const [hasEntered, setHasEntered] = useState(false);
-  const [activeTab, setActiveTab] = useState<AppTab>("senior");
+  const [activeTab, setActiveTab] = useState<AppTab>("safety");
   const [backendReady, setBackendReady] = useState(false);
   const [productionAudit, setProductionAudit] = useState<ProductionAudit>(fallbackAudit);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
-  const [locationStatus, setLocationStatus] = useState("Demo mode: GPS has not been shared yet");
-  const [notificationStatus, setNotificationStatus] = useState("Demo mode: alerts are simulated until provider keys are added");
+  const [locationStatus, setLocationStatus] = useState("GPS has not been shared yet");
+  const [notificationStatus, setNotificationStatus] = useState("Alerts are ready when provider keys and verified contacts are connected");
   const [actionBusy, setActionBusy] = useState<string | null>(null);
   const [demoTime, setDemoTime] = useState(new Date());
   const [screenAnnouncement, setScreenAnnouncement] = useState("Nischint is ready");
@@ -717,7 +580,7 @@ export default function Home() {
     }
 
     return careState.lostMode
-      ? "Demo outside safe zone - alert chain active"
+      ? "Outside safe zone - alert chain active"
       : "Safe-zone ready - GPS not shared yet";
   }
 
@@ -833,7 +696,7 @@ export default function Home() {
     }
   }
 
-  async function enterNischint(nextTab: AppTab = "senior", requireCode = true) {
+  async function enterNischint(nextTab: AppTab = "safety", requireCode = true) {
     const isLoggedIn = await loginCaregiver(!requireCode);
     if (!isLoggedIn) {
       return;
@@ -923,7 +786,7 @@ export default function Home() {
 
   async function activateLostMode() {
     setActionBusy("lost");
-    setScreenAnnouncement("Emergency demo started. Caregiver alert is active.");
+    setScreenAnnouncement("Emergency flow started. Caregiver alert is active.");
     navigator.vibrate?.([180, 90, 180]);
     void keepScreenAwake();
     if (voiceAssist) speakText(copy.lostVoice);
@@ -962,8 +825,8 @@ export default function Home() {
   }
 
   async function simulateEmergencyFlow() {
-    setNotificationStatus("Demo emergency: primary caregiver notified, backup timer started");
-    setLocationStatus("Demo emergency: using saved safe-zone location until GPS is allowed");
+    setNotificationStatus("Emergency flow: primary caregiver notified, backup timer started");
+    setLocationStatus("Emergency flow: using saved safe-zone location until GPS is allowed");
     await activateLostMode();
   }
 
@@ -972,10 +835,10 @@ export default function Home() {
     setActionBusy("reset");
     setCareState(fallbackState);
     setGuidance(defaultGuidance);
-    setLocationStatus("Demo mode: GPS has not been shared yet");
-    setNotificationStatus("Demo mode: alerts are simulated until provider keys are added");
+    setLocationStatus("GPS has not been shared yet");
+    setNotificationStatus("Alerts are ready when provider keys and verified contacts are connected");
     setPrivacyStatus("No privacy request queued");
-    setScreenAnnouncement("Demo reset. Nischint is ready.");
+    setScreenAnnouncement("Nischint state reset. Ready.");
     setNoteDraft("");
     setReminderTitle("Evening walk");
     setReminderTime("17:30");
@@ -987,7 +850,7 @@ export default function Home() {
       const nextNetwork = state.location.networkStatus === "offline" ? "online" : "offline";
       setScreenAnnouncement(
         nextNetwork === "offline"
-          ? "Offline mode demo is on. Emergency card remains visible."
+          ? "Offline mode is on. Emergency card remains visible."
           : "Online mode restored."
       );
       return {
@@ -1184,7 +1047,7 @@ export default function Home() {
         }
       },
       () => {
-        setLocationStatus("GPS permission was not granted. Demo safe-zone view is still available.");
+        setLocationStatus("GPS permission was not granted. Saved safe-zone view is still available.");
         setScreenAnnouncement("GPS permission was not granted.");
         setActionBusy(null);
       },
@@ -1488,10 +1351,10 @@ export default function Home() {
             <p className="privacyPromise">{copy.privacyPromise}</p>
 
             <div className="welcomeActions">
-              <button className="primaryButton" type="button" onClick={() => void enterNischint("senior", true)}>
+              <button className="primaryButton" type="button" onClick={() => void enterNischint("safety", true)}>
                 {copy.startApp}
               </button>
-              <button className="softButton" type="button" onClick={() => void enterNischint("demo", false)}>
+              <button className="softButton" type="button" onClick={() => void enterNischint("safety", false)}>
                 {copy.skipSetup}
               </button>
             </div>
@@ -1565,74 +1428,46 @@ export default function Home() {
 
       <section
         className="tabPanel"
-        id="panel-senior"
+        id="panel-safety"
         role="tabpanel"
-        aria-labelledby="tab-senior"
-        hidden={activeTab !== "senior"}
+        aria-labelledby="tab-safety"
+        hidden={activeTab !== "safety"}
       >
-      <section className="hero" aria-labelledby="nischint-title">
-        <div className="heroCopy">
-          <div className="brandPill">
-            <span aria-hidden="true">नि</span>
-            {copy.brandTag}
-          </div>
-          <p className="scriptName" aria-hidden="true">निश्चिंत</p>
-          <h1 className="heroWordmark" id="nischint-title">Nischint</h1>
-          <p>{copy.heroDescription}</p>
-          <div className="heroActions" aria-label="Primary demo actions">
-            <button
-              className="primaryButton emergencyPrimary"
-              type="button"
-              onClick={() => void activateLostMode()}
-            >
-              {actionBusy === "lost" ? "Alerting family..." : copy.lost}
-            </button>
-            <button
-              className="softButton"
-              type="button"
-              onClick={() => void completeCheckIn("ok")}
-            >
-              {copy.safe}
-            </button>
-          </div>
-          <div className="trustStrip" aria-label="Safety highlights">
-            <span><strong>24/7</strong> {copy.ready}</span>
-            <span><strong>PIN</strong> {copy.guarded}</span>
-            <span><strong>{language === "hi" ? "सहमति" : "Consent"}</strong> {copy.consentFirst}</span>
-          </div>
-
-          <div className="statusLegend" aria-label="Live demo status">
-            <span className="stateChip safe"><i />Safe</span>
-            <span className="stateChip caution"><i />Caution</span>
-            <span className="stateChip danger"><i />Emergency</span>
-            <span className={`stateChip ${networkClass}`}><i />{networkLabel}</span>
-            <span className="stateChip neutral"><i />{formattedDemoTime}</span>
-          </div>
-
-          <div className="signalRail" aria-label="Production signal flow">
-            <div>
-              {[...signalRailItems, ...signalRailItems].map((item, index) => (
-                <span key={item + "-" + index}>{item}</span>
-              ))}
+        <section className="hero appPanelHero" aria-labelledby="nischint-title">
+          <div className="heroCopy">
+            <div className="brandPill">
+              <span aria-hidden="true">नि</span>
+              {copy.brandTag}
+            </div>
+            <p className="scriptName" aria-hidden="true">निश्चिंत</p>
+            <h1 className="heroWordmark" id="nischint-title">Safety first</h1>
+            <p>{copy.heroDescription}</p>
+            <div className="heroActions" aria-label="Primary safety actions">
+              <button
+                className="primaryButton emergencyPrimary"
+                type="button"
+                onClick={() => void activateLostMode()}
+              >
+                {actionBusy === "lost" ? "Alerting family..." : copy.lost}
+              </button>
+              <button
+                className="softButton"
+                type="button"
+                onClick={() => void completeCheckIn("ok")}
+              >
+                {copy.safe}
+              </button>
+            </div>
+            <div className="statusLegend" aria-label="Current safety status">
+              <span className="stateChip safe"><i />Safe</span>
+              <span className="stateChip caution"><i />Caution</span>
+              <span className="stateChip danger"><i />Emergency</span>
+              <span className={`stateChip ${networkClass}`}><i />{networkLabel}</span>
+              <span className="stateChip neutral"><i />{formattedDemoTime}</span>
             </div>
           </div>
 
-          <div className="motionDeck" aria-label="Live care signal tiles">
-            {advancedTiles.map((tile, index) => (
-              <article
-                className={`motionTile motionTile${index + 1} tone${index + 1}`}
-                key={tile.title}
-              >
-                <span>{tile.kicker}</span>
-                <strong>{tile.title}</strong>
-                <p>{tile.copy}</p>
-                <em>{tile.metric}</em>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="phoneCard" aria-label="Senior safety screen">
+          <div className="phoneCard" aria-label="Senior safety screen">
           <div className="phoneTop">
             <span>{copy.seniorView}</span>
             <span className={`syncPill ${backendReady ? "" : "localOnly"}`}>
@@ -1744,69 +1579,417 @@ export default function Home() {
               </button>
             </div>
           </div>
-        </div>
-      </section>
+          </div>
+        </section>
       </section>
 
       <section
         className="tabPanel"
-        id="panel-care"
+        id="panel-location"
         role="tabpanel"
-        aria-labelledby="tab-care"
-        hidden={activeTab !== "care"}
+        aria-labelledby="tab-location"
+        hidden={activeTab !== "location"}
       >
-      <section id="care-services" className="careIntro" aria-label="Nischint care services">
-        <div className="sectionHeading">
-          <span>How Nischint helps</span>
-          <h2>Built for real moments, not just memories</h2>
-        </div>
-        <p>
-          The app keeps the senior-facing screen very simple while giving caregivers
-          the context they need: where the person is, what happened, who to
-          contact, and what to do next.
-        </p>
-        <div className="serviceCloud" aria-label="Available care features">
-          {serviceHighlights.map((service) => (
-            <span className="serviceChip" key={service}>{service}</span>
-          ))}
-        </div>
-      </section>
-
-      <section className="howBand" aria-label="How Nischint works">
-        <div className="sectionHeading">
-          <span>How it works</span>
-          <h2>Three calm steps for a stressful moment</h2>
-        </div>
-        <div className="howGrid">
-          {howItWorks.map((item) => (
-            <article key={item.step}>
-              <strong>{item.step}</strong>
-              <h3>{item.title}</h3>
-              <p>{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="featureRail" aria-label="Project strengths">
-        {featureHighlights.map((feature) => (
-          <article className="featureTile" key={feature.title}>
-            <strong>{feature.title}</strong>
-            <p>{feature.copy}</p>
+        <section className="workspaceGrid twoColumn" aria-label="Location and safe-zone tools">
+          <article className="patientPanel">
+            <div className="sectionHeading">
+              <span>Live safety</span>
+              <h2>GPS and alert actions</h2>
+            </div>
+            <p className="panelCopy">{locationStatus}</p>
+            <button className="primaryButton" type="button" onClick={() => void shareLocation()}>
+              {actionBusy === "location" ? "Requesting GPS..." : "Share live location"}
+            </button>
+            <div className="demoControlRow">
+              <button className="dangerButton" type="button" onClick={() => void simulateEmergencyFlow()}>
+                Start emergency flow
+              </button>
+              <button className="softButton compact" type="button" onClick={toggleOfflineDemo}>
+                {careState.location.networkStatus === "offline" ? "Restore online" : "Offline mode"}
+              </button>
+              <button className="softButton compact" type="button" onClick={() => void resetDemo()}>
+                {actionBusy === "reset" ? "Resetting..." : "Reset state"}
+              </button>
+            </div>
+            <div className="toggleRow">
+              <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("sms")}>
+                {actionBusy === "sms" ? "Sending..." : "SMS"}
+              </button>
+              <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("whatsapp")}>
+                {actionBusy === "whatsapp" ? "Sending..." : "WhatsApp"}
+              </button>
+              <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("push")}>
+                {actionBusy === "push" ? "Sending..." : "Push"}
+              </button>
+            </div>
+            <p className="panelCopy">{notificationStatus}</p>
           </article>
-        ))}
-      </section>
+
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Safe zone</span>
+              <h2>Where is {careState.patient.name}?</h2>
+            </div>
+            <div className="mapCard appMapCard" aria-label="Safe zone map">
+              <div className="mapSurface">
+                <span className="homeDot">Home</span>
+                <span
+                  className={`personDot ${careState.location.safeZoneStatus === "outside" ? "outside" : ""}`}
+                >
+                  {careState.patient.name}
+                </span>
+                <div className="safeRing" />
+                <span className="routeLine" />
+                <span className="scanBeam" />
+              </div>
+              <div>
+                <span className="smallLabel">Safe zone</span>
+                <h3>
+                  {careState.location.safeZoneStatus === "outside"
+                    ? "Outside usual area"
+                    : "Inside usual area"}
+                </h3>
+                <p>{safeZoneSummary()}</p>
+                <p>
+                  {careState.location.latitude
+                    ? careState.location.latitude.toFixed(4) + ", " + careState.location.longitude?.toFixed(4)
+                    : careState.patient.safeZoneName + ", " + careState.patient.safeZoneRadiusMeters + "m radius"}
+                </p>
+              </div>
+            </div>
+          </article>
+
+          <article className="caregiverPanel fullSpan">
+            <div className="sectionHeading">
+              <span>Escalation</span>
+              <h2>Family response ladder</h2>
+            </div>
+            <div className="timelineCard" aria-label="Caregiver escalation timeline">
+              {escalationSteps.map((step, index) => (
+                <div
+                  className={`timelineItem ${
+                    careState.lostMode && index === 0
+                      ? "active"
+                      : careState.lostMode && index === 1
+                        ? "waiting"
+                        : ""
+                  }`}
+                  key={step.time}
+                >
+                  <strong>{step.time}</strong>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+        </section>
       </section>
 
       <section
         className="tabPanel"
-        id="panel-demo"
+        id="panel-reminders"
         role="tabpanel"
-        aria-labelledby="tab-demo"
-        hidden={activeTab !== "demo"}
+        aria-labelledby="tab-reminders"
+        hidden={activeTab !== "reminders"}
       >
-      <section id="live-demo" className="toolGrid" aria-label="Nischint controls">
-        <article className="patientPanel">
+        <section className="workspaceGrid twoColumn" aria-label="Reminders and check-ins">
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Reminders</span>
+              <h2>Medicine and routine</h2>
+            </div>
+            <label>
+              Reminder
+              <input
+                value={reminderTitle}
+                onChange={(event) => setReminderTitle(event.target.value)}
+              />
+            </label>
+            <label>
+              Time
+              <input
+                type="time"
+                value={reminderTime}
+                onChange={(event) => setReminderTime(event.target.value)}
+              />
+            </label>
+            <button className="softButton" type="button" onClick={() => void addReminder()}>
+              Add reminder
+            </button>
+            <div className="eventList">
+              {careState.reminders.slice(0, 6).map((reminder) => (
+                <p key={reminder.id}>
+                  <strong>{reminder.time}</strong> {reminder.title}
+                </p>
+              ))}
+            </div>
+          </article>
+
+          <article className="patientPanel">
+            <div className="sectionHeading">
+              <span>Daily check-in</span>
+              <h2>Update family quickly</h2>
+            </div>
+            <div className="quickGrid" aria-label="Daily check in">
+              <button type="button" onClick={() => void completeCheckIn("ok")}>
+                <span>{copy.okay}</span>
+              </button>
+              <button type="button" onClick={() => void completeCheckIn("help")}>
+                <span>{copy.needHelp}</span>
+              </button>
+              <button type="button" onClick={() => void completeCheckIn("medicine")}>
+                <span>{copy.medicine}</span>
+              </button>
+            </div>
+            <div className={`statusBanner ${status.className}`}>
+              <span><i aria-hidden="true">{status.icon}</i>{status.label}</span>
+              <p>{status.detail}</p>
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section
+        className="tabPanel"
+        id="panel-circle"
+        role="tabpanel"
+        aria-labelledby="tab-circle"
+        hidden={activeTab !== "circle"}
+      >
+        <section className="workspaceGrid twoColumn" aria-label="Care circle">
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Care circle</span>
+              <h2>Family and trusted contacts</h2>
+            </div>
+            <div className="contactList">
+              {careState.contacts.map((contact) => (
+                <article key={contact.name}>
+                  <div className="contactMeta">
+                    <strong>{contact.name}</strong>
+                    <span>
+                      {contact.role} · {contact.accessLevel}
+                      {contact.canReceiveAlerts ? " · alerts on" : " · view only"}
+                    </span>
+                  </div>
+                  <p className="contactPhone">{contact.phone}</p>
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Invite</span>
+              <h2>Add caregiver</h2>
+            </div>
+            <label>
+              Name
+              <input
+                value={inviteName}
+                onChange={(event) => setInviteName(event.target.value)}
+              />
+            </label>
+            <label>
+              Phone or email
+              <input
+                value={inviteContact}
+                onChange={(event) => setInviteContact(event.target.value)}
+              />
+            </label>
+            <button className="softButton" type="button" onClick={() => void sendInvite()}>
+              Send invite
+            </button>
+            <div className="eventList">
+              {careState.invites.slice(0, 4).map((invite) => (
+                <p key={invite.id}>
+                  <strong>{invite.status}</strong> {invite.name} · {invite.role}
+                </p>
+              ))}
+            </div>
+          </article>
+
+          <article className={`alertCard fullSpan ${careState.lostMode ? "alertOn" : ""}`}>
+            <div>
+              <span className="smallLabel">Latest alert</span>
+              <h3>
+                {careState.lostMode
+                  ? `Lost-mode alert from ${careState.patient.name}`
+                  : "No emergency alerts"}
+              </h3>
+              <p>
+                {careState.lostMode
+                  ? `${careState.location.label} shared. Safe-zone boundary may have been crossed.`
+                  : `${careState.patient.name} checked in. Safe zone, medicine, and routine are visible.`}
+              </p>
+            </div>
+            <button
+              className="softButton compact"
+              type="button"
+              onClick={() => void syncLostMode(!careState.lostMode)}
+            >
+              {careState.lostMode ? "Resolve" : "Start alert"}
+            </button>
+          </article>
+        </section>
+      </section>
+
+      <section
+        className="tabPanel"
+        id="panel-notes"
+        role="tabpanel"
+        aria-labelledby="tab-notes"
+        hidden={activeTab !== "notes"}
+      >
+        <section className="workspaceGrid twoColumn" aria-label="Notes and activity">
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Caregiver notes</span>
+              <h2>Family handoff</h2>
+            </div>
+            <label>
+              Add note
+              <textarea
+                value={noteDraft}
+                onChange={(event) => setNoteDraft(event.target.value)}
+                placeholder="Example: She had breakfast and seemed calm."
+              />
+            </label>
+            <button className="softButton" type="button" onClick={() => void addNote()}>
+              Add caregiver note
+            </button>
+            <div className="eventList">
+              {careState.notes.map((note) => (
+                <p key={note}>{note}</p>
+              ))}
+            </div>
+          </article>
+
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Event history</span>
+              <h2>Recent care activity</h2>
+            </div>
+            <div className="eventList">
+              {careState.events.slice(0, 8).map((event) => (
+                <p key={event.id}>
+                  <strong>{event.type}</strong> {event.message}
+                </p>
+              ))}
+            </div>
+          </article>
+        </section>
+      </section>
+
+      <section
+        className="tabPanel"
+        id="panel-privacy"
+        role="tabpanel"
+        aria-labelledby="tab-privacy"
+        hidden={activeTab !== "privacy"}
+      >
+        <section className="workspaceGrid twoColumn" aria-label="Privacy and consent">
+          <article id="privacy" className="caregiverPanel consentPanel">
+            <div className="sectionHeading">
+              <span>Privacy and safety</span>
+              <h2>Consent-first design</h2>
+            </div>
+            <p className="panelCopy">
+              Location sharing is permission-based, emergency info is shown only
+              for care support, and the app is designed around consent, audit
+              history, caregiver roles, and data export/delete requests.
+            </p>
+            <label className="switchRow">
+              <input
+                checked={locationConsent}
+                type="checkbox"
+                onChange={(event) => void updateConsent("location", event.target.checked)}
+              />
+              <span>Location sharing consent</span>
+            </label>
+            <label className="switchRow">
+              <input
+                checked={emergencyConsent}
+                type="checkbox"
+                onChange={(event) => void updateConsent("emergency-card", event.target.checked)}
+              />
+              <span>Emergency card consent</span>
+            </label>
+            <div className="toggleRow">
+              <button className="softButton compact" type="button" onClick={() => void queuePrivacy("export")}>
+                Export data
+              </button>
+              <button className="softButton compact" type="button" onClick={() => void queuePrivacy("delete")}>
+                Delete request
+              </button>
+            </div>
+            <p className="panelCopy">
+              {privacyStatus}. Location: {locationConsent ? "allowed" : "off"}. Emergency card: {emergencyConsent ? "visible" : "hidden"}.
+            </p>
+          </article>
+
+          <article className="caregiverPanel">
+            <div className="sectionHeading">
+              <span>Consent audit</span>
+              <h2>Who changed what</h2>
+            </div>
+            <div className="consentAudit">
+              {careState.consentLog.slice(0, 6).map((entry) => (
+                <p key={entry.id}>
+                  <strong>{entry.actor}</strong> {entry.allowed ? "allowed" : "paused"} {entry.scope}
+                </p>
+              ))}
+            </div>
+            <div className="consentFlow">
+              <span className={locationConsent ? "complete" : ""}>Ask</span>
+              <span className={locationConsent ? "complete" : ""}>Allow</span>
+              <span className={careState.lostMode ? "active" : ""}>Share</span>
+              <span className={privacyStatus.includes("queued") ? "active" : ""}>Audit</span>
+            </div>
+          </article>
+
+          <section className="productionBand fullSpan" aria-label="Production safety controls">
+            <div className="sectionHeading">
+              <span>Readiness · {productionAudit.mode}</span>
+              <h2>Production safety layer</h2>
+            </div>
+            <div className="readinessMeter" aria-label="Production readiness score">
+              <strong>{productionAudit.readyCount}/{productionAudit.totalCount}</strong>
+              <p>production checks ready in this deployment</p>
+            </div>
+            <div className="auditGrid" aria-label="Production readiness checklist">
+              {productionAudit.checks.map((check) => (
+                <article className={check.ready ? "ready" : "pending"} key={check.id}>
+                  <span>{check.ready ? "Ready" : "Needs setup"}</span>
+                  <strong>{check.label}</strong>
+                  <p>{check.detail}</p>
+                </article>
+              ))}
+            </div>
+            {productionAudit.nextSteps.length ? (
+              <div className="nextStepBox">
+                <span className="smallLabel">Next provider steps</span>
+                {productionAudit.nextSteps.map((step) => (
+                  <p key={step}>{step}</p>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        </section>
+      </section>
+
+      <section
+        className="tabPanel"
+        id="panel-settings"
+        role="tabpanel"
+        aria-labelledby="tab-settings"
+        hidden={activeTab !== "settings"}
+      >
+        <section className="workspaceGrid twoColumn" aria-label="Settings and profile">
+          <article className="patientPanel">
           <div className="sectionHeading">
             <span>Senior setup</span>
             <h2>Care profile</h2>
@@ -1858,80 +2041,51 @@ export default function Home() {
           <button className="softButton" type="button" onClick={() => void saveOnboarding()}>
             {actionBusy === "profile" ? "Saving..." : "Save setup"}
           </button>
-        </article>
+          </article>
 
-        <article className="patientPanel">
-          <div className="sectionHeading">
-            <span>Accessibility</span>
-            <h2>Easy to read</h2>
-          </div>
-          <div className="toggleRow">
-            <button
-              className={`softButton compact ${largeText ? "selected" : ""}`}
-              type="button"
-              onClick={() => setLargeText((value) => !value)}
-            >
-              Large text
+          <article className="patientPanel">
+            <div className="sectionHeading">
+              <span>Accessibility</span>
+              <h2>Easy to read</h2>
+            </div>
+            <label className="switchRow">
+              <input
+                checked={voiceAssist}
+                type="checkbox"
+                onChange={(event) => setVoicePreference(event.target.checked)}
+              />
+              <span>Voice guidance</span>
+            </label>
+            <label className="switchRow">
+              <input
+                checked={largeText}
+                type="checkbox"
+                onChange={(event) => setLargeText(event.target.checked)}
+              />
+              <span>Large text</span>
+            </label>
+            <label className="switchRow">
+              <input
+                checked={highContrast}
+                type="checkbox"
+                onChange={(event) => setHighContrast(event.target.checked)}
+              />
+              <span>High contrast</span>
+            </label>
+            <label>
+              Caregiver access code
+              <input
+                inputMode="numeric"
+                value={caregiverAccessCode}
+                onChange={(event) => setCaregiverAccessCode(event.target.value)}
+              />
+            </label>
+            <button className="softButton" type="button" onClick={() => setHasEntered(false)}>
+              Reopen start setup
             </button>
-            <button
-              className={`softButton compact ${highContrast ? "selected" : ""}`}
-              type="button"
-              onClick={() => setHighContrast((value) => !value)}
-            >
-              High contrast
-            </button>
-          </div>
-          <p className="panelCopy">
-            The senior view uses large touch targets, simple sentences,
-            readable contrast, keyboard focus states, and reduced choices.
-          </p>
-        </article>
+          </article>
 
-        <article className="patientPanel">
-          <div className="sectionHeading">
-            <span>Live safety</span>
-            <h2>GPS and alerts</h2>
-          </div>
-          <p className="panelCopy">{locationStatus}</p>
-          <button className="primaryButton" type="button" onClick={() => void shareLocation()}>
-            {actionBusy === "location" ? "Requesting GPS..." : "Share live location"}
-          </button>
-          <div className="demoControlRow">
-            <button className="dangerButton" type="button" onClick={() => void simulateEmergencyFlow()}>
-              Simulate emergency
-            </button>
-            <button className="softButton compact" type="button" onClick={toggleOfflineDemo}>
-              {careState.location.networkStatus === "offline" ? "Restore online" : "Demo offline"}
-            </button>
-            <button className="softButton compact" type="button" onClick={() => void resetDemo()}>
-              {actionBusy === "reset" ? "Resetting..." : "Reset demo"}
-            </button>
-          </div>
-          <div className="toggleRow">
-            <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("sms")}>
-              {actionBusy === "sms" ? "Sending..." : "SMS"}
-            </button>
-            <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("whatsapp")}>
-              {actionBusy === "whatsapp" ? "Sending..." : "WhatsApp"}
-            </button>
-            <button className="softButton compact" type="button" onClick={() => void notifyCaregiver("push")}>
-              {actionBusy === "push" ? "Sending..." : "Push"}
-            </button>
-          </div>
-          <p className="panelCopy">{notificationStatus}</p>
-        </article>
-      </section>
-      </section>
-
-      <section
-        className="tabPanel"
-        id="panel-family"
-        role="tabpanel"
-        aria-labelledby="tab-family"
-        hidden={activeTab !== "family"}
-      >
-      <section className="dashboard" aria-label="Nischint feature demo">
-        <div className="patientPanel">
+          <article className="patientPanel">
           <div className="sectionHeading">
             <span>Calm guidance</span>
             <h2>{activeGuidance.title}</h2>
@@ -1981,440 +2135,20 @@ export default function Home() {
               </button>
             </div>
           </div>
-
-          <div className="voiceCard">
-            <div>
-              <span className="smallLabel">{copy.familyVoice}</span>
-              <h3>
-                {voicePlaying
-                  ? copy.playingMessage
-                  : copy.familySays(careState.contacts[0]?.name ?? "Family")}
-              </h3>
-              <p>&ldquo;{language === "hi" ? copy.calmingMessage : careState.patient.calmingMessage}&rdquo;</p>
-            </div>
-            <button
-              className="roundButton"
-              type="button"
-              aria-label={voicePlaying ? copy.stop : copy.play}
-              onClick={() =>
-                voicePlaying
-                  ? stopSpeaking()
-                  : speakText(
-                      language === "hi" ? copy.calmingMessage : careState.patient.calmingMessage
-                    )
-              }
-            >
-              {voicePlaying ? copy.stop : copy.play}
-            </button>
+          <div className="architectureCard" aria-label="Production architecture roadmap">
+            <span className="smallLabel">Scale roadmap</span>
+            <h3>Senior app, family dashboard, admin portal</h3>
+            <p>
+              Nischint can grow into dedicated senior, family, admin, and public apps
+              with services for auth, location, alerts, profiles, AI, notifications,
+              and immutable audit logs.
+            </p>
+            <a href="/api/nischint/architecture" target="_blank" rel="noreferrer">
+              View architecture JSON
+            </a>
           </div>
-        </div>
-
-        <div className="caregiverPanel">
-          <div className="sectionHeading">
-            <span>Caregiver live view</span>
-            <h2>Family sees what matters first</h2>
-          </div>
-
-          <div className={`alertCard ${careState.lostMode ? "alertOn" : ""}`}>
-            <div>
-              <span className="smallLabel">Latest alert</span>
-              <h3>
-                {careState.lostMode
-                  ? `Lost-mode alert from ${careState.patient.name}`
-                  : "No emergency alerts"}
-              </h3>
-              <p>
-                {careState.lostMode
-                  ? `${careState.location.label} shared. Safe-zone boundary may have been crossed.`
-                  : `${careState.patient.name} checked in. Safe zone, medicine, and routine are visible.`}
-              </p>
-            </div>
-            <button
-              className="softButton compact"
-              type="button"
-              onClick={() => void syncLostMode(!careState.lostMode)}
-            >
-              {careState.lostMode ? "Resolve" : "Demo alert"}
-            </button>
-          </div>
-
-          <div className="timelineCard" aria-label="Caregiver escalation timeline">
-            <span className="smallLabel">Escalation timeline</span>
-            {escalationSteps.map((step, index) => (
-              <div
-                className={`timelineItem ${
-                  careState.lostMode && index === 0
-                    ? "active"
-                    : careState.lostMode && index === 1
-                      ? "waiting"
-                      : ""
-                }`}
-                key={step.time}
-              >
-                <strong>{step.time}</strong>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mapCard" aria-label="Safe zone map demo">
-            <div className="mapSurface">
-              <span className="homeDot">Home</span>
-              <span
-                className={`personDot ${careState.location.safeZoneStatus === "outside" ? "outside" : ""}`}
-              >
-                {careState.patient.name}
-              </span>
-              <div className="safeRing" />
-              <span className="routeLine" />
-              <span className="scanBeam" />
-            </div>
-            <div>
-              <span className="smallLabel">Safe zone</span>
-              <h3>
-                {careState.location.safeZoneStatus === "outside"
-                  ? "Outside usual area"
-                  : "Inside usual area"}
-              </h3>
-              <p>{safeZoneSummary()}</p>
-              <p>
-                {careState.location.latitude
-                  ? careState.location.latitude.toFixed(4) + ", " + careState.location.longitude?.toFixed(4)
-                  : careState.patient.safeZoneName + ", " + careState.patient.safeZoneRadiusMeters + "m radius"}
-              </p>
-            </div>
-          </div>
-
-          <div className="contactList">
-            {careState.contacts.map((contact) => (
-              <article key={contact.name}>
-                <div className="contactMeta">
-                  <strong>{contact.name}</strong>
-                  <span>
-                    {contact.role} · {contact.accessLevel}
-                    {contact.canReceiveAlerts ? " · alerts on" : " · view only"}
-                  </span>
-                </div>
-                <p className="contactPhone">{contact.phone}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-      </section>
-
-      <section
-        className="tabPanel"
-        id="panel-privacy"
-        role="tabpanel"
-        aria-labelledby="tab-privacy"
-        hidden={activeTab !== "privacy"}
-      >
-      <section className="productionBand" aria-label="Production safety controls">
-        <div className="sectionHeading">
-          <span>For real families · {productionAudit.mode}</span>
-          <h2>Production safety layer</h2>
-        </div>
-        <div className="readinessMeter" aria-label="Production readiness score">
-          <strong>{productionAudit.readyCount}/{productionAudit.totalCount}</strong>
-          <p>production checks ready in this deployment</p>
-        </div>
-        <div className="auditGrid" aria-label="Production readiness checklist">
-          {productionAudit.checks.map((check) => (
-            <article className={check.ready ? "ready" : "pending"} key={check.id}>
-              <span>{check.ready ? "Ready" : "Needs setup"}</span>
-              <strong>{check.label}</strong>
-              <p>{check.detail}</p>
-            </article>
-          ))}
-        </div>
-        {productionAudit.nextSteps.length ? (
-          <div className="nextStepBox">
-            <span className="smallLabel">Next provider steps</span>
-            {productionAudit.nextSteps.map((step) => (
-              <p key={step}>{step}</p>
-            ))}
-          </div>
-        ) : null}
-        <div className="productionGrid">
-          {productionTiles.map((tile) => (
-            <article className="productionTile" key={tile.title}>
-              <em>{tile.accent}</em>
-              <strong>{tile.title}</strong>
-              <p>{tile.detail}</p>
-            </article>
-          ))}
-        </div>
-        <div className="architectureCard" aria-label="Production architecture roadmap">
-          <span className="smallLabel">Scale roadmap</span>
-          <h3>Senior app, family dashboard, admin portal</h3>
-          <p>
-            This MVP runs as one Vercel PWA. The production roadmap splits Nischint into
-            dedicated senior, family, admin, and public apps with services for auth,
-            location, alerts, profiles, AI, notifications, and immutable audit logs.
-          </p>
-          <a href="/api/nischint/architecture" target="_blank" rel="noreferrer">
-            View architecture JSON
-          </a>
-        </div>
-      </section>
-
-      <section className="trustBand" aria-label="Trust and family use cases">
-        <div className="sectionHeading">
-          <span>Trust signals</span>
-          <h2>Designed around consent, clarity, and family care</h2>
-        </div>
-        <div className="trustGrid">
-          {trustSignals.map((item) => (
-            <article key={item.label}>
-              <span className="badgeMark" aria-hidden="true">नि</span>
-              <strong>{item.label}</strong>
-              <p>{item.detail}</p>
-            </article>
-          ))}
-        </div>
-        <div className="useCaseGrid">
-          {familyUseCases.map((item) => (
-            <article key={item.quote}>
-              <p>&ldquo;{item.quote}&rdquo;</p>
-              <span>{item.family}</span>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="toolGrid" aria-label="Caregiver history and privacy">
-        <article className="caregiverPanel settingsPanel">
-          <div className="sectionHeading">
-            <span>Settings</span>
-            <h2>Preferences</h2>
-          </div>
-          <label className="switchRow">
-            <input
-              checked={voiceAssist}
-              type="checkbox"
-              onChange={(event) => setVoicePreference(event.target.checked)}
-            />
-            <span>Voice guidance</span>
-          </label>
-          <label className="switchRow">
-            <input
-              checked={largeText}
-              type="checkbox"
-              onChange={(event) => setLargeText(event.target.checked)}
-            />
-            <span>Large text</span>
-          </label>
-          <label className="switchRow">
-            <input
-              checked={highContrast}
-              type="checkbox"
-              onChange={(event) => setHighContrast(event.target.checked)}
-            />
-            <span>High contrast</span>
-          </label>
-          <button className="softButton" type="button" onClick={() => setHasEntered(false)}>
-            Reopen start setup
-          </button>
-        </article>
-
-        <article className="caregiverPanel">
-          <div className="sectionHeading">
-            <span>Reminders</span>
-            <h2>Medicine and routine</h2>
-          </div>
-          <label>
-            Reminder
-            <input
-              value={reminderTitle}
-              onChange={(event) => setReminderTitle(event.target.value)}
-            />
-          </label>
-          <label>
-            Time
-            <input
-              type="time"
-              value={reminderTime}
-              onChange={(event) => setReminderTime(event.target.value)}
-            />
-          </label>
-          <button className="softButton" type="button" onClick={() => void addReminder()}>
-            Add reminder
-          </button>
-          <div className="eventList">
-            {careState.reminders.slice(0, 4).map((reminder) => (
-              <p key={reminder.id}>
-                <strong>{reminder.time}</strong> {reminder.title}
-              </p>
-            ))}
-          </div>
-        </article>
-
-        <article className="caregiverPanel">
-          <div className="sectionHeading">
-            <span>Care circle</span>
-            <h2>Invite caregiver</h2>
-          </div>
-          <label>
-            Name
-            <input
-              value={inviteName}
-              onChange={(event) => setInviteName(event.target.value)}
-            />
-          </label>
-          <label>
-            Phone or email
-            <input
-              value={inviteContact}
-              onChange={(event) => setInviteContact(event.target.value)}
-            />
-          </label>
-          <button className="softButton" type="button" onClick={() => void sendInvite()}>
-            Send invite
-          </button>
-          <div className="eventList">
-            {careState.invites.slice(0, 3).map((invite) => (
-              <p key={invite.id}>
-                <strong>{invite.status}</strong> {invite.name} · {invite.role}
-              </p>
-            ))}
-          </div>
-        </article>
-
-        <article className="caregiverPanel">
-          <div className="sectionHeading">
-            <span>Caregiver notes</span>
-            <h2>Family handoff</h2>
-          </div>
-          <label>
-            Add note
-            <textarea
-              value={noteDraft}
-              onChange={(event) => setNoteDraft(event.target.value)}
-              placeholder="Example: She had breakfast and seemed calm."
-            />
-          </label>
-          <button className="softButton" type="button" onClick={() => void addNote()}>
-            Add caregiver note
-          </button>
-          <div className="eventList">
-            {careState.notes.map((note) => (
-              <p key={note}>{note}</p>
-            ))}
-          </div>
-        </article>
-
-        <article className="caregiverPanel">
-          <div className="sectionHeading">
-            <span>Event history</span>
-            <h2>Recent care activity</h2>
-          </div>
-          <div className="eventList">
-            {careState.events.slice(0, 6).map((event) => (
-              <p key={event.id}>
-                <strong>{event.type}</strong> {event.message}
-              </p>
-            ))}
-          </div>
-        </article>
-
-        <article className="caregiverPanel noticePanel">
-          <div className="sectionHeading">
-            <span>Launch note</span>
-            <h2>Demo-ready, not medical advice</h2>
-          </div>
-          <p className="panelCopy">
-            Nischint is a safety-support prototype for presentations and pilot
-            testing. For real families, connect verified contacts, a secure
-            database, authentication, emergency policies, and consent workflows
-            before storing sensitive health or location data.
-          </p>
-        </article>
-
-        <article id="privacy" className="caregiverPanel consentPanel">
-          <div className="sectionHeading">
-            <span>Privacy and safety</span>
-            <h2>Consent-first design</h2>
-          </div>
-          <p className="panelCopy">
-            Location sharing is permission-based, emergency info is shown only
-            for care support, and the app is designed around consent, audit
-            history, caregiver roles, and data export/delete requests.
-          </p>
-          <label className="switchRow">
-            <input
-              checked={locationConsent}
-              type="checkbox"
-              onChange={(event) => void updateConsent("location", event.target.checked)}
-            />
-            <span>Location sharing consent</span>
-          </label>
-          <label className="switchRow">
-            <input
-              checked={emergencyConsent}
-              type="checkbox"
-              onChange={(event) => void updateConsent("emergency-card", event.target.checked)}
-            />
-            <span>Emergency card consent</span>
-          </label>
-          <label>
-            Caregiver access code
-            <input
-              inputMode="numeric"
-              value={caregiverAccessCode}
-              onChange={(event) => setCaregiverAccessCode(event.target.value)}
-            />
-          </label>
-          <div className="consentFlow">
-            <span className={locationConsent ? "complete" : ""}>Ask</span>
-            <span className={locationConsent ? "complete" : ""}>Allow</span>
-            <span className={careState.lostMode ? "active" : ""}>Share</span>
-            <span className={privacyStatus.includes("queued") ? "active" : ""}>Audit</span>
-          </div>
-          <div className="consentAudit">
-            <span className="smallLabel">Consent audit</span>
-            {careState.consentLog.slice(0, 4).map((entry) => (
-              <p key={entry.id}>
-                <strong>{entry.actor}</strong> {entry.allowed ? "allowed" : "paused"} {entry.scope}
-              </p>
-            ))}
-          </div>
-          <div className="escalationStack">
-            <p><strong>0 min</strong> Primary caregiver alert</p>
-            <p><strong>10 min</strong> Backup family contact</p>
-            <p><strong>20 min</strong> Neighbor or doctor handoff</p>
-          </div>
-          <div className="toggleRow">
-            <button className="softButton compact" type="button" onClick={() => void queuePrivacy("export")}>
-              Export data
-            </button>
-            <button className="softButton compact" type="button" onClick={() => void queuePrivacy("delete")}>
-              Delete request
-            </button>
-          </div>
-          <p className="panelCopy">
-            {privacyStatus}. Location: {locationConsent ? "allowed" : "off"}. Emergency card: {emergencyConsent ? "visible" : "hidden"}.
-          </p>
-        </article>
-
-        <article id="help" className="caregiverPanel faqPanel">
-          <div className="sectionHeading">
-            <span>Help</span>
-            <h2>Family FAQ</h2>
-          </div>
-          <div className="faqList">
-            {faqItems.map((item) => (
-              <details key={item.question}>
-                <summary>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
-          </div>
-        </article>
-      </section>
+          </article>
+        </section>
       </section>
     </main>
   );

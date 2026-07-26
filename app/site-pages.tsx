@@ -28,7 +28,7 @@ export type SitePageConfig = {
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/care", label: "Care" },
-  { href: "/demo", label: "Demo" },
+  { href: "/demo", label: "App" },
   { href: "/privacy", label: "Privacy" },
   { href: "/about", label: "About" },
 ];
@@ -39,7 +39,7 @@ export const sitePages = {
     title: "Caregiver onboarding that explains exactly how Nischint helps.",
     intro:
       "Nischint keeps the senior screen calm while giving family members the context they need during check-ins, medicine reminders, and moments of confusion.",
-    primaryCta: { label: "Open live demo", href: "/#demo" },
+    primaryCta: { label: "Open Nischint", href: "/#safety" },
     secondaryCta: { label: "Read privacy promise", href: "/privacy" },
     highlights: [
       {
@@ -52,7 +52,7 @@ export const sitePages = {
       },
       {
         title: "Escalation explained",
-        body: "The demo shows a 0, 10, and 20 minute alert ladder for family follow-up.",
+        body: "The app shows a 0, 10, and 20 minute alert ladder for family follow-up.",
       },
     ],
     sections: [
@@ -77,11 +77,11 @@ export const sitePages = {
     ],
   },
   demo: {
-    eyebrow: "Interactive prototype",
+    eyebrow: "Live workflow",
     title: "Try the senior safety flow and caregiver dashboard preview.",
     intro:
-      "The live demo lets you simulate lost mode, safe check-ins, reminders, location sharing, voice guidance, family alerts, and privacy actions.",
-    primaryCta: { label: "Launch interactive demo", href: "/#demo" },
+      "The app walkthrough shows lost mode, safe check-ins, reminders, location sharing, voice guidance, family alerts, and privacy actions.",
+    primaryCta: { label: "Launch Nischint app", href: "/#safety" },
     secondaryCta: { label: "View caregiver guide", href: "/care" },
     highlights: [
       {
@@ -99,7 +99,7 @@ export const sitePages = {
     ],
     sections: [
       {
-        title: "Demo scenarios",
+        title: "Care scenarios",
         body: "Use these simple scenarios for a presentation or product walkthrough.",
         items: [
           { title: "Lost outside home", body: "Press I feel lost, share location, and show the caregiver alert card." },
@@ -108,8 +108,8 @@ export const sitePages = {
         ],
       },
       {
-        title: "Demo limitations",
-        body: "This deployment is a prototype. Real emergency use needs verified caregivers, tested SMS delivery, legal review, monitoring, and field validation.",
+        title: "Production boundaries",
+        body: "Real emergency use needs verified caregivers, tested SMS delivery, legal review, monitoring, and field validation.",
         items: [
           { title: "Provider setup", body: "SMS, WhatsApp, AI, and database providers need production credentials." },
           { title: "Device permissions", body: "GPS, notifications, speech, and vibration depend on the browser and phone settings." },
@@ -123,7 +123,7 @@ export const sitePages = {
     title: "Privacy policy for a care app that handles sensitive moments.",
     intro:
       "Nischint is designed around visible consent, limited collection, caregiver transparency, and clear data rights before real-world use.",
-    primaryCta: { label: "Open consent demo", href: "/#privacy" },
+    primaryCta: { label: "Open consent tools", href: "/#privacy" },
     secondaryCta: { label: "Contact privacy team", href: "/contact" },
     highlights: [
       {
@@ -142,7 +142,7 @@ export const sitePages = {
     sections: [
       {
         title: "Data Nischint may collect",
-        body: "The demo stores care-state data. A production system would need a full privacy notice before collecting real personal or health data.",
+        body: "The app stores care-state data. A production system needs a full privacy notice before collecting real personal or health data.",
         items: [
           { title: "Care profile", body: "Name, language, home address, emergency note, calming message, and safe-zone settings." },
           { title: "Care contacts", body: "Names, roles, phone numbers, alert permissions, and access levels." },
@@ -174,7 +174,7 @@ export const sitePages = {
     title: "A calm safety companion for older adults and the families who care for them.",
     intro:
       "Nischint means peace of mind. The project focuses on practical real-time support when someone is confused, lost, unwell, or unable to explain what they need.",
-    primaryCta: { label: "Try the demo", href: "/demo" },
+    primaryCta: { label: "Open the app", href: "/demo" },
     secondaryCta: { label: "See roadmap", href: "/api/nischint/architecture" },
     highlights: [
       {
@@ -197,12 +197,12 @@ export const sitePages = {
         items: [
           { title: "Calm technology", body: "The senior screen avoids clutter and keeps important actions obvious." },
           { title: "Family clarity", body: "Caregivers get a structured picture instead of scattered calls and messages." },
-          { title: "Meaningful project", body: "The demo shows real-time help, not only static memory preservation." },
+          { title: "Meaningful project", body: "The app shows real-time help, not only static memory preservation." },
         ],
       },
       {
         title: "Roadmap",
-        body: "The current Vercel app is the MVP. The production roadmap splits senior, family, admin, and public experiences with stronger infrastructure.",
+        body: "The current Vercel app is the live MVP. The production roadmap splits senior, family, admin, and public experiences with stronger infrastructure.",
         items: [
           { title: "Next", body: "Finish verified alerts, caregiver accounts, normalized database tables, and privacy workflows." },
           { title: "Later", body: "Add native app support, WebSocket location, monitoring, stronger compliance, and health integrations." },
@@ -215,20 +215,20 @@ export const sitePages = {
     eyebrow: "Support",
     title: "Contact and support paths for families evaluating Nischint.",
     intro:
-      "Use this page as the public support surface for privacy questions, demo help, partnership requests, and caregiver onboarding.",
+      "Use this page as the public support surface for privacy questions, app help, partnership requests, and caregiver onboarding.",
     primaryCta: { label: "Email project team", href: "mailto:hello@nischint.app" },
     secondaryCta: { label: "Read FAQ", href: "/faq" },
     highlights: [
       { title: "Privacy questions", body: "Ask about consent, data export, deletion, retention, and third-party providers." },
-      { title: "Demo help", body: "Get guidance for presenting the lost-mode, location, reminders, voice, and caregiver flows." },
+      { title: "App help", body: "Get guidance for presenting the lost-mode, location, reminders, voice, and caregiver flows." },
       { title: "Partnerships", body: "Discuss elder care, healthcare, community, or safety pilot opportunities." },
     ],
     sections: [
       {
         title: "Before contacting",
-        body: "For urgent real-life safety concerns, contact local emergency services or trusted family directly. Nischint is currently a prototype.",
+        body: "For urgent real-life safety concerns, contact local emergency services or trusted family directly. Nischint must be paired with real safety plans.",
         items: [
-          { title: "Demo code", body: "Use 2486 for the prototype family login." },
+          { title: "Access code", body: "Use 2486 for the family login." },
           { title: "Provider setup", body: "SMS, WhatsApp, AI, and database keys must be configured before production tests." },
           { title: "Feedback", body: "Note the device, browser, route, and exact action if something feels unclear." },
         ],
@@ -239,11 +239,11 @@ export const sitePages = {
     eyebrow: "Questions",
     title: "Common questions for families, judges, and caregivers.",
     intro:
-      "Short answers for the project demo, safety expectations, privacy model, and production readiness.",
-    primaryCta: { label: "Try demo", href: "/demo" },
+      "Short answers for the app walkthrough, safety expectations, privacy model, and production readiness.",
+    primaryCta: { label: "Open app", href: "/demo" },
     secondaryCta: { label: "Care guide", href: "/care" },
     highlights: [
-      { title: "Is this live emergency software?", body: "Not yet. It is a production-minded MVP and presentation demo." },
+      { title: "Is this live emergency software?", body: "Not yet. It is a production-minded MVP and must be paired with real emergency plans." },
       { title: "Can it help elderly users?", body: "Yes. The language is elder-safety focused, not limited to dementia." },
       { title: "Does AI make decisions?", body: "No. AI can draft calm guidance and summaries; escalation rules stay explicit." },
     ],
@@ -253,9 +253,9 @@ export const sitePages = {
         body: "Nischint should always be presented as care support, not a replacement for family judgement or emergency services.",
         items: [
           { title: "What happens when I feel lost is pressed?", body: "The app enters lost mode, shows guidance, can share location, and queues caregiver alerts." },
-          { title: "Can someone use it without reading?", body: "The demo includes read-aloud and voice command support when the browser supports it." },
+          { title: "Can someone use it without reading?", body: "The app includes read-aloud and voice command support when the browser supports it." },
           { title: "What is left for production?", body: "Real accounts, verified alert delivery, formal privacy/legal review, monitoring, and field testing." },
-          { title: "Why separate pages?", body: "Families need clear privacy, care, demo, and trust information without overloading the senior screen." },
+          { title: "Why separate pages?", body: "Families need clear privacy, care, app, and trust information without overloading the senior screen." },
         ],
       },
     ],

@@ -16,7 +16,7 @@ The senior-facing side keeps actions large, gentle, and direct. The caregiver-fa
 
 ## Core Use Case
 
-When a person feels lost, they can press **I feel lost**. Nischint then demonstrates a safety flow that can:
+When a person feels lost, they can press **I feel lost**. Nischint then runs a safety flow that can:
 
 1. Turn on lost mode.
 2. Show calming guidance.
@@ -45,13 +45,13 @@ When a person feels lost, they can press **I feel lost**. Nischint then demonstr
 ### Caregiver View
 
 - Live alert status
-- Safe-zone map demo
+- Safe-zone map view
 - Caregiver contact list
 - Reminder creation
 - Caregiver invite flow
 - Family handoff notes
 - Recent event history
-- Privacy export/delete request demo
+- Privacy export/delete requests
 - Consent toggles for location and emergency-card visibility
 - Caregiver access-code concept
 - Caregiver access levels for owner, backup, and clinical contacts
@@ -83,15 +83,15 @@ Nischint includes Next.js API routes for:
 
 Nischint now has real route pages instead of navigation links that only point back to the same screen:
 
-- Landing/demo app: `/`
+- Main app: `/`
 - Caregiver information: `/care`
-- Interactive demo guide: `/demo`
+- App walkthrough: `/demo`
 - Privacy policy: `/privacy`
 - About and roadmap: `/about`
 - Contact: `/contact`
 - FAQ: `/faq`
 
-Without provider keys, the app still works as a polished demo and simulates delivery. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
+Without provider keys, the app still works in guided sample mode and records actions locally or in the configured database. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
 
 ## Voice And Language Accessibility
 
@@ -116,11 +116,11 @@ Read-aloud uses the browser's speech synthesis. Voice-command availability depen
 
 For a scale-up plan covering separate senior/family/admin apps, microservices, real-time location, AWS deployment, and accessibility guardrails, see [docs/PRODUCTION_ARCHITECTURE.md](docs/PRODUCTION_ARCHITECTURE.md). For the deeper production stack, integrations, security, accessibility, and operations roadmap, see [docs/TECHNICAL_IMPLEMENTATION.md](docs/TECHNICAL_IMPLEMENTATION.md).
 
-## Demo Flow
+## App Flow
 
 1. Open the app on a phone-sized screen.
 2. Choose the senior name, language, and whether voice guidance should be on.
-3. Enter with the demo access code **2486**.
+3. Enter with the family access code **2486**.
 4. Press **I feel lost**.
 5. Watch the senior view enter help mode.
 6. Press **Share live location** and allow GPS permission.
@@ -166,7 +166,7 @@ This runs a production build and verifies the Nischint-branded launch content, m
 1. Push this folder to GitHub.
 2. Import the repository in Vercel.
 3. Keep the framework preset as **Next.js**.
-4. Leave environment variables empty for the demo deployment.
+4. Leave environment variables empty for a sample deployment.
 5. Add real environment variables only when connecting real providers.
 6. Deploy.
 
@@ -179,12 +179,12 @@ Recommended Vercel settings:
 
 ## Environment Variables
 
-All environment variables are optional for the demo deployment. Do not add blank variables in Vercel; add a key only when you have a real value.
+All environment variables are optional for the first deployment. Do not add blank variables in Vercel; add a key only when you have a real value.
 
 | Variable | Purpose |
 | --- | --- |
 | `DATABASE_URL` | Production database connection, such as Neon, Supabase, or Vercel Postgres |
-| `NISCHINT_SESSION_SECRET` | Secret used to sign caregiver demo sessions |
+| `NISCHINT_SESSION_SECRET` | Secret used to sign caregiver sessions |
 | `TWILIO_ACCOUNT_SID` | Twilio account SID for SMS alerts |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
 | `TWILIO_FROM_NUMBER` | Twilio sender number |
@@ -245,15 +245,15 @@ Nischint now includes a production-readiness layer that checks whether the deplo
 
 The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
 
-When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory demo state.
+When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory sample state.
 
-The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default demo code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so demo sessions are signed with a private production value.
+The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
 
 AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice. The `/api/nischint/ai-capabilities` endpoint reports whether voice conversation, orchestration, planning, and screenshot verification providers are configured.
 
 ## Important Safety Note
 
-Nischint is currently a polished MVP for demos, portfolios, and judged project presentations. It is not medical advice, an emergency-response service, or a replacement for professional care.
+Nischint is currently a polished MVP for pilots, portfolios, and judged project presentations. It is not medical advice, an emergency-response service, or a replacement for professional care.
 
 Before using it with real families, the project still needs:
 
@@ -280,4 +280,4 @@ Before using it with real families, the project still needs:
 
 ## Project Status
 
-Nischint is ready to deploy as a meaningful, voice-assisted MVP. It demonstrates the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, visible production-safety concepts, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.
+Nischint is ready to deploy as a meaningful, voice-assisted MVP. It shows the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, visible production-safety concepts, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.
