@@ -112,19 +112,6 @@ type Guidance = {
   steps: string[];
 };
 
-type ProductionAudit = {
-  mode: string;
-  readyCount: number;
-  totalCount: number;
-  checks: Array<{
-    id: string;
-    label: string;
-    ready: boolean;
-    detail: string;
-  }>;
-  nextSteps: string[];
-};
-
 type AiCapability = {
   id: string;
   label: string;
@@ -425,49 +412,6 @@ const routeLinks = [
   { href: "/about", label: "About" },
 ];
 
-const fallbackAudit: ProductionAudit = {
-  mode: "production-minded",
-  readyCount: 2,
-  totalCount: 7,
-  checks: [
-    {
-      id: "database",
-      label: "Durable database",
-      ready: false,
-      detail: "Add DATABASE_URL for persistent production storage.",
-    },
-    {
-      id: "auth",
-      label: "Caregiver authentication",
-      ready: false,
-      detail: "Access code is active. Add a real auth provider for production accounts.",
-    },
-    {
-      id: "sms",
-      label: "Verified SMS alerts",
-      ready: false,
-      detail: "Add Twilio credentials and verified caregiver numbers.",
-    },
-    {
-      id: "privacy",
-      label: "Consent and audit trail",
-      ready: true,
-      detail: "Consent and privacy actions are tracked in the care timeline.",
-    },
-    {
-      id: "geofence",
-      label: "Safe-zone distance logic",
-      ready: true,
-      detail: "GPS updates use radius checks when safe-zone coordinates exist.",
-    },
-  ],
-  nextSteps: [
-    "Add DATABASE_URL for persistent production storage.",
-    "Add a real auth provider for production accounts.",
-    "Add Twilio credentials and verified caregiver numbers.",
-  ],
-};
-
 export default function Home() {
   const [careState, setCareState] = useState<CareState>(fallbackState);
   const [guidance, setGuidance] = useState<Guidance>(defaultGuidance);
@@ -478,7 +422,6 @@ export default function Home() {
   const [hasEntered, setHasEntered] = useState(false);
   const [activeTab, setActiveTab] = useState<AppTab>("safety");
   const [backendReady, setBackendReady] = useState(false);
-  const [productionAudit, setProductionAudit] = useState<ProductionAudit>(fallbackAudit);
   const [voicePlaying, setVoicePlaying] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
@@ -924,7 +867,6 @@ export default function Home() {
       ai?: string;
       capabilities?: AiCapability[];
       delivery?: string;
-      audit?: ProductionAudit;
       authenticated?: boolean;
       session?: CaregiverSession | null;
       error?: string;
@@ -939,15 +881,6 @@ export default function Home() {
       if (payload.capabilities) setAiCapabilities(payload.capabilities);
     } catch {
       setBackendReady(false);
-    }
-  }
-
-  async function refreshProductionAudit() {
-    try {
-      const payload = await callApi("/api/nischint/production");
-      if (payload.audit) setProductionAudit(payload.audit);
-    } catch {
-      setProductionAudit(fallbackAudit);
     }
   }
 
@@ -1197,7 +1130,6 @@ export default function Home() {
           window.localStorage.removeItem("nischint-has-entered");
         }
         await refreshGuidance();
-        await refreshProductionAudit();
       } catch {
         if (mounted) setBackendReady(false);
       }
@@ -1951,32 +1883,53 @@ export default function Home() {
             </div>
           </article>
 
-          <section className="productionBand fullSpan" aria-label="Production safety controls">
+          <section className="privacyControlBand fullSpan" aria-label="Privacy visibility summary">
             <div className="sectionHeading">
-              <span>Readiness · {productionAudit.mode}</span>
-              <h2>Production safety layer</h2>
+              <span>Your information</span>
+              <h2>What family can see</h2>
             </div>
-            <div className="readinessMeter" aria-label="Production readiness score">
-              <strong>{productionAudit.readyCount}/{productionAudit.totalCount}</strong>
-              <p>production checks ready in this deployment</p>
+            <div className="privacySummaryGrid">
+              <article className={locationConsent ? "allowed" : "paused"}>
+                <span>{locationConsent ? "Allowed" : "Paused"}</span>
+                <strong>Live location</strong>
+                <p>
+                  {locationConsent
+                    ? "Caregivers can see location only after the senior shares it."
+                    : "Caregivers cannot see live location until permission is turned on."}
+                </p>
+              </article>
+              <article className={emergencyConsent ? "allowed" : "paused"}>
+                <span>{emergencyConsent ? "Visible" : "Hidden"}</span>
+                <strong>Emergency card</strong>
+                <p>
+                  {emergencyConsent
+                    ? "Home address, medical note, and primary contact can be shown during help mode."
+                    : "Emergency details stay hidden until this consent is restored."}
+                </p>
+              </article>
+              <article className={caregiverSession ? "allowed" : "paused"}>
+                <span>{caregiverSession ? "Signed in" : "Locked"}</span>
+                <strong>Caregiver access</strong>
+                <p>
+                  {caregiverSession
+                    ? `${caregiverSession.caregiverName} can view the care dashboard as ${caregiverSession.role}.`
+                    : "Family dashboard access requires the caregiver code."}
+                </p>
+              </article>
             </div>
-            <div className="auditGrid" aria-label="Production readiness checklist">
-              {productionAudit.checks.map((check) => (
-                <article className={check.ready ? "ready" : "pending"} key={check.id}>
-                  <span>{check.ready ? "Ready" : "Needs setup"}</span>
-                  <strong>{check.label}</strong>
-                  <p>{check.detail}</p>
-                </article>
-              ))}
+            <div className="privacyRequestList" aria-label="Privacy requests">
+              <span className="smallLabel">Recent requests</span>
+              {careState.privacyRequests.length ? (
+                careState.privacyRequests.slice(0, 4).map((request) => (
+                  <p key={request.id}>
+                    <strong>{request.type === "export" ? "Data export" : "Delete request"}</strong>
+                    <span>{request.status}</span>
+                  </p>
+                ))
+              ) : (
+                <p>No export or delete request has been made yet.</p>
+              )}
             </div>
-            {productionAudit.nextSteps.length ? (
-              <div className="nextStepBox">
-                <span className="smallLabel">Next provider steps</span>
-                {productionAudit.nextSteps.map((step) => (
-                  <p key={step}>{step}</p>
-                ))}
-              </div>
-            ) : null}
           </section>
         </section>
       </section>

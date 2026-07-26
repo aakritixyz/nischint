@@ -65,9 +65,9 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /screenAnnouncement/);
   assert.match(page, /Share live location/);
   assert.match(page, /Consent-first design/);
-  assert.match(page, /Production safety layer/);
-  assert.match(page, /productionAudit/);
-  assert.match(page, /Production readiness checklist/);
+  assert.match(page, /What family can see/);
+  assert.match(page, /privacySummaryGrid/);
+  assert.match(page, /Recent requests/);
   assert.match(page, /Production architecture roadmap/);
   assert.match(page, /Senior app, family dashboard, admin portal/);
   assert.match(page, /api\/nischint\/architecture/);
@@ -132,8 +132,9 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /fullSpan/);
   assert.match(styles, /appPanelHero/);
   assert.match(styles, /timelineCard/);
-  assert.match(styles, /auditGrid/);
-  assert.match(styles, /readinessMeter/);
+  assert.match(styles, /privacyControlBand/);
+  assert.match(styles, /privacySummaryGrid/);
+  assert.match(styles, /privacyRequestList/);
   assert.match(styles, /contactPhone/);
   assert.match(styles, /aiCareCard/);
   assert.match(styles, /aiCapabilityRow/);

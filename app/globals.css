@@ -1810,6 +1810,87 @@ body {
   gap: 5px;
 }
 
+.privacyControlBand {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 254, 250, 0.88);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.privacySummaryGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.privacySummaryGrid article,
+.privacyRequestList {
+  border: 1px solid rgba(63, 55, 62, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+  padding: 14px;
+}
+
+.privacySummaryGrid article.allowed {
+  box-shadow: inset 4px 0 0 var(--sage);
+}
+
+.privacySummaryGrid article.paused {
+  box-shadow: inset 4px 0 0 var(--rose);
+}
+
+.privacySummaryGrid span,
+.privacyRequestList p span {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 26px;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--mint);
+  color: #226747;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0 9px;
+}
+
+.privacySummaryGrid article.paused span {
+  background: #f6dfe4;
+  color: #8a2435;
+}
+
+.privacySummaryGrid strong {
+  display: block;
+  margin-top: 9px;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.privacySummaryGrid p,
+.privacyRequestList p {
+  margin-top: 7px;
+  color: #675d65;
+  font-size: 0.88rem;
+  font-weight: 520;
+  line-height: 1.4;
+}
+
+.privacyRequestList {
+  display: grid;
+  gap: 7px;
+}
+
+.privacyRequestList p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 0;
+}
+
 .productionTile {
   position: relative;
   min-height: 138px;
