@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type CheckIn = "ok" | "help" | "medicine";
@@ -552,6 +553,13 @@ const appTabs: Array<{ id: AppTab; label: string; hint: string }> = [
   { id: "demo", label: "Demo", hint: "Try flows" },
   { id: "family", label: "Family", hint: "Caregiver view" },
   { id: "privacy", label: "Privacy", hint: "Settings and help" },
+];
+
+const routeLinks = [
+  { href: "/care", label: "Care" },
+  { href: "/demo", label: "Demo" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/about", label: "About" },
 ];
 
 const fallbackAudit: ProductionAudit = {
@@ -1287,6 +1295,7 @@ export default function Home() {
 
   useEffect(() => {
     let mounted = true;
+    const initialHash = window.location.hash.replace("#", "");
     const savedLanguage = window.localStorage.getItem("nischint-language");
     const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
     const savedHasEntered = window.localStorage.getItem("nischint-has-entered");
@@ -1294,6 +1303,9 @@ export default function Home() {
     const tick = window.setInterval(() => setDemoTime(new Date()), 30000);
 
     const restorePreferences = window.setTimeout(() => {
+      if (appTabs.some((tab) => tab.id === initialHash)) {
+        setActiveTab(initialHash as AppTab);
+      }
       if (savedLanguage === "hi" || savedLanguage === "en") {
         setLanguage(savedLanguage);
         setVoiceStatus(languageCopy[savedLanguage].voiceReady);
@@ -1495,23 +1507,17 @@ export default function Home() {
     <main
       className={appClassName}
       lang={language === "hi" ? "hi" : "en"}
-    >
+      >
       <header className="topBar" aria-label="Nischint navigation">
-        <a className="brandLockup" href="#nischint-title" aria-label="Nischint home">
+        <Link className="brandLockup" href="/" aria-label="Nischint home">
           <span>नि</span>
           <strong>Nischint</strong>
-        </a>
+        </Link>
         <nav aria-label="App sections">
-          {appTabs.slice(0, 4).map((tab) => (
-            <button
-              className={activeTab === tab.id ? "active" : ""}
-              key={tab.id}
-              type="button"
-              aria-pressed={activeTab === tab.id}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
+          {routeLinks.map((link) => (
+            <Link href={link.href} key={link.href}>
+              {link.label}
+            </Link>
           ))}
           <button
             type="button"

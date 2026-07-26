@@ -79,6 +79,18 @@ Nischint includes Next.js API routes for:
 - Consent audit: `/api/nischint/consent`
 - Production readiness: `/api/nischint/production`
 
+### Public Pages
+
+Nischint now has real route pages instead of navigation links that only point back to the same screen:
+
+- Landing/demo app: `/`
+- Caregiver information: `/care`
+- Interactive demo guide: `/demo`
+- Privacy policy: `/privacy`
+- About and roadmap: `/about`
+- Contact: `/contact`
+- FAQ: `/faq`
+
 Without provider keys, the app still works as a polished demo and simulates delivery. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
 
 ## Voice And Language Accessibility

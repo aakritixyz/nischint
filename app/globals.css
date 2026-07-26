@@ -1895,6 +1895,139 @@ body {
   padding: 8px 10px;
 }
 
+.routeShell {
+  max-width: 1040px;
+}
+
+.routeTop {
+  position: relative;
+  top: 0;
+}
+
+.routeTop nav {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.routeTop nav::-webkit-scrollbar {
+  display: none;
+}
+
+.routeHero,
+.routeSection {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 254, 250, 0.9);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.routeHero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.routeHero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(135deg, rgba(74, 117, 107, 0.12), transparent 45%),
+    linear-gradient(225deg, rgba(216, 154, 145, 0.16), transparent 50%);
+}
+
+.routeHero h1 {
+  font-size: clamp(2.35rem, 12vw, 5rem);
+}
+
+.routeHero > p:not(.smallLabel),
+.routeSection > p {
+  max-width: 780px;
+  color: #604858;
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.routeActions,
+.routeHighlightGrid,
+.routeInfoGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.routeActions {
+  margin-top: 4px;
+}
+
+.routeActions a {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  text-decoration: none;
+}
+
+.routeHighlightGrid,
+.routeSection {
+  margin-top: 14px;
+}
+
+.routeInfoGrid article {
+  display: grid;
+  gap: 7px;
+  border: 1px solid rgba(86, 58, 74, 0.11);
+  border-radius: 18px;
+  background: rgba(255, 253, 248, 0.84);
+  padding: 14px;
+}
+
+.routeInfoGrid h3 {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.routeInfoGrid p {
+  color: #715968;
+  font-size: 0.94rem;
+  font-weight: 620;
+  line-height: 1.48;
+}
+
+@media (min-width: 560px) {
+  .routeActions,
+  .routeHighlightGrid,
+  .routeInfoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .routeHighlightGrid article:first-child,
+  .routeInfoGrid article:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 860px) {
+  .routeHero,
+  .routeSection {
+    padding: 24px;
+  }
+
+  .routeHighlightGrid,
+  .routeInfoGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .routeHighlightGrid article:first-child,
+  .routeInfoGrid article:first-child {
+    grid-column: auto;
+  }
+}
+
 .switchRow {
   display: flex;
   grid-template-columns: none;

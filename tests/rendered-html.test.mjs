@@ -33,6 +33,11 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Main safety screen/);
   assert.match(page, /nischint-has-entered/);
   assert.match(page, /caregiverSession/);
+  assert.match(page, /href: "\/care"/);
+  assert.match(page, /href: "\/demo"/);
+  assert.match(page, /href: "\/privacy"/);
+  assert.match(page, /href: "\/about"/);
+  assert.match(page, /initialHash/);
   assert.match(page, /api\/nischint\/login/);
   assert.match(page, /api\/nischint\/logout/);
   assert.match(page, /Signed in as/);
@@ -123,10 +128,62 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /aiCapabilityRow/);
   assert.match(styles, /aiActionRow/);
   assert.match(styles, /architectureCard/);
+  assert.match(styles, /routeShell/);
+  assert.match(styles, /routeHighlightGrid/);
+  assert.match(styles, /routeInfoGrid/);
   assert.match(styles, /white-space: nowrap/);
   assert.match(styles, /max-width: 420px/);
   assert.match(styles, /content-visibility/);
   assert.match(serviceWorker, /nischint-offline-v3/);
+});
+
+test("public information pages are real routes", async () => {
+  const [
+    sitePages,
+    carePage,
+    demoPage,
+    privacyPage,
+    aboutPage,
+    contactPage,
+    faqPage,
+    readme,
+  ] = await Promise.all([
+    readProjectFile("app/site-pages.tsx"),
+    readProjectFile("app/care/page.tsx"),
+    readProjectFile("app/demo/page.tsx"),
+    readProjectFile("app/privacy/page.tsx"),
+    readProjectFile("app/about/page.tsx"),
+    readProjectFile("app/contact/page.tsx"),
+    readProjectFile("app/faq/page.tsx"),
+    readProjectFile("README.md"),
+  ]);
+
+  assert.match(sitePages, /Privacy policy for a care app/);
+  assert.match(sitePages, /Caregiver onboarding/);
+  assert.match(sitePages, /Launch interactive demo/);
+  assert.match(sitePages, /Mission/);
+  assert.match(sitePages, /Contact and support paths/);
+  assert.match(sitePages, /Common questions/);
+  assert.match(sitePages, /GDPR/);
+  assert.match(sitePages, /DPDP Act/);
+  assert.match(sitePages, /HIPAA-ready/);
+  assert.match(sitePages, /Twilio/);
+  assert.match(sitePages, /Google Maps/);
+  assert.match(sitePages, /\/contact/);
+  assert.match(sitePages, /\/faq/);
+  assert.match(carePage, /Caregiver Guide/);
+  assert.match(demoPage, /Interactive Demo/);
+  assert.match(privacyPage, /Privacy Policy/);
+  assert.match(aboutPage, /About/);
+  assert.match(contactPage, /Contact/);
+  assert.match(faqPage, /FAQ/);
+  assert.match(readme, /Public Pages/);
+  assert.match(readme, /\/privacy/);
+  assert.match(readme, /\/care/);
+  assert.match(readme, /\/demo/);
+  assert.match(readme, /\/about/);
+  assert.match(readme, /\/contact/);
+  assert.match(readme, /\/faq/);
 });
 
 test("production hardening backend pieces exist", async () => {
