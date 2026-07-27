@@ -101,7 +101,7 @@ const contacts: CareContact[] = [
   {
     name: "Asha",
     role: "Daughter",
-    phone: "+91 98765 43210",
+    phone: "+91 92100 67119",
     tone: "Primary",
     accessLevel: "owner",
     canReceiveAlerts: true,

@@ -157,7 +157,7 @@ const fallbackState: CareState = {
     {
       name: "Asha",
       role: "Daughter",
-      phone: "+91 98765 43210",
+      phone: "+91 92100 67119",
       tone: "Primary",
       accessLevel: "owner",
       canReceiveAlerts: true,
@@ -456,7 +456,7 @@ export default function Home() {
   const [caregiverName, setCaregiverName] = useState("Asha");
   const [caregiverIdentifier, setCaregiverIdentifier] = useState("asha@example.com");
   const [caregiverPassword, setCaregiverPassword] = useState("");
-  const [caregiverPhone, setCaregiverPhone] = useState("+91 98765 43210");
+  const [caregiverPhone, setCaregiverPhone] = useState("+91 92100 67119");
   const [language, setLanguage] = useState<Language>("en");
   const [voiceAssist, setVoiceAssist] = useState(true);
   const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
