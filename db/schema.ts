@@ -29,6 +29,18 @@ export const caregivers = sqliteTable("caregivers", {
   createdAt: text("created_at").notNull(),
 });
 
+export const caregiverAccounts = sqliteTable("caregiver_accounts", {
+  id: text("id").primaryKey(),
+  patientId: text("patient_id").notNull(),
+  name: text("name").notNull(),
+  identifier: text("identifier").notNull().unique(),
+  phone: text("phone").notNull().default(""),
+  role: text("role").notNull(),
+  accessLevel: text("access_level").notNull().default("owner"),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: text("created_at").notNull(),
+});
+
 export const consentLogs = sqliteTable("consent_logs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   patientId: text("patient_id").notNull(),
@@ -54,6 +66,15 @@ export const alerts = sqliteTable("alerts", {
   message: text("message").notNull(),
   createdAt: text("created_at").notNull(),
   resolvedAt: text("resolved_at"),
+});
+
+export const alertDeliveries = sqliteTable("alert_deliveries", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  patientId: text("patient_id").notNull(),
+  channel: text("channel").notNull(),
+  delivered: integer("delivered", { mode: "boolean" }).notNull(),
+  detail: text("detail").notNull(),
+  createdAt: text("created_at").notNull(),
 });
 
 export const locations = sqliteTable("locations", {

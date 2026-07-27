@@ -90,6 +90,7 @@ Nischint now has real route pages instead of navigation links that only point ba
 - About and roadmap: `/about`
 - Contact: `/contact`
 - FAQ: `/faq`
+- Monitoring health: `/api/nischint/monitoring`
 
 Without provider keys, the app still works in guided sample mode and records actions locally or in the configured database. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
 
@@ -188,6 +189,7 @@ All environment variables are optional for the first deployment. Do not add blan
 | `TWILIO_ACCOUNT_SID` | Twilio account SID for SMS alerts |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
 | `TWILIO_FROM_NUMBER` | Twilio sender number |
+| `VERIFIED_CAREGIVER_NUMBERS` | Comma-separated verified recipient numbers allowed to receive SMS/WhatsApp |
 | `WHATSAPP_ACCESS_TOKEN` | WhatsApp Cloud API token |
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
 | `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
@@ -241,7 +243,7 @@ Then add it in Vercel under **Project Settings -> Domains** and follow the DNS i
 
 ## College Showcase Status
 
-Nischint is ready for a college project showcase as a polished, working MVP. It has a mobile-first interface, real tabbed workflows, backend routes, signed caregiver sessions, persistent database support when `DATABASE_URL` is present, bilingual voice support, privacy controls, and provider hooks for SMS, WhatsApp, and AI guidance.
+Nischint is ready for a college project showcase as a polished, working MVP. It has a mobile-first interface, real tabbed workflows, backend routes, signed caregiver sessions, caregiver signup/login, persistent database support when `DATABASE_URL` is present, bilingual voice support, privacy controls, monitoring, and provider hooks for SMS, WhatsApp, and AI guidance.
 
 Suggested presentation flow:
 
@@ -264,9 +266,16 @@ The data model includes caregiver access levels, alert permissions, radius-based
 
 When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory sample state.
 
-The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
+The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. Caregiver signup is available through `/api/nischint/signup`; with `DATABASE_URL`, accounts are stored in Postgres with PBKDF2 password hashes. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
+
+Alert delivery is explicit about failure. SMS and WhatsApp are blocked for real delivery unless the recipient appears in `VERIFIED_CAREGIVER_NUMBERS`. `/api/nischint/monitoring` reports provider health, failed deliveries, safe-zone state, and recent events for launch review.
 
 AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice. The `/api/nischint/ai-capabilities` endpoint reports whether voice conversation, orchestration, planning, and screenshot verification providers are configured.
+
+Formal launch artifacts:
+
+- [Privacy and legal review checklist](docs/PRIVACY_LEGAL_REVIEW.md)
+- [Pilot test plan](docs/PILOT_TEST_PLAN.md)
 
 ## Important Safety Note
 
@@ -275,8 +284,8 @@ Nischint is currently a polished MVP for pilots, portfolios, and judged project 
 Before using it with real families, the project still needs:
 
 1. Secure production database storage.
-2. Full caregiver accounts through Auth.js, Clerk, Supabase Auth, or Vercel auth.
-3. Verified caregiver phone numbers.
+2. Full managed auth provider if the pilot grows beyond the built-in caregiver accounts.
+3. Verified caregiver phone numbers in `VERIFIED_CAREGIVER_NUMBERS`.
 4. Real SMS/WhatsApp provider credentials.
 5. Legal/privacy review for consent-based location sharing.
 6. Privacy and health-data compliance review.
@@ -285,7 +294,7 @@ Before using it with real families, the project still needs:
 
 ## Future Improvements
 
-- Caregiver login and family-specific dashboards
+- Managed auth provider and family-specific dashboards
 - Real persistent care profiles
 - Medication adherence escalation
 - Production safe-zone distance logic with configurable zones

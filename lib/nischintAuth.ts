@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import postgres from "postgres";
 
 import { getCareState } from "./nischintStore";
 
@@ -6,6 +7,17 @@ const COOKIE_NAME = "nischint_session";
 const DEMO_ACCESS_CODE = "2486";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
 const encoder = new TextEncoder();
+
+type CaregiverAccount = {
+  id: string;
+  name: string;
+  identifier: string;
+  phone: string;
+  role: string;
+  accessLevel: "owner" | "backup" | "clinical";
+  passwordHash: string;
+  createdAt: string;
+};
 
 export type CaregiverSession = {
   patientId: string;
@@ -15,6 +27,12 @@ export type CaregiverSession = {
   issuedAt: number;
 };
 
+const authStore = globalThis as typeof globalThis & {
+  nischintAuthSql?: postgres.Sql;
+  nischintAuthTableReady?: Promise<void>;
+  nischintCaregiverAccounts?: CaregiverAccount[];
+};
+
 function getSessionSecret() {
   return (
     process.env.NISCHINT_SESSION_SECRET ??
@@ -22,6 +40,38 @@ function getSessionSecret() {
     process.env.NEXTAUTH_SECRET ??
     "nischint-local-demo-secret"
   );
+}
+
+function getSql() {
+  if (!process.env.DATABASE_URL?.trim()) return null;
+
+  if (!authStore.nischintAuthSql) {
+    authStore.nischintAuthSql = postgres(process.env.DATABASE_URL, {
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 10,
+      ssl: process.env.DATABASE_URL.includes("sslmode=disable") ? false : "require",
+    });
+  }
+
+  return authStore.nischintAuthSql;
+}
+
+async function ensureAccountTable(sql: postgres.Sql) {
+  authStore.nischintAuthTableReady ??= sql`
+    create table if not exists nischint_caregiver_accounts (
+      id text primary key,
+      patient_id text not null,
+      name text not null,
+      identifier text not null unique,
+      phone text not null default '',
+      role text not null,
+      access_level text not null,
+      password_hash text not null,
+      created_at timestamptz not null default now()
+    )
+  `.then(() => undefined);
+  await authStore.nischintAuthTableReady;
 }
 
 function encodeBase64Url(value: string) {
@@ -50,6 +100,148 @@ async function sealSession(session: CaregiverSession) {
   return `${payload}.${signature}`;
 }
 
+function normalizeIdentifier(identifier: string) {
+  return identifier.trim().toLowerCase();
+}
+
+function accountMemoryStore() {
+  authStore.nischintCaregiverAccounts ??= [];
+  return authStore.nischintCaregiverAccounts;
+}
+
+async function hashPassword(password: string, salt = crypto.randomUUID()) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    "PBKDF2",
+    false,
+    ["deriveBits"]
+  );
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt: encoder.encode(salt),
+      iterations: 120000,
+    },
+    key,
+    256
+  );
+  return `${salt}.${Buffer.from(bits).toString("base64url")}`;
+}
+
+async function verifyPassword(password: string, passwordHash: string) {
+  const [salt, storedHash] = passwordHash.split(".");
+  if (!salt || !storedHash) return false;
+  const nextHash = await hashPassword(password, salt);
+  return nextHash === passwordHash;
+}
+
+async function setSessionFromAccount(account: {
+  name: string;
+  role: string;
+  accessLevel: "owner" | "backup" | "clinical";
+}) {
+  const session: CaregiverSession = {
+    patientId: getCareState().patientId,
+    caregiverName: account.name,
+    role: account.role,
+    accessLevel: account.accessLevel,
+    issuedAt: Date.now(),
+  };
+  const jar = await cookies();
+  jar.set(COOKIE_NAME, await sealSession(session), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: SESSION_MAX_AGE_SECONDS,
+  });
+  return session;
+}
+
+export async function createCaregiverAccount(payload: {
+  name: string;
+  identifier: string;
+  phone?: string;
+  password: string;
+}) {
+  const identifier = normalizeIdentifier(payload.identifier);
+  const name = payload.name.trim();
+  const phone = payload.phone?.trim() ?? "";
+
+  if (!name || !identifier || payload.password.length < 8) {
+    return {
+      ok: false as const,
+      error: "Enter a name, phone or email, and an 8+ character password.",
+    };
+  }
+
+  const account: CaregiverAccount = {
+    id: crypto.randomUUID(),
+    name,
+    identifier,
+    phone,
+    role: "Primary caregiver",
+    accessLevel: "owner",
+    passwordHash: await hashPassword(payload.password),
+    createdAt: new Date().toISOString(),
+  };
+
+  const sql = getSql();
+  if (sql) {
+    try {
+      await ensureAccountTable(sql);
+      await sql`
+        insert into nischint_caregiver_accounts
+          (id, patient_id, name, identifier, phone, role, access_level, password_hash, created_at)
+        values
+          (${account.id}, ${getCareState().patientId}, ${account.name}, ${account.identifier}, ${account.phone}, ${account.role}, ${account.accessLevel}, ${account.passwordHash}, ${account.createdAt})
+      `;
+      return { ok: true as const, session: await setSessionFromAccount(account) };
+    } catch {
+      return { ok: false as const, error: "Caregiver account already exists or could not be saved." };
+    }
+  }
+
+  const accounts = accountMemoryStore();
+  if (accounts.some((existing) => existing.identifier === identifier)) {
+    return { ok: false as const, error: "Caregiver account already exists." };
+  }
+  accounts.push(account);
+  return { ok: true as const, session: await setSessionFromAccount(account) };
+}
+
+async function findCaregiverAccount(identifier: string) {
+  const normalized = normalizeIdentifier(identifier);
+  const sql = getSql();
+
+  if (sql) {
+    await ensureAccountTable(sql);
+    const rows = await sql<{
+      name: string;
+      role: string;
+      access_level: "owner" | "backup" | "clinical";
+      password_hash: string;
+    }[]>`
+      select name, role, access_level, password_hash
+      from nischint_caregiver_accounts
+      where identifier = ${normalized}
+      limit 1
+    `;
+    const row = rows[0];
+    if (!row) return null;
+    return {
+      name: row.name,
+      role: row.role,
+      accessLevel: row.access_level,
+      passwordHash: row.password_hash,
+    };
+  }
+
+  return accountMemoryStore().find((account) => account.identifier === normalized) ?? null;
+}
+
 async function unsealSession(value: string | undefined) {
   if (!value) return null;
   const [payload, signature] = value.split(".");
@@ -66,7 +258,18 @@ async function unsealSession(value: string | undefined) {
   }
 }
 
-export async function createCaregiverSession(accessCode: string, quickDemo = false) {
+export async function createCaregiverSession(
+  accessCode: string,
+  quickDemo = false,
+  credentials?: { identifier?: string; password?: string }
+) {
+  if (credentials?.identifier && credentials.password) {
+    const account = await findCaregiverAccount(credentials.identifier);
+    if (account && await verifyPassword(credentials.password, account.passwordHash)) {
+      return setSessionFromAccount(account);
+    }
+  }
+
   if (!quickDemo && accessCode.trim() !== DEMO_ACCESS_CODE) return null;
 
   const state = getCareState();

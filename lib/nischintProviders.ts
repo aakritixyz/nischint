@@ -6,6 +6,7 @@ type ProviderEnv = {
   TWILIO_FROM_NUMBER?: string;
   WHATSAPP_ACCESS_TOKEN?: string;
   WHATSAPP_PHONE_NUMBER_ID?: string;
+  VERIFIED_CAREGIVER_NUMBERS?: string;
   OPENAI_API_KEY?: string;
   GROQ_API_KEY?: string;
   GEMINI_API_KEY?: string;
@@ -39,6 +40,7 @@ function providerEnv() {
     TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER,
     WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
     WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    VERIFIED_CAREGIVER_NUMBERS: process.env.VERIFIED_CAREGIVER_NUMBERS,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
@@ -112,12 +114,43 @@ export async function sendCareNotification(
   };
 }
 
+function normalizePhone(value: string) {
+  return value.replace(/[^\d+]/g, "");
+}
+
+function isVerifiedRecipient(to: string, vars: ProviderEnv) {
+  const allowedNumbers = vars.VERIFIED_CAREGIVER_NUMBERS?.split(",")
+    .map((number) => normalizePhone(number.trim()))
+    .filter(Boolean);
+
+  if (!allowedNumbers?.length) {
+    return {
+      ok: false,
+      detail: "Recipient verification list missing. Add VERIFIED_CAREGIVER_NUMBERS before real SMS/WhatsApp delivery.",
+    };
+  }
+
+  return allowedNumbers.includes(normalizePhone(to))
+    ? { ok: true, detail: "Recipient is verified." }
+    : {
+        ok: false,
+        detail: "Recipient number is not in VERIFIED_CAREGIVER_NUMBERS.",
+      };
+}
+
 async function sendSms(to: string, body: string) {
   const vars = providerEnv();
   if (!vars.TWILIO_ACCOUNT_SID || !vars.TWILIO_AUTH_TOKEN || !vars.TWILIO_FROM_NUMBER) {
     return {
       delivered: false,
       detail: "SMS simulated. Add Twilio env vars for real delivery.",
+    };
+  }
+  const recipientCheck = isVerifiedRecipient(to, vars);
+  if (!recipientCheck.ok) {
+    return {
+      delivered: false,
+      detail: `SMS blocked: ${recipientCheck.detail}`,
     };
   }
 
@@ -152,6 +185,13 @@ async function sendWhatsApp(to: string, body: string) {
     return {
       delivered: false,
       detail: "WhatsApp simulated. Add WhatsApp Cloud API env vars for real delivery.",
+    };
+  }
+  const recipientCheck = isVerifiedRecipient(to, vars);
+  if (!recipientCheck.ok) {
+    return {
+      delivered: false,
+      detail: `WhatsApp blocked: ${recipientCheck.detail}`,
     };
   }
 
@@ -314,4 +354,22 @@ export function getAiProviderSummary() {
     return "OpenAI ready for optional calming guidance.";
   }
   return "Fallback calm guidance is active. Add GROQ_API_KEY, GEMINI_API_KEY, OPENROUTER_API_KEY, or OPENAI_API_KEY.";
+}
+
+export function getProviderHealth() {
+  const vars = providerEnv();
+  return {
+    sms: {
+      configured: Boolean(vars.TWILIO_ACCOUNT_SID && vars.TWILIO_AUTH_TOKEN && vars.TWILIO_FROM_NUMBER),
+      verifiedRecipients: Boolean(vars.VERIFIED_CAREGIVER_NUMBERS?.trim()),
+    },
+    whatsapp: {
+      configured: Boolean(vars.WHATSAPP_ACCESS_TOKEN && vars.WHATSAPP_PHONE_NUMBER_ID),
+      verifiedRecipients: Boolean(vars.VERIFIED_CAREGIVER_NUMBERS?.trim()),
+    },
+    ai: {
+      configured: Boolean(vars.GROQ_API_KEY || vars.GEMINI_API_KEY || vars.OPENROUTER_API_KEY || vars.OPENAI_API_KEY),
+      readyCapabilities: getAiCapabilityMap().filter((capability) => capability.ready).length,
+    },
+  };
 }

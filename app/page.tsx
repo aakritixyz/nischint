@@ -7,6 +7,7 @@ type CheckIn = "ok" | "help" | "medicine";
 type Language = "en" | "hi";
 type AppTab = "safety" | "location" | "reminders" | "circle" | "notes" | "privacy" | "settings";
 type VoiceTone = "calm" | "standard" | "energetic";
+type AuthMode = "login" | "signup";
 
 type BrowserSpeechRecognition = {
   lang: string;
@@ -237,6 +238,12 @@ const languageCopy = {
     progressStep: "Step 1 of 3",
     demoMode: "Setup",
     loginTitle: "Start setup",
+    loginMode: "Login",
+    signupMode: "Create account",
+    caregiverName: "Caregiver name",
+    caregiverIdentifier: "Phone or email",
+    caregiverPassword: "Password",
+    signupButton: "Create caregiver account",
     returningUser: "Already set up?",
     privacyPromise: "Consent stays visible. Location is shared only after permission.",
     voiceTone: "Voice comfort",
@@ -319,6 +326,12 @@ const languageCopy = {
     progressStep: "चरण 1 / 3",
     demoMode: "सेटअप",
     loginTitle: "सेटअप शुरू करें",
+    loginMode: "लॉगिन",
+    signupMode: "अकाउंट बनाएं",
+    caregiverName: "देखभालकर्ता का नाम",
+    caregiverIdentifier: "फोन या ईमेल",
+    caregiverPassword: "पासवर्ड",
+    signupButton: "देखभालकर्ता अकाउंट बनाएं",
     returningUser: "पहले से सेटअप है?",
     privacyPromise: "सहमति हमेशा दिखेगी। स्थान केवल अनुमति के बाद साझा होगा।",
     voiceTone: "आवाज का तरीका",
@@ -439,6 +452,11 @@ export default function Home() {
   const [locationConsent, setLocationConsent] = useState(true);
   const [emergencyConsent, setEmergencyConsent] = useState(true);
   const [caregiverAccessCode, setCaregiverAccessCode] = useState("2486");
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const [caregiverName, setCaregiverName] = useState("Asha");
+  const [caregiverIdentifier, setCaregiverIdentifier] = useState("asha@example.com");
+  const [caregiverPassword, setCaregiverPassword] = useState("");
+  const [caregiverPhone, setCaregiverPhone] = useState("+91 98765 43210");
   const [language, setLanguage] = useState<Language>("en");
   const [voiceAssist, setVoiceAssist] = useState(true);
   const [onboardingVoiceAssist, setOnboardingVoiceAssist] = useState(true);
@@ -622,6 +640,8 @@ export default function Home() {
     try {
       const payload = await callApi("/api/nischint/login", {
         accessCode: caregiverAccessCode,
+        identifier: caregiverIdentifier,
+        password: caregiverPassword,
         quickDemo: bypassCode,
       });
       if (!payload.authenticated || !payload.session) {
@@ -658,6 +678,35 @@ export default function Home() {
       window.setTimeout(() => speakText(copy.languageSelected, language, true), 120);
     } else {
       setVoiceStatus(copy.voiceOff);
+    }
+  }
+
+  async function signupCaregiver() {
+    try {
+      const payload = await callApi("/api/nischint/signup", {
+        name: caregiverName,
+        identifier: caregiverIdentifier,
+        phone: caregiverPhone,
+        password: caregiverPassword,
+      });
+      if (!payload.authenticated || !payload.session) {
+        setLoginMessage(payload.error ?? "Could not create caregiver account.");
+        setScreenAnnouncement(payload.error ?? "Could not create caregiver account.");
+        return;
+      }
+      setCaregiverSession(payload.session);
+      window.localStorage.setItem("nischint-has-entered", "true");
+      window.localStorage.setItem("nischint-voice-assist", String(onboardingVoiceAssist));
+      window.localStorage.setItem("nischint-language", language);
+      window.localStorage.setItem("nischint-voice-tone", voiceTone);
+      setLoginMessage("");
+      setHasEntered(true);
+      setActiveTab("safety");
+      setScreenAnnouncement("Caregiver account created.");
+    } catch {
+      const message = "Signup is temporarily unavailable. Please try again.";
+      setLoginMessage(message);
+      setScreenAnnouncement(message);
     }
   }
 
@@ -1253,6 +1302,25 @@ export default function Home() {
               ))}
             </div>
 
+            <div className="authModeSegment" role="group" aria-label="Caregiver account mode">
+              <button
+                className={authMode === "login" ? "active" : ""}
+                type="button"
+                aria-pressed={authMode === "login"}
+                onClick={() => setAuthMode("login")}
+              >
+                {copy.loginMode}
+              </button>
+              <button
+                className={authMode === "signup" ? "active" : ""}
+                type="button"
+                aria-pressed={authMode === "signup"}
+                onClick={() => setAuthMode("signup")}
+              >
+                {copy.signupMode}
+              </button>
+            </div>
+
             <label>
               {copy.personName}
               <input
@@ -1263,6 +1331,51 @@ export default function Home() {
                     patient: { ...state.patient, name: event.target.value },
                   }))
                 }
+              />
+            </label>
+
+            {authMode === "signup" ? (
+              <>
+                <label>
+                  {copy.caregiverName}
+                  <input
+                    value={caregiverName}
+                    onChange={(event) => setCaregiverName(event.target.value)}
+                  />
+                </label>
+                <label>
+                  {copy.caregiverIdentifier}
+                  <input
+                    value={caregiverIdentifier}
+                    onChange={(event) => setCaregiverIdentifier(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Verified phone number
+                  <input
+                    inputMode="tel"
+                    value={caregiverPhone}
+                    onChange={(event) => setCaregiverPhone(event.target.value)}
+                  />
+                </label>
+              </>
+            ) : (
+              <label>
+                {copy.caregiverIdentifier}
+                <input
+                  value={caregiverIdentifier}
+                  onChange={(event) => setCaregiverIdentifier(event.target.value)}
+                />
+              </label>
+            )}
+
+            <label>
+              {copy.caregiverPassword}
+              <input
+                type="password"
+                value={caregiverPassword}
+                onChange={(event) => setCaregiverPassword(event.target.value)}
+                placeholder={authMode === "signup" ? "8+ characters" : "Optional if using access code"}
               />
             </label>
 
@@ -1283,9 +1396,15 @@ export default function Home() {
             <p className="privacyPromise">{copy.privacyPromise}</p>
 
             <div className="welcomeActions">
-              <button className="primaryButton" type="button" onClick={() => void enterNischint("safety", true)}>
-                {copy.startApp}
-              </button>
+              {authMode === "signup" ? (
+                <button className="primaryButton" type="button" onClick={() => void signupCaregiver()}>
+                  {copy.signupButton}
+                </button>
+              ) : (
+                <button className="primaryButton" type="button" onClick={() => void enterNischint("safety", true)}>
+                  {copy.startApp}
+                </button>
+              )}
               <button className="softButton" type="button" onClick={() => void enterNischint("safety", false)}>
                 {copy.skipSetup}
               </button>

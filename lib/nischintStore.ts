@@ -22,7 +22,8 @@ export type CareEvent = {
     | "reminder"
     | "invite"
     | "privacy"
-    | "consent";
+    | "consent"
+    | "monitoring";
   message: string;
   createdAt: string;
 };
@@ -364,6 +365,43 @@ export function simulateNotification(channel: "sms" | "whatsapp" | "push") {
     message: `${channel.toUpperCase()} alert queued for ${alertContact?.name ?? "caregiver"}.`,
   });
   return state;
+}
+
+export function recordNotificationDelivery(
+  channel: "sms" | "whatsapp" | "push",
+  delivered: boolean,
+  detail: string
+) {
+  const state = currentState();
+  addEvent(state, {
+    type: delivered ? "notification" : "monitoring",
+    message: delivered
+      ? `${channel.toUpperCase()} delivery confirmed. ${detail}`
+      : `${channel.toUpperCase()} delivery needs attention. ${detail}`,
+  });
+  return state;
+}
+
+export function getMonitoringSnapshot() {
+  const state = currentState();
+  const deliveryFailures = state.events.filter(
+    (event) =>
+      event.type === "monitoring" ||
+      event.message.toLowerCase().includes("failed") ||
+      event.message.toLowerCase().includes("blocked") ||
+      event.message.toLowerCase().includes("needs attention")
+  );
+
+  return {
+    patientId: state.patientId,
+    lastUpdated: state.lastUpdated,
+    lostMode: state.lostMode,
+    safeZoneStatus: state.location.safeZoneStatus,
+    networkStatus: state.location.networkStatus,
+    deliveryFailures: deliveryFailures.length,
+    recentEvents: state.events.slice(0, 10),
+    openPrivacyRequests: state.privacyRequests.filter((request) => request.status === "queued").length,
+  };
 }
 
 export function addReminder(payload: Omit<Reminder, "id" | "active">) {

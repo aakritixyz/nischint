@@ -141,3 +141,7 @@ export async function persistPrivacyRequest(
 export async function persistConsent(state: CareState) {
   await saveCareState(state);
 }
+
+export async function persistNotificationDelivery(state: CareState) {
+  await saveCareState(state);
+}

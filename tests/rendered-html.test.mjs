@@ -43,8 +43,12 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /href: "\/about"/);
   assert.match(page, /initialHash/);
   assert.match(page, /api\/nischint\/login/);
+  assert.match(page, /api\/nischint\/signup/);
   assert.match(page, /api\/nischint\/logout/);
   assert.match(page, /Signed in as/);
+  assert.match(page, /Create caregiver account/);
+  assert.match(page, /Caregiver name/);
+  assert.match(page, /Verified phone number/);
   assert.match(page, /Keep voice guidance on/);
   assert.match(page, /Use buttons only/);
   assert.match(page, /Elder safety & family care/);
@@ -119,6 +123,7 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /loginCard/);
   assert.match(styles, /loginHeader/);
   assert.match(styles, /loginError/);
+  assert.match(styles, /authModeSegment/);
   assert.match(styles, /setupProgress/);
   assert.match(styles, /comfortGroup/);
   assert.match(styles, /welcomeVoiceGroup/);
@@ -206,7 +211,9 @@ test("production hardening backend pieces exist", async () => {
     productionRoute,
     architectureRoute,
     aiCapabilitiesRoute,
+    monitoringRoute,
     consentRoute,
+    signupRoute,
     loginRoute,
     logoutRoute,
     meRoute,
@@ -219,13 +226,17 @@ test("production hardening backend pieces exist", async () => {
     schema,
     architectureDoc,
     technicalDoc,
+    privacyLegalDoc,
+    pilotPlanDoc,
     readme,
     packageJson,
   ] = await Promise.all([
     readProjectFile("app/api/nischint/production/route.ts"),
     readProjectFile("app/api/nischint/architecture/route.ts"),
     readProjectFile("app/api/nischint/ai-capabilities/route.ts"),
+    readProjectFile("app/api/nischint/monitoring/route.ts"),
     readProjectFile("app/api/nischint/consent/route.ts"),
+    readProjectFile("app/api/nischint/signup/route.ts"),
     readProjectFile("app/api/nischint/login/route.ts"),
     readProjectFile("app/api/nischint/logout/route.ts"),
     readProjectFile("app/api/nischint/me/route.ts"),
@@ -238,6 +249,8 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("db/schema.ts"),
     readProjectFile("docs/PRODUCTION_ARCHITECTURE.md"),
     readProjectFile("docs/TECHNICAL_IMPLEMENTATION.md"),
+    readProjectFile("docs/PRIVACY_LEGAL_REVIEW.md"),
+    readProjectFile("docs/PILOT_TEST_PLAN.md"),
     readProjectFile("README.md"),
     readProjectFile("package.json"),
   ]);
@@ -245,11 +258,17 @@ test("production hardening backend pieces exist", async () => {
   assert.match(productionRoute, /getProductionAudit/);
   assert.match(architectureRoute, /productionArchitecture/);
   assert.match(aiCapabilitiesRoute, /getAiCapabilityMap/);
+  assert.match(monitoringRoute, /getMonitoringSnapshot/);
+  assert.match(monitoringRoute, /getProviderHealth/);
   assert.match(consentRoute, /recordConsent/);
+  assert.match(signupRoute, /createCaregiverAccount/);
   assert.match(loginRoute, /createCaregiverSession/);
   assert.match(logoutRoute, /clearCaregiverSession/);
   assert.match(meRoute, /getCaregiverSession/);
   assert.match(authLib, /nischint_session/);
+  assert.match(authLib, /createCaregiverAccount/);
+  assert.match(authLib, /PBKDF2/);
+  assert.match(authLib, /nischint_caregiver_accounts/);
   assert.match(authLib, /crypto\.subtle/);
   assert.match(authLib, /httpOnly/);
   assert.match(persistenceLib, /postgres/);
@@ -257,6 +276,9 @@ test("production hardening backend pieces exist", async () => {
   assert.match(persistenceLib, /jsonb/);
   assert.match(persistenceLib, /hydrateCareState/);
   assert.match(providersLib, /GROQ_API_KEY/);
+  assert.match(providersLib, /VERIFIED_CAREGIVER_NUMBERS/);
+  assert.match(providersLib, /isVerifiedRecipient/);
+  assert.match(providersLib, /getProviderHealth/);
   assert.match(providersLib, /GEMINI_API_KEY/);
   assert.match(providersLib, /OPENROUTER_API_KEY/);
   assert.match(providersLib, /gemini-2\.5-flash-native-audio/);
@@ -286,7 +308,11 @@ test("production hardening backend pieces exist", async () => {
   assert.match(store, /accessLevel/);
   assert.match(store, /hydrateCareState/);
   assert.match(store, /consentLog/);
+  assert.match(store, /recordNotificationDelivery/);
+  assert.match(store, /getMonitoringSnapshot/);
   assert.match(schema, /consentLogs/);
+  assert.match(schema, /caregiverAccounts/);
+  assert.match(schema, /alertDeliveries/);
   assert.match(architectureDoc, /Target Multi-App Architecture/);
   assert.match(architectureDoc, /Senior UX Guardrails/);
   assert.match(architectureDoc, /Technical Implementation Direction/);
@@ -295,7 +321,15 @@ test("production hardening backend pieces exist", async () => {
   assert.match(technicalDoc, /Twilio SMS/);
   assert.match(technicalDoc, /WCAG 2\.1 AAA/);
   assert.match(technicalDoc, /RPO 5 minutes/);
+  assert.match(privacyLegalDoc, /Privacy And Legal Review Checklist/);
+  assert.match(privacyLegalDoc, /not legal advice/);
+  assert.match(pilotPlanDoc, /Pilot Test Plan/);
+  assert.match(pilotPlanDoc, /verified SMS\/WhatsApp recipients/);
   assert.match(readme, /Production readiness/);
+  assert.match(readme, /Caregiver signup/);
+  assert.match(readme, /VERIFIED_CAREGIVER_NUMBERS/);
+  assert.match(readme, /PILOT_TEST_PLAN/);
+  assert.match(readme, /PRIVACY_LEGAL_REVIEW/);
   assert.match(readme, /PRODUCTION_ARCHITECTURE/);
   assert.match(readme, /TECHNICAL_IMPLEMENTATION/);
   assert.match(readme, /signed session/);

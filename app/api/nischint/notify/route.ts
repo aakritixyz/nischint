@@ -1,6 +1,10 @@
 import { sendCareNotification } from "../../../../lib/nischintProviders";
-import { getCareState } from "../../../../lib/nischintStore";
-import { simulateNotification } from "../../../../lib/nischintStore";
+import { persistNotificationDelivery } from "../../../../lib/nischintPersistence";
+import {
+  getCareState,
+  recordNotificationDelivery,
+  simulateNotification,
+} from "../../../../lib/nischintStore";
 
 const channels = new Set(["sms", "whatsapp", "push"]);
 
@@ -16,8 +20,14 @@ export async function POST(request: Request) {
     );
   }
 
-  const state = simulateNotification(payload.channel);
+  simulateNotification(payload.channel);
   const delivery = await sendCareNotification(payload.channel, getCareState());
+  const state = recordNotificationDelivery(
+    payload.channel,
+    delivery.delivered,
+    delivery.detail
+  );
+  await persistNotificationDelivery(state);
 
   return Response.json({
     state,
