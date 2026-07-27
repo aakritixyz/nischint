@@ -19,6 +19,24 @@ type CaregiverAccount = {
   createdAt: string;
 };
 
+type SupabaseAuthUser = {
+  id?: string;
+  email?: string;
+  phone?: string;
+  user_metadata?: {
+    name?: string;
+    role?: string;
+    accessLevel?: "owner" | "backup" | "clinical";
+  };
+};
+
+type SupabaseAuthResponse = {
+  access_token?: string;
+  user?: SupabaseAuthUser;
+  error?: string;
+  msg?: string;
+};
+
 export type CaregiverSession = {
   patientId: string;
   caregiverName: string;
@@ -40,6 +58,17 @@ function getSessionSecret() {
     process.env.NEXTAUTH_SECRET ??
     "nischint-local-demo-secret"
   );
+}
+
+function supabaseConfig() {
+  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey =
+    process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url?.trim() || !anonKey?.trim()) return null;
+  return {
+    url: url.replace(/\/$/, ""),
+    anonKey,
+  };
 }
 
 function getSql() {
@@ -160,6 +189,92 @@ async function setSessionFromAccount(account: {
   return session;
 }
 
+function identifierPayload(identifier: string) {
+  return identifier.includes("@")
+    ? { email: normalizeIdentifier(identifier) }
+    : { phone: identifier.replace(/[^\d+]/g, "") };
+}
+
+function sessionProfileFromSupabase(
+  fallbackName: string,
+  user?: SupabaseAuthUser
+) {
+  return {
+    name: user?.user_metadata?.name ?? fallbackName,
+    role: user?.user_metadata?.role ?? "Primary caregiver",
+    accessLevel: user?.user_metadata?.accessLevel ?? "owner",
+  };
+}
+
+async function signupWithSupabase(payload: {
+  name: string;
+  identifier: string;
+  phone?: string;
+  password: string;
+}) {
+  const config = supabaseConfig();
+  if (!config) return null;
+
+  const response = await fetch(`${config.url}/auth/v1/signup`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      authorization: `Bearer ${config.anonKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      ...identifierPayload(payload.identifier),
+      password: payload.password,
+      data: {
+        name: payload.name,
+        phone: payload.phone,
+        role: "Primary caregiver",
+        accessLevel: "owner",
+      },
+    }),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as SupabaseAuthResponse;
+  if (!response.ok || data.error || data.msg) {
+    return {
+      ok: false as const,
+      error: data.error ?? data.msg ?? "Supabase signup failed.",
+    };
+  }
+
+  return {
+    ok: true as const,
+    session: await setSessionFromAccount(
+      sessionProfileFromSupabase(payload.name, data.user)
+    ),
+  };
+}
+
+async function loginWithSupabase(identifier: string, password: string) {
+  const config = supabaseConfig();
+  if (!config || !identifier || !password) return null;
+
+  const response = await fetch(`${config.url}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: config.anonKey,
+      authorization: `Bearer ${config.anonKey}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      ...identifierPayload(identifier),
+      password,
+    }),
+  });
+
+  const data = (await response.json().catch(() => ({}))) as SupabaseAuthResponse;
+  if (!response.ok || !data.access_token) return null;
+
+  return setSessionFromAccount(
+    sessionProfileFromSupabase(identifier.split("@")[0] || "Caregiver", data.user)
+  );
+}
+
 export async function createCaregiverAccount(payload: {
   name: string;
   identifier: string;
@@ -176,6 +291,14 @@ export async function createCaregiverAccount(payload: {
       error: "Enter a name, phone or email, and an 8+ character password.",
     };
   }
+
+  const supabaseSignup = await signupWithSupabase({
+    name,
+    identifier,
+    phone,
+    password: payload.password,
+  });
+  if (supabaseSignup) return supabaseSignup;
 
   const account: CaregiverAccount = {
     id: crypto.randomUUID(),
@@ -264,6 +387,12 @@ export async function createCaregiverSession(
   credentials?: { identifier?: string; password?: string }
 ) {
   if (credentials?.identifier && credentials.password) {
+    const supabaseSession = await loginWithSupabase(
+      credentials.identifier,
+      credentials.password
+    );
+    if (supabaseSession) return supabaseSession;
+
     const account = await findCaregiverAccount(credentials.identifier);
     if (account && await verifyPassword(credentials.password, account.passwordHash)) {
       return setSessionFromAccount(account);

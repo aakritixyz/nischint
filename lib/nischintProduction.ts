@@ -18,6 +18,13 @@ function advancedAiReady() {
   return hasEnv("GROQ_API_KEY") && hasEnv("GEMINI_API_KEY") && hasEnv("OPENROUTER_API_KEY");
 }
 
+function supabaseAuthReady() {
+  return (
+    (hasEnv("SUPABASE_URL") || hasEnv("NEXT_PUBLIC_SUPABASE_URL")) &&
+    (hasEnv("SUPABASE_ANON_KEY") || hasEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"))
+  );
+}
+
 function hasEnv(key: string) {
   return Boolean(process.env[key]?.trim());
 }
@@ -39,14 +46,16 @@ export function getProductionAudit() {
         hasEnv("NISCHINT_SESSION_SECRET") ||
         hasEnv("AUTH_SECRET") ||
         hasEnv("NEXTAUTH_SECRET") ||
-        hasEnv("CLERK_SECRET_KEY"),
+        hasEnv("CLERK_SECRET_KEY") ||
+        supabaseAuthReady(),
       detail:
         hasEnv("NISCHINT_SESSION_SECRET") ||
         hasEnv("AUTH_SECRET") ||
         hasEnv("NEXTAUTH_SECRET") ||
-        hasEnv("CLERK_SECRET_KEY")
-          ? "Signed caregiver sessions are configured. Add named caregiver accounts before real use."
-          : "Demo access code is active. Add NISCHINT_SESSION_SECRET and a full auth provider for production.",
+        hasEnv("CLERK_SECRET_KEY") ||
+        supabaseAuthReady()
+          ? "Caregiver authentication is configured with signed sessions and optional Supabase Auth."
+          : "Demo access code is active. Add NISCHINT_SESSION_SECRET and SUPABASE_URL/SUPABASE_ANON_KEY for production.",
     },
     {
       id: "sms",
@@ -60,8 +69,11 @@ export function getProductionAudit() {
     {
       id: "whatsapp",
       label: "WhatsApp alerts",
-      ready: hasEnv("WHATSAPP_ACCESS_TOKEN") && hasEnv("WHATSAPP_PHONE_NUMBER_ID"),
-      detail: "WhatsApp Cloud API requires access token, phone number ID, and approved templates for production.",
+      ready:
+        hasEnv("WHATSAPP_ACCESS_TOKEN") &&
+        hasEnv("WHATSAPP_PHONE_NUMBER_ID") &&
+        hasEnv("WHATSAPP_TEMPLATE_NAME"),
+      detail: "WhatsApp Cloud API requires access token, phone number ID, verified recipients, and an approved template name for production.",
     },
     {
       id: "ai",

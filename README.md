@@ -186,12 +186,16 @@ All environment variables are optional for the first deployment. Do not add blan
 | --- | --- |
 | `DATABASE_URL` | Production database connection, such as Neon, Supabase, or Vercel Postgres |
 | `NISCHINT_SESSION_SECRET` | Secret used to sign caregiver sessions |
+| `SUPABASE_URL` | Supabase project URL for optional managed caregiver auth |
+| `SUPABASE_ANON_KEY` | Supabase anon key for optional managed caregiver auth |
 | `TWILIO_ACCOUNT_SID` | Twilio account SID for SMS alerts |
 | `TWILIO_AUTH_TOKEN` | Twilio auth token |
 | `TWILIO_FROM_NUMBER` | Twilio sender number |
 | `VERIFIED_CAREGIVER_NUMBERS` | Comma-separated verified recipient numbers allowed to receive SMS/WhatsApp |
 | `WHATSAPP_ACCESS_TOKEN` | WhatsApp Cloud API token |
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
+| `WHATSAPP_TEMPLATE_NAME` | Approved WhatsApp template name for production alerts |
+| `WHATSAPP_TEMPLATE_LANGUAGE` | Optional WhatsApp template language code, default `en_US` |
 | `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
 | `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
 | `OPENROUTER_API_KEY` | OpenRouter key for configurable per-round action planning |
@@ -266,9 +270,9 @@ The data model includes caregiver access levels, alert permissions, radius-based
 
 When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory sample state.
 
-The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. Caregiver signup is available through `/api/nischint/signup`; with `DATABASE_URL`, accounts are stored in Postgres with PBKDF2 password hashes. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
+The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. Caregiver signup is available through `/api/nischint/signup`; when `SUPABASE_URL` and `SUPABASE_ANON_KEY` exist, signup/login use Supabase Auth first. Without Supabase, accounts are stored in Postgres with PBKDF2 password hashes when `DATABASE_URL` exists. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
 
-Alert delivery is explicit about failure. SMS and WhatsApp are blocked for real delivery unless the recipient appears in `VERIFIED_CAREGIVER_NUMBERS`. `/api/nischint/monitoring` reports provider health, failed deliveries, safe-zone state, and recent events for launch review.
+Alert delivery is explicit about failure. SMS and WhatsApp are blocked for real delivery unless the recipient appears in `VERIFIED_CAREGIVER_NUMBERS`. WhatsApp can send an approved template when `WHATSAPP_TEMPLATE_NAME` is configured, otherwise it attempts text delivery only inside Meta's allowed service window. `/api/nischint/monitoring` reports provider health, failed deliveries, safe-zone state, and recent events for launch review.
 
 AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice. The `/api/nischint/ai-capabilities` endpoint reports whether voice conversation, orchestration, planning, and screenshot verification providers are configured.
 

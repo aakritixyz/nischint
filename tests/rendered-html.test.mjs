@@ -267,6 +267,10 @@ test("production hardening backend pieces exist", async () => {
   assert.match(meRoute, /getCaregiverSession/);
   assert.match(authLib, /nischint_session/);
   assert.match(authLib, /createCaregiverAccount/);
+  assert.match(authLib, /signupWithSupabase/);
+  assert.match(authLib, /loginWithSupabase/);
+  assert.match(authLib, /SUPABASE_URL/);
+  assert.match(authLib, /SUPABASE_ANON_KEY/);
   assert.match(authLib, /PBKDF2/);
   assert.match(authLib, /nischint_caregiver_accounts/);
   assert.match(authLib, /crypto\.subtle/);
@@ -277,6 +281,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(persistenceLib, /hydrateCareState/);
   assert.match(providersLib, /GROQ_API_KEY/);
   assert.match(providersLib, /VERIFIED_CAREGIVER_NUMBERS/);
+  assert.match(providersLib, /WHATSAPP_TEMPLATE_NAME/);
+  assert.match(providersLib, /WHATSAPP_TEMPLATE_LANGUAGE/);
   assert.match(providersLib, /isVerifiedRecipient/);
   assert.match(providersLib, /getProviderHealth/);
   assert.match(providersLib, /GEMINI_API_KEY/);
@@ -291,6 +297,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(providersLib, /gemini-2\.5-pro/);
   assert.match(productionLib, /DATABASE_URL/);
   assert.match(productionLib, /NISCHINT_SESSION_SECRET/);
+  assert.match(productionLib, /supabaseAuthReady/);
+  assert.match(productionLib, /WHATSAPP_TEMPLATE_NAME/);
   assert.match(productionLib, /GROQ_API_KEY/);
   assert.match(productionLib, /GEMINI_API_KEY/);
   assert.match(productionLib, /OPENROUTER_API_KEY/);
@@ -328,6 +336,9 @@ test("production hardening backend pieces exist", async () => {
   assert.match(readme, /Production readiness/);
   assert.match(readme, /Caregiver signup/);
   assert.match(readme, /VERIFIED_CAREGIVER_NUMBERS/);
+  assert.match(readme, /SUPABASE_URL/);
+  assert.match(readme, /SUPABASE_ANON_KEY/);
+  assert.match(readme, /WHATSAPP_TEMPLATE_NAME/);
   assert.match(readme, /PILOT_TEST_PLAN/);
   assert.match(readme, /PRIVACY_LEGAL_REVIEW/);
   assert.match(readme, /PRODUCTION_ARCHITECTURE/);

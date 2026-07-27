@@ -6,6 +6,8 @@ type ProviderEnv = {
   TWILIO_FROM_NUMBER?: string;
   WHATSAPP_ACCESS_TOKEN?: string;
   WHATSAPP_PHONE_NUMBER_ID?: string;
+  WHATSAPP_TEMPLATE_NAME?: string;
+  WHATSAPP_TEMPLATE_LANGUAGE?: string;
   VERIFIED_CAREGIVER_NUMBERS?: string;
   OPENAI_API_KEY?: string;
   GROQ_API_KEY?: string;
@@ -40,6 +42,8 @@ function providerEnv() {
     TWILIO_FROM_NUMBER: process.env.TWILIO_FROM_NUMBER,
     WHATSAPP_ACCESS_TOKEN: process.env.WHATSAPP_ACCESS_TOKEN,
     WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    WHATSAPP_TEMPLATE_NAME: process.env.WHATSAPP_TEMPLATE_NAME,
+    WHATSAPP_TEMPLATE_LANGUAGE: process.env.WHATSAPP_TEMPLATE_LANGUAGE,
     VERIFIED_CAREGIVER_NUMBERS: process.env.VERIFIED_CAREGIVER_NUMBERS,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
@@ -205,9 +209,27 @@ async function sendWhatsApp(to: string, body: string) {
       },
       body: JSON.stringify({
         messaging_product: "whatsapp",
-        to,
-        type: "text",
-        text: { body },
+        to: normalizePhone(to).replace(/^\+/, ""),
+        ...(vars.WHATSAPP_TEMPLATE_NAME
+          ? {
+              type: "template",
+              template: {
+                name: vars.WHATSAPP_TEMPLATE_NAME,
+                language: {
+                  code: vars.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
+                },
+                components: [
+                  {
+                    type: "body",
+                    parameters: [{ type: "text", text: body }],
+                  },
+                ],
+              },
+            }
+          : {
+              type: "text",
+              text: { body },
+            }),
       }),
     }
   );
@@ -216,7 +238,9 @@ async function sendWhatsApp(to: string, body: string) {
     delivered: response.ok,
     detail: response.ok
       ? "WhatsApp message sent through Cloud API."
-      : "WhatsApp message request failed.",
+      : vars.WHATSAPP_TEMPLATE_NAME
+        ? "WhatsApp template request failed. Check template name, language, parameters, and approval."
+        : "WhatsApp text request failed. Use an approved template for production/outside the 24-hour window.",
   };
 }
 
@@ -366,6 +390,7 @@ export function getProviderHealth() {
     whatsapp: {
       configured: Boolean(vars.WHATSAPP_ACCESS_TOKEN && vars.WHATSAPP_PHONE_NUMBER_ID),
       verifiedRecipients: Boolean(vars.VERIFIED_CAREGIVER_NUMBERS?.trim()),
+      templateConfigured: Boolean(vars.WHATSAPP_TEMPLATE_NAME?.trim()),
     },
     ai: {
       configured: Boolean(vars.GROQ_API_KEY || vars.GEMINI_API_KEY || vars.OPENROUTER_API_KEY || vars.OPENAI_API_KEY),
