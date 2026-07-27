@@ -56,7 +56,7 @@ When a person feels lost, they can press **I feel lost**. Nischint then runs a s
 - Caregiver access-code concept
 - Caregiver access levels for owner, backup, and clinical contacts
 - Consent audit log for privacy-sensitive sharing changes
-- Production readiness checklist for database, auth, alerts, AI, privacy, and geofence setup
+- User-facing privacy summary that explains what family can see
 - Escalation ladder for primary, backup, and doctor/neighbor handoff
 
 ### Backend/API Routes
@@ -124,7 +124,7 @@ For a scale-up plan covering separate senior/family/admin apps, microservices, r
 4. Press **I feel lost**.
 5. Watch the senior view enter help mode.
 6. Press **Share live location** and allow GPS permission.
-7. Send a simulated SMS, WhatsApp, or push alert.
+7. Run the alert drill or send an SMS, WhatsApp, or push alert through the provider layer.
 8. Switch between **English** and **Hindi**, then use **Listen** to hear the safety screen.
 9. Press **Speak** and say a clear help or check-in command.
 10. Add a reminder, caregiver note, and show the caregiver live view.
@@ -239,9 +239,26 @@ nischint.life
 
 Then add it in Vercel under **Project Settings -> Domains** and follow the DNS instructions.
 
+## College Showcase Status
+
+Nischint is ready for a college project showcase as a polished, working MVP. It has a mobile-first interface, real tabbed workflows, backend routes, signed caregiver sessions, persistent database support when `DATABASE_URL` is present, bilingual voice support, privacy controls, and provider hooks for SMS, WhatsApp, and AI guidance.
+
+Suggested presentation flow:
+
+1. Start on the setup screen and choose English/Hindi plus voice preference.
+2. Enter with access code **2486**.
+3. Press **I feel lost** to show lost mode, read-aloud guidance, caregiver alert status, and safe-zone change.
+4. Open **Location** and run the alert drill, share live GPS if available, and show the response ladder.
+5. Open **Reminders** and add a medicine/routine reminder.
+6. Open **Care circle** and show contacts, roles, and latest alert status.
+7. Open **Privacy** and show consent toggles, export/delete requests, and “What family can see.”
+8. Open **Settings** and show accessibility controls plus the showcase proof card.
+
+This positions Nischint as a meaningful real-time elder-safety project rather than a static landing page.
+
 ## Production Hardening Added
 
-Nischint now includes a production-readiness layer that checks whether the deployment has durable storage, auth secrets, SMS, WhatsApp, and AI guidance configured. The UI shows which pieces are ready and what still needs provider setup.
+Nischint includes a production-readiness endpoint that checks whether the deployment has durable storage, auth secrets, SMS, WhatsApp, and AI guidance configured. This stays available through `/api/nischint/production` for technical review, while the normal app shows user-facing privacy and care controls instead of internal deployment status.
 
 The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
 
@@ -280,4 +297,4 @@ Before using it with real families, the project still needs:
 
 ## Project Status
 
-Nischint is ready to deploy as a meaningful, voice-assisted MVP. It shows the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, visible production-safety concepts, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.
+Nischint is ready to present as a meaningful, voice-assisted college showcase MVP. It shows the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, privacy-first controls, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.

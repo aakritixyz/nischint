@@ -110,6 +110,6 @@ export const productionArchitecture = {
     "Single Vercel PWA simulates the Senior App and Family Dashboard.",
     "Next.js API routes stand in for gateway, alert, profile, AI, audit, and notification services.",
     "Neon/Postgres stores live care state while provider keys enable AI and Twilio SMS.",
-    "The Privacy tab exposes production readiness until a real Admin Portal exists.",
+    "The Privacy tab shows user-facing consent and visibility controls; production readiness stays behind an API endpoint for technical review.",
   ],
 };

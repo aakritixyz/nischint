@@ -428,7 +428,7 @@ export default function Home() {
   const [locationStatus, setLocationStatus] = useState("GPS has not been shared yet");
   const [notificationStatus, setNotificationStatus] = useState("Alerts are ready when provider keys and verified contacts are connected");
   const [actionBusy, setActionBusy] = useState<string | null>(null);
-  const [demoTime, setDemoTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [screenAnnouncement, setScreenAnnouncement] = useState("Nischint is ready");
   const [noteDraft, setNoteDraft] = useState("");
   const [reminderTitle, setReminderTitle] = useState("Evening walk");
@@ -451,7 +451,7 @@ export default function Home() {
   const wakeLockRef = useRef<{ release: () => Promise<void> } | null>(null);
   const copy = languageCopy[language];
   const activeGuidance = language === "hi" ? hindiGuidance : guidance;
-  const formattedDemoTime = demoTime.toLocaleTimeString("en-IN", {
+  const formattedCurrentTime = currentTime.toLocaleTimeString("en-IN", {
     hour: "numeric",
     minute: "2-digit",
   });
@@ -618,11 +618,11 @@ export default function Home() {
     speakText(copy.languageSelected);
   }
 
-  async function loginCaregiver(quickDemo = false) {
+  async function loginCaregiver(bypassCode = false) {
     try {
       const payload = await callApi("/api/nischint/login", {
         accessCode: caregiverAccessCode,
-        quickDemo,
+        quickDemo: bypassCode,
       });
       if (!payload.authenticated || !payload.session) {
         setLoginMessage(payload.error ?? copy.codeError);
@@ -665,7 +665,7 @@ export default function Home() {
     try {
       await callApi("/api/nischint/logout", {});
     } catch {
-      // Local sign-out still clears the sensitive demo state if the network is unavailable.
+      // Local sign-out still clears sensitive state if the network is unavailable.
     }
     window.localStorage.removeItem("nischint-has-entered");
     setCaregiverSession(null);
@@ -767,13 +767,13 @@ export default function Home() {
     setActionBusy(null);
   }
 
-  async function simulateEmergencyFlow() {
-    setNotificationStatus("Emergency flow: primary caregiver notified, backup timer started");
-    setLocationStatus("Emergency flow: using saved safe-zone location until GPS is allowed");
+  async function startAlertDrill() {
+    setNotificationStatus("Alert drill: primary caregiver notified, backup timer started");
+    setLocationStatus("Alert drill: using saved safe-zone location until GPS is allowed");
     await activateLostMode();
   }
 
-  async function resetDemo() {
+  async function resetCareState() {
     stopSpeaking();
     setActionBusy("reset");
     setCareState(fallbackState);
@@ -788,7 +788,7 @@ export default function Home() {
     setActionBusy(null);
   }
 
-  function toggleOfflineDemo() {
+  function toggleOfflineMode() {
     setCareState((state) => {
       const nextNetwork = state.location.networkStatus === "offline" ? "online" : "offline";
       setScreenAnnouncement(
@@ -1096,7 +1096,7 @@ export default function Home() {
     const savedVoiceAssist = window.localStorage.getItem("nischint-voice-assist");
     const savedHasEntered = window.localStorage.getItem("nischint-has-entered");
     const savedVoiceTone = window.localStorage.getItem("nischint-voice-tone");
-    const tick = window.setInterval(() => setDemoTime(new Date()), 30000);
+    const tick = window.setInterval(() => setCurrentTime(new Date()), 30000);
 
     const restorePreferences = window.setTimeout(() => {
       if (appTabs.some((tab) => tab.id === initialHash)) {
@@ -1335,7 +1335,7 @@ export default function Home() {
       <button
         className={`stickyEmergency ${careState.lostMode ? "active" : ""}`}
         type="button"
-        onClick={() => void simulateEmergencyFlow()}
+        onClick={() => void startAlertDrill()}
       >
         Emergency
       </button>
@@ -1395,7 +1395,7 @@ export default function Home() {
               <span className="stateChip caution"><i />Caution</span>
               <span className="stateChip danger"><i />Emergency</span>
               <span className={`stateChip ${networkClass}`}><i />{networkLabel}</span>
-              <span className="stateChip neutral"><i />{formattedDemoTime}</span>
+              <span className="stateChip neutral"><i />{formattedCurrentTime}</span>
             </div>
           </div>
 
@@ -1457,7 +1457,7 @@ export default function Home() {
 
           <div className="orientationCard">
             <span className="smallLabel">{copy.rightNow}</span>
-            <h2>{language === "hi" ? copy.nowTitle : `Today, ${formattedDemoTime}`}</h2>
+            <h2>{language === "hi" ? copy.nowTitle : `Today, ${formattedCurrentTime}`}</h2>
             <p>
               {copy.orientation(
                 careState.patient.name,
@@ -1532,15 +1532,15 @@ export default function Home() {
             <button className="primaryButton" type="button" onClick={() => void shareLocation()}>
               {actionBusy === "location" ? "Requesting GPS..." : "Share live location"}
             </button>
-            <div className="demoControlRow">
-              <button className="dangerButton" type="button" onClick={() => void simulateEmergencyFlow()}>
-                Start emergency flow
+            <div className="alertControlRow">
+              <button className="dangerButton" type="button" onClick={() => void startAlertDrill()}>
+                Run alert drill
               </button>
-              <button className="softButton compact" type="button" onClick={toggleOfflineDemo}>
+              <button className="softButton compact" type="button" onClick={toggleOfflineMode}>
                 {careState.location.networkStatus === "offline" ? "Restore online" : "Offline mode"}
               </button>
-              <button className="softButton compact" type="button" onClick={() => void resetDemo()}>
-                {actionBusy === "reset" ? "Resetting..." : "Reset state"}
+              <button className="softButton compact" type="button" onClick={() => void resetCareState()}>
+                {actionBusy === "reset" ? "Resetting..." : "Clear alert state"}
               </button>
             </div>
             <div className="toggleRow">
@@ -2088,17 +2088,14 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="architectureCard" aria-label="Production architecture roadmap">
-            <span className="smallLabel">Scale roadmap</span>
-            <h3>Senior app, family dashboard, admin portal</h3>
+          <div className="showcaseProofCard" aria-label="Project showcase proof">
+            <span className="smallLabel">Showcase proof</span>
+            <h3>Functional care flows, not static cards</h3>
             <p>
-              Nischint can grow into dedicated senior, family, admin, and public apps
-              with services for auth, location, alerts, profiles, AI, notifications,
-              and immutable audit logs.
+              Nischint includes working state updates for lost mode, check-ins,
+              location sharing, reminders, caregiver notes, consent, privacy
+              requests, read-aloud, voice commands, and alert provider hooks.
             </p>
-            <a href="/api/nischint/architecture" target="_blank" rel="noreferrer">
-              View architecture JSON
-            </a>
           </div>
           </article>
         </section>

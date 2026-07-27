@@ -50,8 +50,8 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /Elder safety & family care/);
   assert.match(page, /I feel lost/);
   assert.match(page, /Emergency/);
-  assert.match(page, /Start emergency flow/);
-  assert.match(page, /Reset state/);
+  assert.match(page, /Run alert drill/);
+  assert.match(page, /Clear alert state/);
   assert.match(page, /Offline mode/);
   assert.match(page, /Family response ladder/);
   assert.match(page, /Preferences/);
@@ -68,9 +68,8 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /What family can see/);
   assert.match(page, /privacySummaryGrid/);
   assert.match(page, /Recent requests/);
-  assert.match(page, /Production architecture roadmap/);
-  assert.match(page, /Senior app, family dashboard, admin portal/);
-  assert.match(page, /api\/nischint\/architecture/);
+  assert.match(page, /Project showcase proof/);
+  assert.match(page, /Functional care flows, not static cards/);
   assert.match(page, /Consent audit/);
   assert.match(page, /updateConsent/);
   assert.match(page, /Caregiver access code/);
@@ -90,7 +89,7 @@ test("Nischint page contains the launch-ready product experience", async () => {
   assert.match(page, /activateLostMode/);
   assert.doesNotMatch(page, /Groq, Gemini, and OpenRouter power calm support/);
   assert.doesNotMatch(page, /Lost-mode support/);
-  assert.doesNotMatch(page, /Demo mode|quick demo|Demo-ready, not medical advice|Simulate emergency|Reset demo/);
+  assert.doesNotMatch(page, /Demo mode|quick demo|Demo-ready, not medical advice|Simulate emergency|Reset demo|Production safety layer/);
   assert.doesNotMatch(page, /Choose the language and voice comfort level first/);
   assert.doesNotMatch(page, /Choose simple preferences before opening Nischint/);
   assert.doesNotMatch(page, /CareAnchor|Making Every Memory Matter|SkeletonPreview/);
@@ -139,7 +138,8 @@ test("metadata and PWA manifest are branded for Nischint", async () => {
   assert.match(styles, /aiCareCard/);
   assert.match(styles, /aiCapabilityRow/);
   assert.match(styles, /aiActionRow/);
-  assert.match(styles, /architectureCard/);
+  assert.match(styles, /showcaseProofCard/);
+  assert.match(styles, /alertControlRow/);
   assert.match(styles, /routeShell/);
   assert.match(styles, /routeHighlightGrid/);
   assert.match(styles, /routeInfoGrid/);
