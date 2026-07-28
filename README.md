@@ -196,6 +196,7 @@ All environment variables are optional for the first deployment. Do not add blan
 | `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
 | `WHATSAPP_TEMPLATE_NAME` | Approved WhatsApp template name for production alerts |
 | `WHATSAPP_TEMPLATE_LANGUAGE` | Optional WhatsApp template language code, default `en_US` |
+| `WHATSAPP_TEMPLATE_HAS_BODY_PARAM` | Optional. Set `true` only when your approved template has one body variable. Leave unset for Meta's `hello_world` template |
 | `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
 | `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
 | `OPENROUTER_API_KEY` | OpenRouter key for configurable per-round action planning |

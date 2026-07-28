@@ -8,6 +8,7 @@ type ProviderEnv = {
   WHATSAPP_PHONE_NUMBER_ID?: string;
   WHATSAPP_TEMPLATE_NAME?: string;
   WHATSAPP_TEMPLATE_LANGUAGE?: string;
+  WHATSAPP_TEMPLATE_HAS_BODY_PARAM?: string;
   VERIFIED_CAREGIVER_NUMBERS?: string;
   OPENAI_API_KEY?: string;
   GROQ_API_KEY?: string;
@@ -45,6 +46,7 @@ function providerEnv() {
     WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
     WHATSAPP_TEMPLATE_NAME: process.env.WHATSAPP_TEMPLATE_NAME,
     WHATSAPP_TEMPLATE_LANGUAGE: process.env.WHATSAPP_TEMPLATE_LANGUAGE,
+    WHATSAPP_TEMPLATE_HAS_BODY_PARAM: process.env.WHATSAPP_TEMPLATE_HAS_BODY_PARAM,
     VERIFIED_CAREGIVER_NUMBERS: process.env.VERIFIED_CAREGIVER_NUMBERS,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
@@ -201,6 +203,34 @@ async function sendWhatsApp(to: string, body: string) {
     };
   }
 
+  const templateHasBodyParam =
+    vars.WHATSAPP_TEMPLATE_HAS_BODY_PARAM === "true" ||
+    (Boolean(vars.WHATSAPP_TEMPLATE_NAME) && vars.WHATSAPP_TEMPLATE_NAME !== "hello_world");
+  const templatePayload = vars.WHATSAPP_TEMPLATE_NAME
+    ? {
+        type: "template",
+        template: {
+          name: vars.WHATSAPP_TEMPLATE_NAME,
+          language: {
+            code: vars.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
+          },
+          ...(templateHasBodyParam
+            ? {
+                components: [
+                  {
+                    type: "body",
+                    parameters: [{ type: "text", text: body }],
+                  },
+                ],
+              }
+            : {}),
+        },
+      }
+    : {
+        type: "text",
+        text: { body },
+      };
+
   const response = await fetch(
     `https://graph.facebook.com/v21.0/${vars.WHATSAPP_PHONE_NUMBER_ID}/messages`,
     {
@@ -212,26 +242,7 @@ async function sendWhatsApp(to: string, body: string) {
       body: JSON.stringify({
         messaging_product: "whatsapp",
         to: normalizePhone(to).replace(/^\+/, ""),
-        ...(vars.WHATSAPP_TEMPLATE_NAME
-          ? {
-              type: "template",
-              template: {
-                name: vars.WHATSAPP_TEMPLATE_NAME,
-                language: {
-                  code: vars.WHATSAPP_TEMPLATE_LANGUAGE ?? "en_US",
-                },
-                components: [
-                  {
-                    type: "body",
-                    parameters: [{ type: "text", text: body }],
-                  },
-                ],
-              },
-            }
-          : {
-              type: "text",
-              text: { body },
-            }),
+        ...templatePayload,
       }),
     }
   );
