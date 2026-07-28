@@ -852,7 +852,7 @@ export default function Home() {
       return;
     }
 
-    setVoiceStatus(copy.commandNotFound);
+    setVoiceStatus(transcript ? `${copy.commandNotFound} Heard: ${transcript}` : copy.commandNotFound);
     if (voiceAssist) speakText(copy.commandNotFound);
   }
 
@@ -914,6 +914,11 @@ export default function Home() {
             mimeType: audio.type,
             language,
           });
+          if (!payload.intent && !payload.transcript && payload.detail) {
+            setVoiceStatus(payload.detail);
+            speakText(copy.commandHelp);
+            return;
+          }
           handleVoiceIntent(payload.intent ?? null, payload.transcript);
         } catch {
           setVoiceStatus(copy.commandHelp);
@@ -1083,6 +1088,7 @@ export default function Home() {
       delivery?: string;
       intent?: VoiceIntent | null;
       transcript?: string;
+      detail?: string;
       authenticated?: boolean;
       session?: CaregiverSession | null;
       error?: string;

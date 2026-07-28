@@ -198,6 +198,7 @@ All environment variables are optional for the first deployment. Do not add blan
 | `WHATSAPP_TEMPLATE_LANGUAGE` | Optional WhatsApp template language code, default `en_US` |
 | `WHATSAPP_TEMPLATE_HAS_BODY_PARAM` | Optional. Set `true` only when your approved template has one body variable. Leave unset for Meta's `hello_world` template |
 | `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
+| `GROQ_TRANSCRIPTION_MODEL` | Optional Groq speech-to-text model for voice commands, default `whisper-large-v3-turbo` |
 | `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
 | `OPENROUTER_API_KEY` | OpenRouter key for configurable per-round action planning |
 | `OPENAI_API_KEY` | Optional OpenAI fallback for model-generated calming guidance |

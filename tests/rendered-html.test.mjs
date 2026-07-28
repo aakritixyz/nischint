@@ -291,6 +291,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(providersLib, /getProviderHealth/);
   assert.match(providersLib, /GEMINI_API_KEY/);
   assert.match(providersLib, /detectVoiceIntentWithAi/);
+  assert.match(providersLib, /transcribeWithGroq/);
+  assert.match(providersLib, /whisper-large-v3-turbo/);
   assert.match(providersLib, /inlineData/);
   assert.match(providersLib, /OPENROUTER_API_KEY/);
   assert.match(providersLib, /gemini-2\.5-flash-native-audio/);

@@ -19,6 +19,7 @@ type ProviderEnv = {
   GEMINI_GUIDANCE_MODEL?: string;
   GEMINI_VOICE_MODEL?: string;
   GEMINI_LIVE_MODEL?: string;
+  GROQ_TRANSCRIPTION_MODEL?: string;
   GROQ_ORCHESTRATION_MODEL?: string;
   GROQ_SCREENSHOT_MODEL?: string;
   OPENROUTER_PLANNER_MODEL?: string;
@@ -59,6 +60,7 @@ function providerEnv() {
     GEMINI_GUIDANCE_MODEL: process.env.GEMINI_GUIDANCE_MODEL,
     GEMINI_VOICE_MODEL: process.env.GEMINI_VOICE_MODEL,
     GEMINI_LIVE_MODEL: process.env.GEMINI_LIVE_MODEL,
+    GROQ_TRANSCRIPTION_MODEL: process.env.GROQ_TRANSCRIPTION_MODEL,
     GROQ_ORCHESTRATION_MODEL: process.env.GROQ_ORCHESTRATION_MODEL,
     GROQ_SCREENSHOT_MODEL: process.env.GROQ_SCREENSHOT_MODEL,
     OPENROUTER_PLANNER_MODEL: process.env.OPENROUTER_PLANNER_MODEL,
@@ -163,6 +165,101 @@ function geminiRestVoiceModel(vars: ProviderEnv) {
     return "gemini-2.5-flash";
   }
   return configuredModel;
+}
+
+function base64ToBlob(base64: string, mimeType: string) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: mimeType || "audio/webm" });
+}
+
+async function transcribeWithGroq(input: {
+  audioBase64: string;
+  mimeType: string;
+  language: "en" | "hi";
+}, vars: ProviderEnv) {
+  if (!vars.GROQ_API_KEY) return null;
+
+  const audioBlob = base64ToBlob(input.audioBase64, input.mimeType);
+  const extension = input.mimeType.includes("mp4")
+    ? "m4a"
+    : input.mimeType.includes("ogg")
+      ? "ogg"
+      : input.mimeType.includes("wav")
+        ? "wav"
+        : "webm";
+  const form = new FormData();
+  form.append("file", audioBlob, `nischint-command.${extension}`);
+  form.append("model", vars.GROQ_TRANSCRIPTION_MODEL ?? "whisper-large-v3-turbo");
+  form.append("response_format", "json");
+  if (input.language === "hi") form.append("language", "hi");
+
+  const response = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${vars.GROQ_API_KEY}`,
+    },
+    body: form,
+  });
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as { text?: string };
+  return payload.text?.trim() ?? null;
+}
+
+async function classifyTranscriptWithGemini(transcript: string, vars: ProviderEnv) {
+  if (!vars.GEMINI_API_KEY || !transcript.trim()) return null;
+
+  const model = vars.GEMINI_GUIDANCE_MODEL ?? "gemini-2.5-flash";
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${vars.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text:
+                  "Classify this elder-safety voice transcript as exactly one intent: lost, ok, help, medicine, unknown. " +
+                  "Return JSON only: {\"intent\":\"...\"}. Accept Hindi, English, and Hinglish. Transcript: " +
+                  transcript,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 60,
+          responseMimeType: "application/json",
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) return null;
+
+  const payload = (await response.json()) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+  const text = payload.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
+  try {
+    const parsed = JSON.parse(text) as { intent?: string };
+    const allowed = new Set(["lost", "ok", "help", "medicine"]);
+    return parsed.intent && allowed.has(parsed.intent)
+      ? parsed.intent as VoiceIntent
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 export function getAiCapabilityMap() {
@@ -392,11 +489,21 @@ export async function detectVoiceIntentWithAi(input: {
   language: "en" | "hi";
 }) {
   const vars = providerEnv();
+  const groqTranscript = await transcribeWithGroq(input, vars);
+  if (groqTranscript) {
+    const localIntent = detectVoiceIntentFromText(groqTranscript);
+    return {
+      intent: localIntent ?? await classifyTranscriptWithGemini(groqTranscript, vars),
+      transcript: groqTranscript,
+      detail: "Voice command transcribed with Groq Whisper.",
+    };
+  }
+
   if (!vars.GEMINI_API_KEY) {
     return {
       intent: null,
       transcript: "",
-      detail: "Gemini voice intent detection is not configured.",
+      detail: "Voice transcription is not configured. Add GROQ_API_KEY or GEMINI_API_KEY.",
     };
   }
 
