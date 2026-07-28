@@ -292,7 +292,7 @@ const languageCopy = {
     voiceReady: "Voice guidance is ready",
     voiceUnsupported: "Voice commands are not available on this browser. Read-aloud still works.",
     micPermission: "Microphone permission is blocked. Allow microphone access, then try Voice command again.",
-    commandHelp: "Say: I feel lost, I am okay, or I took medicine.",
+    commandHelp: "Say: I feel lost, I need help, I am okay, or I took medicine.",
     familyVoice: "Family reassurance",
     playingMessage: "Playing reassurance",
     familySays: (name: string) => `${name} says you are safe`,
@@ -383,7 +383,7 @@ const languageCopy = {
     voiceReady: "आवाज से सहायता तैयार है",
     voiceUnsupported: "इस ब्राउजर में बोलकर आदेश देना उपलब्ध नहीं है। सुनने की सुविधा काम करेगी।",
     micPermission: "माइक्रोफोन की अनुमति बंद है। अनुमति चालू करके फिर से आवाज से बोलें।",
-    commandHelp: "कहें: मुझे मदद चाहिए, मैं ठीक हूं, या मैंने दवा ले ली।",
+    commandHelp: "कहें: मुझे रास्ता नहीं मिल रहा, मुझे मदद चाहिए, मैं ठीक हूं, या मैंने दवा ले ली।",
     familyVoice: "परिवार का भरोसा",
     playingMessage: "परिवार का संदेश चल रहा है",
     familySays: (name: string) => `${name} कहती हैं कि आप सुरक्षित हैं`,
@@ -750,25 +750,77 @@ export default function Home() {
       "i am lost",
       "im lost",
       "lost",
-      "help me",
-      "need help",
-      "emergency",
+      "where am i",
       "take me home",
+      "go home",
       "home",
       "ghar",
-      "madad",
-      "mujhe madad chahiye",
+      "ghar jana",
+      "ghar jaana",
+      "mujhe ghar jana",
+      "mujhe ghar jaana",
       "rasta nahi mil raha",
       "raasta nahi mil raha",
-      "मदद",
+      "mujhe rasta nahi mil raha",
+      "mujhe raasta nahi mil raha",
+      "kho gaya",
+      "kho gayi",
+      "gum gaya",
+      "gum gayi",
       "रास्ता",
       "घर",
       "खो",
+      "गुम",
     ];
-    const medicineWords = ["medicine", "tablet", "pill", "took medicine", "dawa", "दवा", "गोली"];
-    const okayWords = ["okay", "ok", "i am okay", "i am safe", "safe", "fine", "theek", "ठीक", "सुरक्षित"];
+    const helpWords = [
+      "help",
+      "help me",
+      "need help",
+      "i need help",
+      "emergency",
+      "call family",
+      "call asha",
+      "madad",
+      "mujhe madad chahiye",
+      "मदद",
+      "सहायता",
+      "आपात",
+    ];
+    const medicineWords = [
+      "medicine",
+      "tablet",
+      "pill",
+      "took medicine",
+      "i took medicine",
+      "medicine done",
+      "dawa",
+      "dawai",
+      "dava",
+      "dawa le li",
+      "dawai le li",
+      "dawa kha li",
+      "दवा",
+      "गोली",
+    ];
+    const okayWords = [
+      "okay",
+      "ok",
+      "i am okay",
+      "i am safe",
+      "safe",
+      "fine",
+      "theek",
+      "theek hu",
+      "theek hoon",
+      "main theek",
+      "mai theek",
+      "sab theek",
+      "ठीक",
+      "सुरक्षित",
+    ];
 
     if (lostWords.some((word) => phrase.includes(word))) return "lost";
+    if (helpWords.some((word) => phrase.includes(word))) return "help";
     if (medicineWords.some((word) => phrase.includes(word))) return "medicine";
     if (okayWords.some((word) => phrase.includes(word))) return "ok";
 
@@ -874,7 +926,7 @@ export default function Home() {
       recorder.start();
       window.setTimeout(() => {
         if (recorder.state === "recording") recorder.stop();
-      }, 4200);
+      }, 6500);
     } catch {
       setIsRecordingCommand(false);
       setVoiceStatus(copy.micPermission);

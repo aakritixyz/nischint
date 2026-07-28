@@ -24,6 +24,8 @@ type ProviderEnv = {
   OPENROUTER_PLANNER_MODEL?: string;
 };
 
+type VoiceIntent = "lost" | "ok" | "help" | "medicine";
+
 const aiModelPlan = {
   analysis: "meta-llama/llama-4-scout-17b-16e-instruct",
   orchestration: "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -61,6 +63,106 @@ function providerEnv() {
     GROQ_SCREENSHOT_MODEL: process.env.GROQ_SCREENSHOT_MODEL,
     OPENROUTER_PLANNER_MODEL: process.env.OPENROUTER_PLANNER_MODEL,
   } satisfies ProviderEnv;
+}
+
+function normalizeVoiceText(value: string) {
+  return value
+    .toLocaleLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function detectVoiceIntentFromText(text: string): VoiceIntent | null {
+  const phrase = normalizeVoiceText(text);
+  const lostWords = [
+    "i feel lost",
+    "i am lost",
+    "im lost",
+    "lost",
+    "where am i",
+    "take me home",
+    "go home",
+    "home",
+    "ghar",
+    "ghar jana",
+    "ghar jaana",
+    "mujhe ghar jana",
+    "mujhe ghar jaana",
+    "rasta nahi mil raha",
+    "raasta nahi mil raha",
+    "mujhe rasta nahi mil raha",
+    "mujhe raasta nahi mil raha",
+    "kho gaya",
+    "kho gayi",
+    "gum gaya",
+    "gum gayi",
+    "रास्ता",
+    "घर",
+    "खो",
+    "गुम",
+  ];
+  const helpWords = [
+    "help",
+    "help me",
+    "need help",
+    "i need help",
+    "emergency",
+    "call family",
+    "call asha",
+    "madad",
+    "mujhe madad chahiye",
+    "मदद",
+    "सहायता",
+    "आपात",
+  ];
+  const medicineWords = [
+    "medicine",
+    "tablet",
+    "pill",
+    "took medicine",
+    "i took medicine",
+    "medicine done",
+    "dawa",
+    "dawai",
+    "dava",
+    "dawa le li",
+    "dawai le li",
+    "dawa kha li",
+    "दवा",
+    "गोली",
+  ];
+  const okayWords = [
+    "okay",
+    "ok",
+    "i am okay",
+    "i am safe",
+    "safe",
+    "fine",
+    "theek",
+    "theek hu",
+    "theek hoon",
+    "main theek",
+    "mai theek",
+    "sab theek",
+    "ठीक",
+    "सुरक्षित",
+  ];
+
+  if (lostWords.some((word) => phrase.includes(word))) return "lost";
+  if (helpWords.some((word) => phrase.includes(word))) return "help";
+  if (medicineWords.some((word) => phrase.includes(word))) return "medicine";
+  if (okayWords.some((word) => phrase.includes(word))) return "ok";
+
+  return null;
+}
+
+function geminiRestVoiceModel(vars: ProviderEnv) {
+  const configuredModel = vars.GEMINI_VOICE_MODEL?.trim();
+  if (!configuredModel || configuredModel.includes("native-audio")) {
+    return "gemini-2.5-flash";
+  }
+  return configuredModel;
 }
 
 export function getAiCapabilityMap() {
@@ -298,7 +400,7 @@ export async function detectVoiceIntentWithAi(input: {
     };
   }
 
-  const model = vars.GEMINI_VOICE_MODEL ?? vars.GEMINI_GUIDANCE_MODEL ?? "gemini-2.5-flash";
+  const model = geminiRestVoiceModel(vars);
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${vars.GEMINI_API_KEY}`,
     {
@@ -313,9 +415,14 @@ export async function detectVoiceIntentWithAi(input: {
             parts: [
               {
                 text:
-                  "You are an elder safety app voice intent detector. Transcribe the short command and classify it as exactly one of: lost, ok, help, medicine, unknown. " +
-                  "Return compact JSON only with keys intent and transcript. Hindi, Hinglish, and English commands are allowed. " +
-                  "Examples: 'I feel lost' => lost, 'mujhe madad chahiye' => help, 'main theek hoon' => ok, 'dawa le li' => medicine.",
+                  "You are Nischint's elder safety voice detector. First transcribe the short voice command, then classify the user intent. " +
+                  "Return compact JSON only with keys intent and transcript. intent must be exactly one of: lost, ok, help, medicine, unknown. " +
+                  "Accept English, Hindi, and Hinglish. Be forgiving of accents and noisy phone audio. " +
+                  "lost means the person is confused about location or wants home: 'I feel lost', 'where am I', 'mujhe ghar jana hai', 'raasta nahi mil raha', 'main kho gayi'. " +
+                  "help means they need a caregiver but may not be lost: 'I need help', 'help me', 'mujhe madad chahiye', 'call Asha'. " +
+                  "ok means safe/check-in: 'I am okay', 'I am safe', 'main theek hoon', 'sab theek hai'. " +
+                  "medicine means medicine taken: 'I took medicine', 'dawa le li', 'goli kha li'. " +
+                  "Prefer the closest safety intent instead of unknown unless the audio is empty or unrelated.",
               },
               {
                 inlineData: {
@@ -354,9 +461,13 @@ export async function detectVoiceIntentWithAi(input: {
     parsed = { intent: "unknown", transcript: text };
   }
   const allowed = new Set(["lost", "ok", "help", "medicine"]);
+  const transcript = parsed.transcript ?? "";
+  const fallbackIntent = detectVoiceIntentFromText(transcript);
   return {
-    intent: parsed.intent && allowed.has(parsed.intent) ? parsed.intent : null,
-    transcript: parsed.transcript ?? "",
+    intent: parsed.intent && allowed.has(parsed.intent)
+      ? parsed.intent
+      : fallbackIntent,
+    transcript,
     detail: "Voice command processed with Gemini.",
   };
 }
