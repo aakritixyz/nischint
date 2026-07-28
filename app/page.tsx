@@ -8,6 +8,7 @@ type Language = "en" | "hi";
 type AppTab = "safety" | "location" | "reminders" | "circle" | "notes" | "privacy" | "settings";
 type VoiceTone = "calm" | "standard" | "energetic";
 type AuthMode = "login" | "signup";
+type VoiceIntent = CheckIn | "lost";
 
 type BrowserSpeechRecognition = {
   lang: string;
@@ -18,7 +19,7 @@ type BrowserSpeechRecognition = {
   onresult: ((event: {
     results: ArrayLike<{ 0: { transcript: string } }>;
   }) => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((event?: { error?: string }) => void) | null;
   onend: (() => void) | null;
 };
 
@@ -286,8 +287,11 @@ const languageCopy = {
     stop: "Stop",
     speak: "Voice command",
     listening: "Listening...",
+    recording: "Speak now. I am listening for a few seconds.",
+    processingVoice: "Understanding your voice command...",
     voiceReady: "Voice guidance is ready",
     voiceUnsupported: "Voice commands are not available on this browser. Read-aloud still works.",
+    micPermission: "Microphone permission is blocked. Allow microphone access, then try Voice command again.",
     commandHelp: "Say: I feel lost, I am okay, or I took medicine.",
     familyVoice: "Family reassurance",
     playingMessage: "Playing reassurance",
@@ -374,8 +378,11 @@ const languageCopy = {
     stop: "रोकें",
     speak: "आवाज से बोलें",
     listening: "सुन रहे हैं...",
+    recording: "अब बोलिए। मैं कुछ सेकंड तक सुन रही हूं।",
+    processingVoice: "आपकी आवाज समझी जा रही है...",
     voiceReady: "आवाज से सहायता तैयार है",
     voiceUnsupported: "इस ब्राउजर में बोलकर आदेश देना उपलब्ध नहीं है। सुनने की सुविधा काम करेगी।",
+    micPermission: "माइक्रोफोन की अनुमति बंद है। अनुमति चालू करके फिर से आवाज से बोलें।",
     commandHelp: "कहें: मुझे मदद चाहिए, मैं ठीक हूं, या मैंने दवा ले ली।",
     familyVoice: "परिवार का भरोसा",
     playingMessage: "परिवार का संदेश चल रहा है",
@@ -465,7 +472,9 @@ export default function Home() {
   const [caregiverSession, setCaregiverSession] = useState<CaregiverSession | null>(null);
   const [voiceStatus, setVoiceStatus] = useState<string>(languageCopy.en.voiceReady);
   const [isListening, setIsListening] = useState(false);
+  const [isRecordingCommand, setIsRecordingCommand] = useState(false);
   const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const wakeLockRef = useRef<{ release: () => Promise<void> } | null>(null);
   const copy = languageCopy[language];
   const activeGuidance = language === "hi" ? hindiGuidance : guidance;
@@ -550,7 +559,11 @@ export default function Home() {
       window.speechSynthesis.cancel();
     }
     recognitionRef.current?.stop();
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
     setIsListening(false);
+    setIsRecordingCommand(false);
     setVoicePlaying(false);
     setVoiceStatus(copy.voiceReady);
   }
@@ -730,7 +743,7 @@ export default function Home() {
       .trim();
   }
 
-  function commandIntent(transcript: string): CheckIn | "lost" | null {
+  function commandIntent(transcript: string): VoiceIntent | null {
     const phrase = normalizeCommand(transcript);
     const lostWords = [
       "i feel lost",
@@ -760,6 +773,113 @@ export default function Home() {
     if (okayWords.some((word) => phrase.includes(word))) return "ok";
 
     return null;
+  }
+
+  function handleVoiceIntent(intent: VoiceIntent | null, transcript?: string) {
+    if (transcript) {
+      setVoiceStatus(copy.recognized(transcript));
+    }
+
+    if (intent === "lost") {
+      void activateLostMode();
+      return;
+    }
+
+    if (intent === "medicine") {
+      void completeCheckIn("medicine");
+      return;
+    }
+
+    if (intent === "help") {
+      void completeCheckIn("help");
+      return;
+    }
+
+    if (intent === "ok") {
+      void completeCheckIn("ok");
+      return;
+    }
+
+    setVoiceStatus(copy.commandNotFound);
+    if (voiceAssist) speakText(copy.commandNotFound);
+  }
+
+  function blobToBase64(blob: Blob) {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = String(reader.result ?? "");
+        resolve(result.includes(",") ? result.split(",")[1] : result);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function recordVoiceCommand() {
+    const mediaDevices = navigator.mediaDevices;
+    const Recorder = window.MediaRecorder;
+
+    if (!mediaDevices?.getUserMedia || !Recorder) {
+      setVoiceStatus(copy.voiceUnsupported);
+      speakText(copy.commandHelp);
+      return;
+    }
+
+    try {
+      stopSpeaking();
+      const stream = await mediaDevices.getUserMedia({ audio: true });
+      const mimeType = Recorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : Recorder.isTypeSupported("audio/mp4")
+          ? "audio/mp4"
+          : "";
+      const recorder = new Recorder(stream, mimeType ? { mimeType } : undefined);
+      const chunks: BlobPart[] = [];
+
+      mediaRecorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) chunks.push(event.data);
+      };
+      recorder.onerror = () => {
+        setIsRecordingCommand(false);
+        setVoiceStatus(copy.micPermission);
+        stream.getTracks().forEach((track) => track.stop());
+      };
+      recorder.onstop = async () => {
+        setIsRecordingCommand(false);
+        stream.getTracks().forEach((track) => track.stop());
+        if (!chunks.length) {
+          setVoiceStatus(copy.commandHelp);
+          return;
+        }
+
+        setVoiceStatus(copy.processingVoice);
+        try {
+          const audio = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+          const payload = await callApi("/api/nischint/voice-command", {
+            audioBase64: await blobToBase64(audio),
+            mimeType: audio.type,
+            language,
+          });
+          handleVoiceIntent(payload.intent ?? null, payload.transcript);
+        } catch {
+          setVoiceStatus(copy.commandHelp);
+          speakText(copy.commandHelp);
+        }
+      };
+
+      setIsRecordingCommand(true);
+      setVoiceStatus(copy.recording);
+      recorder.start();
+      window.setTimeout(() => {
+        if (recorder.state === "recording") recorder.stop();
+      }, 4200);
+    } catch {
+      setIsRecordingCommand(false);
+      setVoiceStatus(copy.micPermission);
+      speakText(copy.micPermission);
+    }
   }
 
   async function keepScreenAwake() {
@@ -864,8 +984,7 @@ export default function Home() {
       speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
 
     if (!Recognition) {
-      setVoiceStatus(copy.voiceUnsupported);
-      speakText(copy.commandHelp);
+      void recordVoiceCommand();
       return;
     }
 
@@ -878,22 +997,16 @@ export default function Home() {
     recognition.onresult = (event) => {
       const transcript = event.results[0]?.[0]?.transcript ?? "";
       const intent = commandIntent(transcript);
-      setVoiceStatus(transcript ? copy.recognized(transcript) : copy.commandHelp);
-
-      if (intent === "lost") {
-        void activateLostMode();
-      } else if (intent === "medicine") {
-        void completeCheckIn("medicine");
-      } else if (intent === "ok") {
-        void completeCheckIn("ok");
-      } else {
-        setVoiceStatus(copy.commandNotFound);
-        if (voiceAssist) speakText(copy.commandNotFound);
-      }
+      handleVoiceIntent(intent, transcript);
     };
-    recognition.onerror = () => {
-      setVoiceStatus(copy.commandHelp);
+    recognition.onerror = (event) => {
       setIsListening(false);
+      if (event?.error === "not-allowed" || event?.error === "service-not-allowed") {
+        setVoiceStatus(copy.micPermission);
+        speakText(copy.micPermission);
+        return;
+      }
+      void recordVoiceCommand();
     };
     recognition.onend = () => {
       setIsListening(false);
@@ -916,6 +1029,8 @@ export default function Home() {
       ai?: string;
       capabilities?: AiCapability[];
       delivery?: string;
+      intent?: VoiceIntent | null;
+      transcript?: string;
       authenticated?: boolean;
       session?: CaregiverSession | null;
       error?: string;
@@ -1561,8 +1676,8 @@ export default function Home() {
               <button type="button" onClick={readCurrentScreen}>
                 {voicePlaying ? copy.stop : copy.listen}
               </button>
-              <button type="button" disabled={!voiceAssist || isListening} onClick={listenForCommand}>
-                {isListening ? copy.listening : copy.speak}
+              <button type="button" disabled={!voiceAssist || isListening || isRecordingCommand} onClick={listenForCommand}>
+                {isListening ? copy.listening : isRecordingCommand ? copy.recording : copy.speak}
               </button>
             </div>
             <p className="voiceStatus" aria-live="polite">{voiceStatus}</p>

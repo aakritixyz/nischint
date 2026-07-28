@@ -16,6 +16,7 @@ type ProviderEnv = {
   AI_PROVIDER?: string;
   GROQ_GUIDANCE_MODEL?: string;
   GEMINI_GUIDANCE_MODEL?: string;
+  GEMINI_VOICE_MODEL?: string;
   GEMINI_LIVE_MODEL?: string;
   GROQ_ORCHESTRATION_MODEL?: string;
   GROQ_SCREENSHOT_MODEL?: string;
@@ -52,6 +53,7 @@ function providerEnv() {
     AI_PROVIDER: process.env.AI_PROVIDER,
     GROQ_GUIDANCE_MODEL: process.env.GROQ_GUIDANCE_MODEL,
     GEMINI_GUIDANCE_MODEL: process.env.GEMINI_GUIDANCE_MODEL,
+    GEMINI_VOICE_MODEL: process.env.GEMINI_VOICE_MODEL,
     GEMINI_LIVE_MODEL: process.env.GEMINI_LIVE_MODEL,
     GROQ_ORCHESTRATION_MODEL: process.env.GROQ_ORCHESTRATION_MODEL,
     GROQ_SCREENSHOT_MODEL: process.env.GROQ_SCREENSHOT_MODEL,
@@ -269,6 +271,83 @@ export async function generateGuidanceWithAi(prompt: string) {
     (await generateWithGemini(prompt, vars)) ??
     (await generateWithOpenAi(prompt, vars))
   );
+}
+
+export async function detectVoiceIntentWithAi(input: {
+  audioBase64: string;
+  mimeType: string;
+  language: "en" | "hi";
+}) {
+  const vars = providerEnv();
+  if (!vars.GEMINI_API_KEY) {
+    return {
+      intent: null,
+      transcript: "",
+      detail: "Gemini voice intent detection is not configured.",
+    };
+  }
+
+  const model = vars.GEMINI_VOICE_MODEL ?? vars.GEMINI_GUIDANCE_MODEL ?? "gemini-2.5-flash";
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${vars.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text:
+                  "You are an elder safety app voice intent detector. Transcribe the short command and classify it as exactly one of: lost, ok, help, medicine, unknown. " +
+                  "Return compact JSON only with keys intent and transcript. Hindi, Hinglish, and English commands are allowed. " +
+                  "Examples: 'I feel lost' => lost, 'mujhe madad chahiye' => help, 'main theek hoon' => ok, 'dawa le li' => medicine.",
+              },
+              {
+                inlineData: {
+                  mimeType: input.mimeType || "audio/webm",
+                  data: input.audioBase64,
+                },
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 120,
+          responseMimeType: "application/json",
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    return {
+      intent: null,
+      transcript: "",
+      detail: "Gemini voice command request failed.",
+    };
+  }
+
+  const payload = (await response.json()) as {
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  };
+  const text = payload.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
+  let parsed: { intent?: string; transcript?: string } = {};
+  try {
+    parsed = JSON.parse(text) as { intent?: string; transcript?: string };
+  } catch {
+    parsed = { intent: "unknown", transcript: text };
+  }
+  const allowed = new Set(["lost", "ok", "help", "medicine"]);
+  return {
+    intent: parsed.intent && allowed.has(parsed.intent) ? parsed.intent : null,
+    transcript: parsed.transcript ?? "",
+    detail: "Voice command processed with Gemini.",
+  };
 }
 
 async function generateWithGroq(prompt: string, vars: ProviderEnv) {

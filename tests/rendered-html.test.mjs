@@ -217,6 +217,7 @@ test("production hardening backend pieces exist", async () => {
     loginRoute,
     logoutRoute,
     meRoute,
+    voiceCommandRoute,
     authLib,
     persistenceLib,
     providersLib,
@@ -240,6 +241,7 @@ test("production hardening backend pieces exist", async () => {
     readProjectFile("app/api/nischint/login/route.ts"),
     readProjectFile("app/api/nischint/logout/route.ts"),
     readProjectFile("app/api/nischint/me/route.ts"),
+    readProjectFile("app/api/nischint/voice-command/route.ts"),
     readProjectFile("lib/nischintAuth.ts"),
     readProjectFile("lib/nischintPersistence.ts"),
     readProjectFile("lib/nischintProviders.ts"),
@@ -265,6 +267,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(loginRoute, /createCaregiverSession/);
   assert.match(logoutRoute, /clearCaregiverSession/);
   assert.match(meRoute, /getCaregiverSession/);
+  assert.match(voiceCommandRoute, /detectVoiceIntentWithAi/);
+  assert.match(voiceCommandRoute, /audioBase64/);
   assert.match(authLib, /nischint_session/);
   assert.match(authLib, /createCaregiverAccount/);
   assert.match(authLib, /signupWithSupabase/);
@@ -286,6 +290,8 @@ test("production hardening backend pieces exist", async () => {
   assert.match(providersLib, /isVerifiedRecipient/);
   assert.match(providersLib, /getProviderHealth/);
   assert.match(providersLib, /GEMINI_API_KEY/);
+  assert.match(providersLib, /detectVoiceIntentWithAi/);
+  assert.match(providersLib, /inlineData/);
   assert.match(providersLib, /OPENROUTER_API_KEY/);
   assert.match(providersLib, /gemini-2\.5-flash-native-audio/);
   assert.match(providersLib, /llama-4-maverick/);
