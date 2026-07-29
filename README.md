@@ -1,143 +1,236 @@
 # Nischint
 
-**Nischint** means *carefree* or *peace of mind*. This project is a mobile-first elder safety and family care companion designed for moments when an older adult feels confused, lost, unwell, or unable to explain what they need.
+**Nischint** means peace of mind. It is a mobile-first elder safety and family care companion built for moments when an older adult feels confused, lost, unwell, or unable to explain what they need.
 
-Instead of being only a memory-preservation app, Nischint focuses on real-time support: helping the person stay calm, helping family understand what is happening, and making emergency actions simple enough to use under stress.
+Nischint is not just a memory app. It focuses on real-time support: one-tap help, voice commands, caregiver alerts, reminders, safe-zone awareness, and consent-first privacy controls.
 
-## Why This Matters
+## Project Pitch
 
-Older adults can face moments when ordinary situations become unexpectedly unsafe. A person may feel disoriented, struggle to call family, miss medicine, move beyond a familiar area, or need support without being able to explain what is wrong.
-
-Nischint is built around one core idea:
-
-> During confusion, the app should reduce decisions, not add more.
-
-The senior-facing side keeps actions large, gentle, and direct. The caregiver-facing side gives family the context they need quickly: location status, check-ins, emergency info, reminders, notes, and alert history.
-
-## Core Use Case
-
-When a person feels lost, they can press **I feel lost**. Nischint then runs a safety flow that can:
-
-1. Turn on lost mode.
-2. Show calming guidance.
-3. Surface the saved home address and medical context.
-4. Share live location after browser permission.
-5. Queue a caregiver alert through simulated or real providers.
-6. Update the caregiver view with safe-zone and event status.
-
-## Features Built
-
-### Senior View
-
-- First-screen setup for name, family access code, language, and voice preference
-- Big **I feel lost** emergency button
-- **I am okay**, **I need help**, and **I took medicine** check-ins
-- Saved home address and current location label
-- Emergency medical information card
-- One-tap caregiver call link
-- Real device read-aloud for the current safety screen
-- English/Hindi interface and spoken guidance toggle
-- Voice commands for lost mode, okay check-ins, and medicine confirmation
-- Spoken family reassurance, haptic feedback, and screen wake lock during lost mode
-- Large text and high contrast accessibility controls
-- Mobile-first layout with large touch targets
-
-### Caregiver View
-
-- Live alert status
-- Safe-zone map view
-- Caregiver contact list
-- Reminder creation
-- Caregiver invite flow
-- Family handoff notes
-- Recent event history
-- Privacy export/delete requests
-- Consent toggles for location and emergency-card visibility
-- Caregiver access-code concept
-- Caregiver access levels for owner, backup, and clinical contacts
-- Consent audit log for privacy-sensitive sharing changes
-- User-facing privacy summary that explains what family can see
-- Escalation ladder for primary, backup, and doctor/neighbor handoff
-
-### Backend/API Routes
-
-Nischint includes Next.js API routes for:
-
-- Care state: `/api/nischint/state`
-- Lost mode: `/api/nischint/lost-mode`
-- Check-ins: `/api/nischint/check-in`
-- Location updates: `/api/nischint/location`
-- Notifications: `/api/nischint/notify`
-- Guidance: `/api/nischint/guidance`
-- AI capability map: `/api/nischint/ai-capabilities`
-- Production architecture: `/api/nischint/architecture`
-- Onboarding: `/api/nischint/onboarding`
-- Notes: `/api/nischint/notes`
-- Reminders: `/api/nischint/reminders`
-- Invites: `/api/nischint/invites`
-- Privacy requests: `/api/nischint/privacy`
-- Consent audit: `/api/nischint/consent`
-- Production readiness: `/api/nischint/production`
-
-### Public Pages
-
-Nischint now has real route pages instead of navigation links that only point back to the same screen:
-
-- Main app: `/`
-- Caregiver information: `/care`
-- App walkthrough: `/demo`
-- Privacy policy: `/privacy`
-- About and roadmap: `/about`
-- Contact: `/contact`
-- FAQ: `/faq`
-- Monitoring health: `/api/nischint/monitoring`
-
-Without provider keys, the app still works in guided sample mode and records actions locally or in the configured database. With real credentials, the provider layer is ready to connect to SMS, WhatsApp, and AI guidance.
-
-## Voice And Language Accessibility
-
-The app now starts with a simple setup screen instead of forcing voice features immediately. A family member or senior can choose English/Hindi and decide whether voice guidance should be on or whether the app should use buttons only.
-
-The senior screen can still switch between English and Hindi and stores that preference on the device. **Listen** reads the person's name, current location, saved home address, and help instruction aloud when voice guidance is enabled. **Speak** listens for clear commands such as “I feel lost,” “I need help,” “I am okay,” “I took medicine,” “मुझे मदद चाहिए,” “घर,” or “मैं ठीक हूं.”
-
-Voice commands intentionally use a stricter matcher so random words like “live” do not trigger lost mode. If the browser hears something unclear, Nischint shows what it heard and asks the person to try a simpler phrase. Automatic voice guidance speaks after emergency and check-in actions only when voice support is enabled. During lost mode, supported phones also vibrate and request a screen wake lock so the instructions remain visible.
-
-Read-aloud uses the browser's speech synthesis. Voice-command availability depends on browser support and may use the browser vendor's speech service, so production privacy notices should explain that behavior.
-
-## Tech Stack
-
-- **Framework:** Next.js
-- **Language:** TypeScript
-- **UI:** React, CSS, Tailwind entry setup
-- **Persistence shape:** Drizzle schema included
-- **Production audit:** Environment-aware readiness endpoint
-- **Deployment:** Vercel-ready
-- **PWA:** Web app manifest and service worker
-- **Providers:** Twilio SMS, WhatsApp Cloud API, Groq, Gemini, and OpenAI guidance hooks
-
-For a scale-up plan covering separate senior/family/admin apps, microservices, real-time location, AWS deployment, and accessibility guardrails, see [docs/PRODUCTION_ARCHITECTURE.md](docs/PRODUCTION_ARCHITECTURE.md). For the deeper production stack, integrations, security, accessibility, and operations roadmap, see [docs/TECHNICAL_IMPLEMENTATION.md](docs/TECHNICAL_IMPLEMENTATION.md).
-
-## App Flow
-
-1. Open the app on a phone-sized screen.
-2. Choose the senior name, language, and whether voice guidance should be on.
-3. Enter with the family access code **2486**.
-4. Press **I feel lost**.
-5. Watch the senior view enter help mode.
-6. Press **Share live location** and allow GPS permission.
-7. Run the alert drill or send an SMS, WhatsApp, or push alert through the provider layer.
-8. Switch between **English** and **Hindi**, then use **Listen** to hear the safety screen.
-9. Press **Speak** and say a clear help or check-in command.
-10. Add a reminder, caregiver note, and show the caregiver live view.
-
-This makes the project easy to explain in a presentation:
+During stressful moments, an elderly person should not have to navigate a complicated app. Nischint gives the senior a calm screen with large actions like **I feel lost**, **I need help**, **I am okay**, and **I took medicine**. It gives caregivers the context they need: location status, emergency notes, alerts, reminders, care-circle contacts, and activity history.
 
 > Nischint supports older adults during vulnerable moments by giving them simple guidance, family contact, location sharing, reminders, and real-time caregiver alerts.
 
+## Copyable Video Script
+
+### 1. Opening
+
+**Show:** Nischint homepage or start screen.
+
+**Speak:**
+
+Hi, this is Nischint, a real-time safety and care companion for elderly people and families. The idea is simple: during moments of confusion, stress, or being lost, the senior should not have to navigate a complicated app. Nischint gives them large, clear actions, voice assistance, family alerts, and caregiver visibility in one mobile-first experience.
+
+### 2. Problem
+
+**Show:** Senior view with the big action buttons.
+
+**Speak:**
+
+Many elderly people, especially those living independently, may forget where they are, miss medicine, or feel unsure about asking for help. In that moment, small buttons and complicated screens are not useful. So Nischint focuses on calm, readable, accessible emergency support.
+
+### 3. Onboarding
+
+**Show:** Login/setup screen, language toggle, and voice option.
+
+**Speak:**
+
+First, a caregiver can set up the senior profile. The app supports English and Hindi, and voice assistance can be turned on for users who may not be comfortable reading. This makes the experience more inclusive for elderly users.
+
+### 4. Senior Safety Flow
+
+**Show:** Senior tab or main senior screen.
+
+**Speak:**
+
+This is the senior-facing screen. It shows the current status, location context, and simple actions like I feel lost, I am okay, I need help, and I took medicine. The buttons are intentionally large and easy to tap on a phone.
+
+### 5. Lost Mode
+
+**Show:** Press **I feel lost**.
+
+**Speak:**
+
+If the senior feels lost, they can press one big button. Nischint activates lost mode, gives calm instructions, shares the saved care context, and alerts the caregiver. The person does not need to type or explain anything in panic.
+
+### 6. Voice Command
+
+**Show:** Tap **Voice command** and say “I feel lost” or “I need help”.
+
+**Speak:**
+
+Nischint also supports voice commands. For example, the user can say I feel lost or mujhe madad chahiye. The app records the command, transcribes it using Groq Whisper, detects the intent, and triggers the correct action. This is useful for seniors who may struggle with reading or touch navigation.
+
+### 7. Check-Ins
+
+**Show:** Press **I am okay** and **I took medicine**.
+
+**Speak:**
+
+Daily check-ins are also supported. The senior can quickly mark that they are safe, need help, or have taken medicine. These updates are saved in the care history so family members can stay informed without constantly calling.
+
+### 8. Location And Safe Zone
+
+**Show:** Location tab and safe-zone section.
+
+**Speak:**
+
+The location section shows whether the person is inside or outside their usual safe area. The app uses safe-zone logic, so caregivers can understand if a loved one may have wandered beyond a familiar area.
+
+### 9. Care Circle
+
+**Show:** Care circle or emergency contacts tab.
+
+**Speak:**
+
+Caregivers and trusted contacts can be added to the care circle. Nischint uses verified numbers for alerts, so safety messages are not accidentally sent to unknown people.
+
+### 10. Alerts
+
+**Show:** SMS or WhatsApp alert controls/status.
+
+**Speak:**
+
+For alerts, Nischint supports SMS through Twilio and has WhatsApp Cloud API integration prepared. SMS is the primary reliable alert channel, while WhatsApp can be used with approved Meta templates.
+
+### 11. Reminders
+
+**Show:** Reminders tab.
+
+**Speak:**
+
+The reminders section helps with daily routines like medicine, walks, hydration, or appointments. This makes Nischint useful not only in emergencies, but also for everyday care.
+
+### 12. Notes And Family Handoff
+
+**Show:** Notes tab.
+
+**Speak:**
+
+Family members can add caregiver notes, like whether the person ate, seemed calm, or needs a follow-up. This helps with handoff between family members, neighbors, or doctors.
+
+### 13. Privacy
+
+**Show:** Privacy tab.
+
+**Speak:**
+
+Because this app handles sensitive data like location and emergency information, Nischint is consent-first. It includes privacy requests, consent logs, and audit history. Location sharing happens only with permission.
+
+### 14. Backend And Tech Stack
+
+**Show:** Monitoring endpoint, GitHub, or Vercel dashboard.
+
+**Speak:**
+
+Technically, Nischint is built with Next.js, React, TypeScript, Tailwind CSS, API routes, PostgreSQL with Drizzle ORM, Twilio for SMS alerts, Groq for voice transcription, Gemini for AI support, and Vercel for deployment. The backend stores care state, reminders, notes, consent logs, and alert events.
+
+### 15. Closing
+
+**Show:** Main app screen again.
+
+**Speak:**
+
+Nischint is designed for real moments when someone needs help immediately. It gives seniors a simple way to stay calm and reach family, while giving caregivers the context they need to respond quickly. For a college showcase, it demonstrates accessibility, AI, backend integration, safety workflows, and meaningful real-world impact.
+
+## What To Show In The Video
+
+1. Start screen and Nischint branding.
+2. Caregiver login/setup.
+3. English/Hindi language toggle.
+4. Voice guidance toggle.
+5. Main senior screen.
+6. Press **I feel lost**.
+7. Use **Voice command** and say “I need help” or “mujhe madad chahiye”.
+8. Show read-aloud response.
+9. Press **I am okay**.
+10. Show Location / safe-zone tab.
+11. Show Reminders tab.
+12. Show Care circle contacts.
+13. Show Notes / family handoff.
+14. Show Privacy / consent audit.
+15. Show `/api/nischint/monitoring` for backend proof.
+
+## Features
+
+- Mobile-first senior safety interface
+- Caregiver signup/login with signed session cookies
+- Caregiver signup creates a secure family access path for the showcase flow
+- Optional Supabase Auth support
+- Persistent care state with PostgreSQL when `DATABASE_URL` is configured
+- Big **I feel lost** lost-mode flow
+- **I am okay**, **I need help**, and **I took medicine** check-ins
+- English/Hindi UI and spoken guidance
+- Voice commands with Groq transcription and AI-backed intent detection
+- Twilio SMS alerts
+- WhatsApp Cloud API template support
+- Verified caregiver number protection with `VERIFIED_CAREGIVER_NUMBERS`
+- Location sharing and safe-zone status logic
+- Reminders for medicine and routine care
+- Care-circle contacts and caregiver roles
+- Family notes and handoff history
+- Privacy requests, consent log, and audit trail
+- Monitoring endpoint for provider and care-state health
+- PWA manifest and service worker
+
+## Tech Stack
+
+- **Frontend:** Next.js App Router, React, TypeScript
+- **Styling:** CSS, Tailwind setup
+- **Backend:** Next.js API routes
+- **Database:** PostgreSQL with Drizzle ORM schema and JSON care-state persistence
+- **Auth:** Built-in caregiver auth with signed sessions, optional Supabase Auth
+- **Alerts:** Twilio SMS, WhatsApp Cloud API
+- **AI:** Groq Whisper for voice transcription, Gemini for AI support, OpenRouter/OpenAI hooks for optional planning/guidance
+- **Deployment:** Vercel
+- **Testing:** Next production build plus Node test runner
+
+## Public Pages And Main Routes
+
+- `/` - main Nischint app
+- `/care` - caregiver information
+- `/demo` - app walkthrough
+- `/privacy` - privacy policy
+- `/about` - about and roadmap
+- `/contact` - contact page
+- `/faq` - FAQ
+- `/api/nischint/monitoring` - provider/care-state health
+- `/api/nischint/production` - production readiness audit
+
+## Important API Routes
+
+- `/api/nischint/state`
+- `/api/nischint/lost-mode`
+- `/api/nischint/check-in`
+- `/api/nischint/location`
+- `/api/nischint/notify`
+- `/api/nischint/voice-command`
+- `/api/nischint/guidance`
+- `/api/nischint/reminders`
+- `/api/nischint/notes`
+- `/api/nischint/consent`
+- `/api/nischint/privacy`
+- `/api/nischint/signup`
+- `/api/nischint/login`
+- `/api/nischint/logout`
+- `/api/nischint/me`
+
 ## Run Locally
+
+Clone or open the project folder:
+
+```bash
+cd /Users/Dell/Documents/Codex/2026-07-22/nischint
+```
+
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the local dev server:
+
+```bash
 npm run dev
 ```
 
@@ -147,169 +240,142 @@ Open:
 http://localhost:3000
 ```
 
-For a production-style local check:
+Production-style local run:
 
 ```bash
 npm run build
 npm start
 ```
 
-## Test
+Run checks:
 
 ```bash
+npm run lint
 npm test
 ```
 
-This runs a production build and verifies the Nischint-branded launch content, metadata, and PWA manifest.
+## Git Commands
 
-## Deploy To Vercel
+Add and commit local changes:
 
-1. Push this folder to GitHub.
-2. Import the repository in Vercel.
-3. Keep the framework preset as **Next.js**.
-4. Leave environment variables empty for a sample deployment.
-5. Add real environment variables only when connecting real providers.
-6. Deploy.
+```bash
+git add .
+git commit -m "Update Nischint showcase docs"
+```
 
-Recommended Vercel settings:
+Push to GitHub:
 
-- Root Directory: `./`
-- Install Command: `npm install`
-- Build Command: `npm run build`
-- Output Directory: `.next`
+```bash
+git push
+```
 
-## Environment Variables
+Vercel redeploys automatically after pushing to the connected `main` branch.
 
-All environment variables are optional for the first deployment. Do not add blank variables in Vercel; add a key only when you have a real value.
+## Required Environment Variables For Best Showcase
 
-| Variable | Purpose |
-| --- | --- |
-| `DATABASE_URL` | Production database connection, such as Neon, Supabase, or Vercel Postgres |
-| `NISCHINT_SESSION_SECRET` | Secret used to sign caregiver sessions |
-| `SUPABASE_URL` | Supabase project URL for optional managed caregiver auth |
-| `SUPABASE_ANON_KEY` | Supabase anon key for optional managed caregiver auth |
-| `TWILIO_ACCOUNT_SID` | Twilio account SID for SMS alerts |
-| `TWILIO_AUTH_TOKEN` | Twilio auth token |
-| `TWILIO_FROM_NUMBER` | Twilio sender number |
-| `VERIFIED_CAREGIVER_NUMBERS` | Comma-separated verified recipient numbers allowed to receive SMS/WhatsApp |
-| `WHATSAPP_ACCESS_TOKEN` | WhatsApp Cloud API token |
-| `WHATSAPP_PHONE_NUMBER_ID` | WhatsApp sender phone number ID |
-| `WHATSAPP_TEMPLATE_NAME` | Approved WhatsApp template name for production alerts |
-| `WHATSAPP_TEMPLATE_LANGUAGE` | Optional WhatsApp template language code, default `en_US` |
-| `WHATSAPP_TEMPLATE_HAS_BODY_PARAM` | Optional. Set `true` only when your approved template has one body variable. Leave unset for Meta's `hello_world` template |
-| `GROQ_API_KEY` | Groq key for fast model-generated calming guidance |
-| `GROQ_TRANSCRIPTION_MODEL` | Optional Groq speech-to-text model for voice commands, default `whisper-large-v3-turbo` |
-| `GEMINI_API_KEY` | Gemini key for enrichment/model-generated calming guidance |
-| `OPENROUTER_API_KEY` | OpenRouter key for configurable per-round action planning |
-| `OPENAI_API_KEY` | Optional OpenAI fallback for model-generated calming guidance |
-| `AI_PROVIDER` | Optional preference: `groq`, `gemini`, or `openai` |
-| `GROQ_GUIDANCE_MODEL` | Optional Groq guidance model override, default `openai/gpt-oss-20b` |
-| `GEMINI_GUIDANCE_MODEL` | Optional Gemini guidance model override, default `gemini-2.5-pro` |
-| `GEMINI_LIVE_MODEL` | Optional voice conversation model, default `gemini-2.5-flash-native-audio` |
-| `GROQ_ORCHESTRATION_MODEL` | Optional Groq drafting/orchestration model, default `meta-llama/llama-4-scout-17b-16e-instruct` |
-| `GROQ_SCREENSHOT_MODEL` | Optional Groq multimodal verification model, default `meta-llama/llama-4-scout-17b-16e-instruct` |
-| `OPENROUTER_PLANNER_MODEL` | Optional OpenRouter planning model, default `best-available` |
+Do not add blank env vars. Add only keys for which you have real values.
 
-Suggested AI model map:
+```env
+DATABASE_URL=...
+NISCHINT_SESSION_SECRET=...
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_FROM_NUMBER=...
+VERIFIED_CAREGIVER_NUMBERS=+919210067119
+GROQ_API_KEY=...
+GROQ_TRANSCRIPTION_MODEL=whisper-large-v3-turbo
+GEMINI_API_KEY=...
+GEMINI_VOICE_MODEL=gemini-2.5-flash
+```
 
-| Role | Model |
-| --- | --- |
-| Analysis | `meta-llama/llama-4-scout-17b-16e-instruct` |
-| Design | `openai/gpt-oss-20b` |
-| Code generation | `openai/gpt-oss-120b` |
-| Optimization | `deepseek-r1-distill-llama-70b` |
-| Enrichment | `gemini-2.5-pro` |
+Optional Supabase Auth:
 
-Advanced AI capability map:
+```env
+SUPABASE_URL=...
+SUPABASE_ANON_KEY=...
+```
+
+Optional WhatsApp:
+
+```env
+WHATSAPP_ACCESS_TOKEN=...
+WHATSAPP_PHONE_NUMBER_ID=...
+WHATSAPP_TEMPLATE_NAME=hello_world
+WHATSAPP_TEMPLATE_LANGUAGE=en_US
+```
+
+For Meta's default `hello_world` template, do **not** set `WHATSAPP_TEMPLATE_HAS_BODY_PARAM`. Set it only when your approved custom template has one body variable:
+
+```env
+WHATSAPP_TEMPLATE_HAS_BODY_PARAM=true
+```
+
+Optional AI/provider tuning:
+
+```env
+AI_PROVIDER=groq
+GROQ_GUIDANCE_MODEL=openai/gpt-oss-20b
+GEMINI_GUIDANCE_MODEL=gemini-2.5-pro
+GEMINI_LIVE_MODEL=gemini-2.5-flash-native-audio
+GROQ_ORCHESTRATION_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
+GROQ_SCREENSHOT_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
+OPENROUTER_API_KEY=...
+OPENROUTER_PLANNER_MODEL=best-available
+OPENAI_API_KEY=...
+```
+
+## AI Capability Map
 
 | Capability | Model | Provider |
 | --- | --- | --- |
 | Voice conversation + intent detection | `gemini-2.5-flash-native-audio` | Gemini Live WebSocket |
-| Orchestration + content drafting | `llama-4-scout` / `llama-4-maverick` | Groq REST API |
-| Per-round action planning | Configurable, default best available | OpenRouter REST API |
-| Screenshot verification | `llama-4-scout` multimodal | Groq REST API |
+| Voice transcription for browser audio | `whisper-large-v3-turbo` | Groq REST API |
+| Orchestration + content drafting | `meta-llama/llama-4-scout-17b-16e-instruct` | Groq REST API |
+| Per-round action planning | `best-available` | OpenRouter REST API |
+| Screenshot verification | `meta-llama/llama-4-scout-17b-16e-instruct` | Groq REST API |
 
-## Custom Domain
+## Vercel Deployment
 
-The free Vercel domain may look like:
+Recommended settings:
 
-```text
-nischint-rho.vercel.app
-```
+- **Framework preset:** Next.js
+- **Root directory:** `./`
+- **Install command:** `npm install`
+- **Build command:** `npm run build`
+- **Output directory:** `.next`
 
-That happens when `nischint.vercel.app` is already unavailable. For a cleaner public URL, buy or connect a custom domain such as:
+After changing environment variables:
 
-```text
-nischintcare.com
-app.nischintcare.com
-nischint.life
-```
+1. Go to Vercel project settings.
+2. Add/update the env vars.
+3. Go to Deployments.
+4. Redeploy the latest deployment.
+5. Check `/api/nischint/monitoring`.
 
-Then add it in Vercel under **Project Settings -> Domains** and follow the DNS instructions.
+## Showcase Test Flow
 
-## College Showcase Status
+1. Open the live URL or local URL on mobile.
+2. Login or create a caregiver account.
+3. Choose English/Hindi and keep voice guidance on.
+4. Tap **Voice command** and say “I feel lost”.
+5. Confirm lost mode activates.
+6. Tap **I am okay** to show a safe check-in.
+7. Tap **Voice command** and say “dawa le li”.
+8. Confirm medicine check-in is recorded.
+9. Open Location, Reminders, Care circle, Notes, and Privacy tabs.
+10. Open `/api/nischint/monitoring` to show backend/provider status.
 
-Nischint is ready for a college project showcase as a polished, working MVP. It has a mobile-first interface, real tabbed workflows, backend routes, signed caregiver sessions, caregiver signup/login, persistent database support when `DATABASE_URL` is present, bilingual voice support, privacy controls, monitoring, and provider hooks for SMS, WhatsApp, and AI guidance.
+## Docs
 
-Suggested presentation flow:
-
-1. Start on the setup screen and choose English/Hindi plus voice preference.
-2. Enter with access code **2486**.
-3. Press **I feel lost** to show lost mode, read-aloud guidance, caregiver alert status, and safe-zone change.
-4. Open **Location** and run the alert drill, share live GPS if available, and show the response ladder.
-5. Open **Reminders** and add a medicine/routine reminder.
-6. Open **Care circle** and show contacts, roles, and latest alert status.
-7. Open **Privacy** and show consent toggles, export/delete requests, and “What family can see.”
-8. Open **Settings** and show accessibility controls plus the showcase proof card.
-
-This positions Nischint as a meaningful real-time elder-safety project rather than a static landing page.
-
-## Production Hardening Added
-
-Nischint includes a production-readiness endpoint that checks whether the deployment has durable storage, auth secrets, SMS, WhatsApp, and AI guidance configured. This stays available through `/api/nischint/production` for technical review, while the normal app shows user-facing privacy and care controls instead of internal deployment status.
-
-The data model includes caregiver access levels, alert permissions, radius-based safe-zone logic, privacy requests, and consent logs. Consent toggles call a backend route so sharing changes appear in the care activity timeline.
-
-When `DATABASE_URL` is configured, Nischint creates a `nischint_care_state` Postgres table and persists the live care profile, check-ins, reminders, notes, location status, privacy requests, and consent history as JSON state. Without `DATABASE_URL`, it safely falls back to in-memory sample state.
-
-The family login now creates a signed session cookie through `/api/nischint/login`, restores it through `/api/nischint/me`, and clears it through `/api/nischint/logout`. Caregiver signup is available through `/api/nischint/signup`; when `SUPABASE_URL` and `SUPABASE_ANON_KEY` exist, signup/login use Supabase Auth first. Without Supabase, accounts are stored in Postgres with PBKDF2 password hashes when `DATABASE_URL` exists. The default family access code is `2486`; set `NISCHINT_SESSION_SECRET` in Vercel so sessions are signed with a private production value.
-
-Alert delivery is explicit about failure. SMS and WhatsApp are blocked for real delivery unless the recipient appears in `VERIFIED_CAREGIVER_NUMBERS`. WhatsApp can send an approved template when `WHATSAPP_TEMPLATE_NAME` is configured, otherwise it attempts text delivery only inside Meta's allowed service window. `/api/nischint/monitoring` reports provider health, failed deliveries, safe-zone state, and recent events for launch review.
-
-AI guidance prefers Groq by default when `GROQ_API_KEY` exists, then Gemini when `GEMINI_API_KEY` exists, then OpenAI when `OPENAI_API_KEY` exists. Set `AI_PROVIDER=gemini` or `AI_PROVIDER=openai` if you want to force a different first choice. The `/api/nischint/ai-capabilities` endpoint reports whether voice conversation, orchestration, planning, and screenshot verification providers are configured.
-
-Formal launch artifacts:
-
+- [Production architecture](docs/PRODUCTION_ARCHITECTURE.md)
+- [Technical implementation roadmap](docs/TECHNICAL_IMPLEMENTATION.md)
 - [Privacy and legal review checklist](docs/PRIVACY_LEGAL_REVIEW.md)
 - [Pilot test plan](docs/PILOT_TEST_PLAN.md)
 
-## Important Safety Note
+## Production readiness And College Showcase Status
 
-Nischint is currently a polished MVP for pilots, portfolios, and judged project presentations. It is not medical advice, an emergency-response service, or a replacement for professional care.
+Nischint is ready for a college project showcase as a polished, working MVP. It demonstrates accessibility, AI, backend integration, SMS/WhatsApp provider hooks, caregiver authentication, privacy-first consent, and a meaningful real-world safety workflow.
 
-Before using it with real families, the project still needs:
+## Safety Note
 
-1. Secure production database storage.
-2. Full managed auth provider if the pilot grows beyond the built-in caregiver accounts.
-3. Verified caregiver phone numbers in `VERIFIED_CAREGIVER_NUMBERS`.
-4. Real SMS/WhatsApp provider credentials.
-5. Legal/privacy review for consent-based location sharing.
-6. Privacy and health-data compliance review.
-7. Clear emergency escalation policies.
-8. Field testing with caregivers and accessibility feedback from older adults.
-
-## Future Improvements
-
-- Managed auth provider and family-specific dashboards
-- Real persistent care profiles
-- Medication adherence escalation
-- Production safe-zone distance logic with configurable zones
-- Audio recording/upload for personalized family voice notes
-- Additional regional languages and dialect testing
-- Caregiver notification preferences
-- Admin audit logs and consent history
-- Better offline emergency card support
-
-## Project Status
-
-Nischint is ready to present as a meaningful, voice-assisted college showcase MVP. It shows the care flow clearly, has a professional mobile-first interface, English/Hindi senior guidance, installable offline support, privacy-first controls, and backend routes for the main safety actions. Real-family use still requires production accounts, verified providers, security review, and field testing.
+Nischint is not medical advice, an emergency-response service, or a replacement for professional care. For real-family production use, it still needs formal legal/privacy review, monitored emergency failure handling, WhatsApp business approval if WhatsApp is used, and field testing with real caregivers and older adults.
